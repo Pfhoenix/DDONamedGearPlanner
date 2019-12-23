@@ -5,8 +5,84 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDONamedGearPlanner"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="DDO Named Gear Planner" Height="700" Width="800">
+	<DockPanel Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+		<StackPanel DockPanel.Dock="Left" Width="187" HorizontalAlignment="Left">
+			<Grid>
+				<DockPanel>
+					<Menu DockPanel.Dock="Top">
+						<MenuItem Header="_File">
+							<MenuItem Header="_New Gear Set" Command="New" />
+							<MenuItem Header="_Load Gear Set" Command="Open" />
+							<MenuItem Header="_Save Gear Set" Command="Save" />
+							<MenuItem Header="Save Gear Set _As" Command="SaveAs" />
+							<Separator />
+							<MenuItem Header="E_xit" Click="MenuItem_Click" />
+						</MenuItem>
+					</Menu>
+					<GroupBox x:Name="groupBox" Header="Filters by slot" Height="194" VerticalAlignment="Top" Width="187" HorizontalAlignment="Left">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition/>
+								<RowDefinition/>
+								<RowDefinition/>
+								<RowDefinition/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+							<ToggleButton Grid.Column="0" Grid.Row="0" Name="tbFilterBack" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" Width="40" Height="40" ToolTip="Back">
+								<Image Source="Resources/slot_bg_back.png" Width="32" Height="32"/>
+							</ToggleButton>
+							<ToggleButton Grid.Column="1" Grid.Row="0" Name="tbFilterBody" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Body">
+								<Image Source="Resources/slot_bg_body.png" Width="32" Height="32"/>
+							</ToggleButton>
+							<ToggleButton Grid.Column="2" Grid.Row="0" Name="tbFilterEye" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Eye">
+								<Image Source="Resources/slot_bg_Eye.png" Width="32" Height="32"/>
+							</ToggleButton>
+							<ToggleButton Grid.Column="3" Grid.Row="0" Name="tbFilterFeet" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Feet">
+								<Image Source="Resources/slot_bg_feet.png" Width="32" Height="32"/>
+							</ToggleButton>
+							<ToggleButton Grid.Column="0" Grid.Row="1" Name="tbFilterFinger" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Finger">
+								<Image Source="Resources/slot_bg_finger1.png" Width="32" Height="32"/>
+							</ToggleButton>
+							<ToggleButton Grid.Column="1" Grid.Row="1" Name="tbFilterHand" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Hand">
+								<Image Source="Resources/slot_bg_hand.png" Width="32" Height="32"/>
+							</ToggleButton>
+							<ToggleButton Grid.Column="2" Grid.Row="1" Name="tbFilterHead" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Head">
+								<Image Source="Resources/slot_bg_head.png" Width="32" Height="32"/>
+							</ToggleButton>
+							<ToggleButton Grid.Column="3" Grid.Row="1" Name="tbFilterNeck" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Neck">
+								<Image Source="Resources/slot_bg_neck.png" Width="32" Height="32"/>
+							</ToggleButton>
+							<ToggleButton Grid.Column="0" Grid.Row="2" Name="tbFilterTrinket" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Trinket">
+								<Image Source="Resources/slot_bg_trinket.png" Width="32" Height="32"/>
+							</ToggleButton>
+							<ToggleButton Grid.Column="1" Grid.Row="2" Name="tbFilterWaist" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Waist">
+								<Image Source="Resources/slot_bg_waist.png" Width="32" Height="32"/>
+							</ToggleButton>
+							<ToggleButton Grid.Column="2" Grid.Row="2" Name="tbFilterWrist" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Wrist">
+								<Image Source="Resources/slot_bg_wrist.png" Width="32" Height="32"/>
+							</ToggleButton>
+							<ToggleButton Grid.Column="3" Grid.Row="2" Name="tbFilterWeapon" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Weapon">
+								<Image Source="Resources/slot_bg_weapon.png" Width="32" Height="32"/>
+							</ToggleButton>
+							<ToggleButton Grid.Column="0" Grid.Row="3" Name="tbFilterOffhand" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Offhand">
+								<Image Source="Resources/slot_bg_offhand.png" Width="32" Height="32"/>
+							</ToggleButton>
+							<Button Grid.Column="1" Grid.Row="3" Name="btnFilterAll" VerticalAlignment="Center" Width="40" Height="20" Click="BtnFilterAll_Click">All</Button>
+							<Button Grid.Column="2" Grid.Row="3" Name="btnFilterClear" VerticalAlignment="Center" Width="40" Height="20" Click="BtnFilterClear_Click">Clear</Button>
+							<Button Grid.Column="3" Grid.Row="3" Name="btnFilterApply" VerticalAlignment="Center" Width="40" Height="20" Click="BtnFilterApply_Click">Apply</Button>
+						</Grid>
+					</GroupBox>
+				</DockPanel>
+			</Grid>
+			<TextBox Name="txtSearchBox" Margin="0,2,0,0" TextChanged="TxtSearchBox_TextChanged"/>
+			<ListBox Name="lbItemList" Height="437"/>
+		</StackPanel>
+	</DockPanel>
 </Window>

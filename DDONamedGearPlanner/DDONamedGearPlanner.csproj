@@ -94,5 +94,21 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\slot_bg_back.png" />
+    <Resource Include="Resources\slot_bg_body.png" />
+    <Resource Include="Resources\slot_bg_eye.png" />
+    <Resource Include="Resources\slot_bg_feet.png" />
+    <Resource Include="Resources\slot_bg_finger1.png" />
+    <Resource Include="Resources\slot_bg_finger2.png" />
+    <Resource Include="Resources\slot_bg_hand.png" />
+    <Resource Include="Resources\slot_bg_head.png" />
+    <Resource Include="Resources\slot_bg_neck.png" />
+    <Resource Include="Resources\slot_bg_offhand.png" />
+    <Resource Include="Resources\slot_bg_trinket.png" />
+    <Resource Include="Resources\slot_bg_waist.png" />
+    <Resource Include="Resources\slot_bg_weapon.png" />
+    <Resource Include="Resources\slot_bg_wrist.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
