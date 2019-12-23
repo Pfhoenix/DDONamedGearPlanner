@@ -35,43 +35,43 @@
 								<ColumnDefinition/>
 							</Grid.ColumnDefinitions>
 
-							<ToggleButton Grid.Column="0" Grid.Row="0" Name="tbFilterBack" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" Width="40" Height="40" ToolTip="Back">
+							<ToggleButton Grid.Column="0" Grid.Row="0" Name="tbFilterBack" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" Width="40" Height="40" ToolTip="Back" Checked="TbFilterBack_Checked" Unchecked="TbFilterBack_Unchecked">
 								<Image Source="Resources/slot_bg_back.png" Width="32" Height="32"/>
 							</ToggleButton>
-							<ToggleButton Grid.Column="1" Grid.Row="0" Name="tbFilterBody" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Body">
+							<ToggleButton Grid.Column="1" Grid.Row="0" Name="tbFilterBody" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Body" Checked="TbFilterBody_Checked" Unchecked="TbFilterBody_Unchecked">
 								<Image Source="Resources/slot_bg_body.png" Width="32" Height="32"/>
 							</ToggleButton>
-							<ToggleButton Grid.Column="2" Grid.Row="0" Name="tbFilterEye" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Eye">
+							<ToggleButton Grid.Column="2" Grid.Row="0" Name="tbFilterEye" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Eye" Checked="TbFilterEye_Checked" Unchecked="TbFilterEye_Unchecked">
 								<Image Source="Resources/slot_bg_Eye.png" Width="32" Height="32"/>
 							</ToggleButton>
-							<ToggleButton Grid.Column="3" Grid.Row="0" Name="tbFilterFeet" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Feet">
+							<ToggleButton Grid.Column="3" Grid.Row="0" Name="tbFilterFeet" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Feet" Checked="TbFilterFeet_Checked" Unchecked="TbFilterFeet_Unchecked">
 								<Image Source="Resources/slot_bg_feet.png" Width="32" Height="32"/>
 							</ToggleButton>
-							<ToggleButton Grid.Column="0" Grid.Row="1" Name="tbFilterFinger" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Finger">
+							<ToggleButton Grid.Column="0" Grid.Row="1" Name="tbFilterFinger" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Finger" Checked="TbFilterFinger_Checked" Unchecked="TbFilterFinger_Unchecked">
 								<Image Source="Resources/slot_bg_finger1.png" Width="32" Height="32"/>
 							</ToggleButton>
-							<ToggleButton Grid.Column="1" Grid.Row="1" Name="tbFilterHand" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Hand">
+							<ToggleButton Grid.Column="1" Grid.Row="1" Name="tbFilterHand" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Hand" Checked="TbFilterHand_Checked" Unchecked="TbFilterHand_Unchecked">
 								<Image Source="Resources/slot_bg_hand.png" Width="32" Height="32"/>
 							</ToggleButton>
-							<ToggleButton Grid.Column="2" Grid.Row="1" Name="tbFilterHead" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Head">
+							<ToggleButton Grid.Column="2" Grid.Row="1" Name="tbFilterHead" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Head" Checked="TbFilterHead_Checked" Unchecked="TbFilterHead_Unchecked">
 								<Image Source="Resources/slot_bg_head.png" Width="32" Height="32"/>
 							</ToggleButton>
-							<ToggleButton Grid.Column="3" Grid.Row="1" Name="tbFilterNeck" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Neck">
+							<ToggleButton Grid.Column="3" Grid.Row="1" Name="tbFilterNeck" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Neck" Checked="TbFilterNeck_Checked" Unchecked="TbFilterNeck_Unchecked">
 								<Image Source="Resources/slot_bg_neck.png" Width="32" Height="32"/>
 							</ToggleButton>
-							<ToggleButton Grid.Column="0" Grid.Row="2" Name="tbFilterTrinket" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Trinket">
+							<ToggleButton Grid.Column="0" Grid.Row="2" Name="tbFilterTrinket" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Trinket" Checked="TbFilterTrinket_Checked" Unchecked="TbFilterTrinket_Unchecked">
 								<Image Source="Resources/slot_bg_trinket.png" Width="32" Height="32"/>
 							</ToggleButton>
-							<ToggleButton Grid.Column="1" Grid.Row="2" Name="tbFilterWaist" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Waist">
+							<ToggleButton Grid.Column="1" Grid.Row="2" Name="tbFilterWaist" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Waist" Checked="TbFilterWaist_Checked" Unchecked="TbFilterWaist_Unchecked">
 								<Image Source="Resources/slot_bg_waist.png" Width="32" Height="32"/>
 							</ToggleButton>
-							<ToggleButton Grid.Column="2" Grid.Row="2" Name="tbFilterWrist" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Wrist">
+							<ToggleButton Grid.Column="2" Grid.Row="2" Name="tbFilterWrist" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Wrist" Checked="TbFilterWrist_Checked" Unchecked="TbFilterWrist_Unchecked">
 								<Image Source="Resources/slot_bg_wrist.png" Width="32" Height="32"/>
 							</ToggleButton>
-							<ToggleButton Grid.Column="3" Grid.Row="2" Name="tbFilterWeapon" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Weapon">
+							<ToggleButton Grid.Column="3" Grid.Row="2" Name="tbFilterWeapon" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Weapon" Checked="TbFilterWeapon_Checked" Unchecked="TbFilterWeapon_Unchecked">
 								<Image Source="Resources/slot_bg_weapon.png" Width="32" Height="32"/>
 							</ToggleButton>
-							<ToggleButton Grid.Column="0" Grid.Row="3" Name="tbFilterOffhand" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Offhand">
+							<ToggleButton Grid.Column="0" Grid.Row="3" Name="tbFilterOffhand" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Offhand" Checked="TbFilterOffhand_Checked" Unchecked="TbFilterOffhand_Unchecked">
 								<Image Source="Resources/slot_bg_offhand.png" Width="32" Height="32"/>
 							</ToggleButton>
 							<Button Grid.Column="1" Grid.Row="3" Name="btnFilterAll" VerticalAlignment="Center" Width="40" Height="20" Click="BtnFilterAll_Click">All</Button>
@@ -82,7 +82,7 @@
 				</DockPanel>
 			</Grid>
 			<TextBox Name="txtSearchBox" Margin="0,2,0,0" TextChanged="TxtSearchBox_TextChanged"/>
-			<ListBox Name="lbItemList" Height="437"/>
+			<ListBox Name="lbItemList" Height="437" MouseDoubleClick="LbItemList_MouseDoubleClick"/>
 		</StackPanel>
 	</DockPanel>
 </Window>
