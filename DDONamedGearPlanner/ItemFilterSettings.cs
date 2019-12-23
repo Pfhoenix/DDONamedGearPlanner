@@ -16,7 +16,6 @@
 		public static bool Head;
 		public static bool Neck;
 		public static bool Offhand;
-		public static bool OffhandShield;
 		public static bool OffhandShieldBuckler;
 		public static bool OffhandShieldSmall;
 		public static bool OffhandShieldLarge;
@@ -26,7 +25,6 @@
 		public static bool Trinket;
 		public static bool Waist;
 		public static bool Weapon;
-		public static bool WeaponSimple;
 		public static bool WeaponSimpleClub;
 		public static bool WeaponSimpleQuarterstaff;
 		public static bool WeaponSimpleDagger;
@@ -34,9 +32,8 @@
 		public static bool WeaponSimpleLightMace;
 		public static bool WeaponSimpleHeavyMace;
 		public static bool WeaponSimpleMorningstar;
-		public static bool WeaponSimpleHeavyXbow;
 		public static bool WeaponSimpleLightXbow;
-		public static bool WeaponMartial;
+		public static bool WeaponSimpleHeavyXbow;
 		public static bool WeaponMartialHandaxe;
 		public static bool WeaponMartialBattleAxe;
 		public static bool WeaponMartialGreatAxe;
@@ -47,15 +44,14 @@
 		public static bool WeaponMartialScimitar;
 		public static bool WeaponMartialFalchion;
 		public static bool WeaponMartialRapier;
-		public static bool WeaponMartialHeavyPick;
 		public static bool WeaponMartialLightPick;
+		public static bool WeaponMartialHeavyPick;
 		public static bool WeaponMartialLightHammer;
 		public static bool WeaponMartialWarHammer;
 		public static bool WeaponMartialMaul;
 		public static bool WeaponMartialGreatClub;
-		public static bool WeaponMartialLongBow;
 		public static bool WeaponMartialShortBow;
-		public static bool WeaponExotic;
+		public static bool WeaponMartialLongBow;
 		public static bool WeaponExoticBastardSword;
 		public static bool WeaponExoticDwarvenWarAxe;
 		public static bool WeaponExoticKama;
@@ -63,9 +59,8 @@
 		public static bool WeaponExoticHandwraps;
 		public static bool WeaponExoticRuneArm;
 		public static bool WeaponExoticGreatXbow;
-		public static bool WeaponExoticRepeatHeavyXbow;
 		public static bool WeaponExoticRepeatLightXbow;
-		public static bool WeaponThrowing;
+		public static bool WeaponExoticRepeatHeavyXbow;
 		public static bool WeaponThrowingAxe;
 		public static bool WeaponThrowingDagger;
 		public static bool WeaponThrowingHammer;

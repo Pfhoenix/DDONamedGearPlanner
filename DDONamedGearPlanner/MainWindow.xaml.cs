@@ -73,6 +73,71 @@ namespace DDONamedGearPlanner
 		{
 			ItemsInList.Clear();
 			txtSearchBox.Text = null;
+			ItemFilterSettings.Back = tbFilterBack.IsChecked ?? false;
+			ItemFilterSettings.Body = tbFilterBody.IsChecked ?? false;
+			ItemFilterSettings.BodyCloth = ItemFilterSettings.Body ? cmiFilterBodyCloth.IsChecked : false;
+			ItemFilterSettings.BodyLight = ItemFilterSettings.Body ? cmiFilterBodyLight.IsChecked : false;
+			ItemFilterSettings.BodyMedium = ItemFilterSettings.Body ? cmiFilterBodyMedium.IsChecked : false;
+			ItemFilterSettings.BodyHeavy = ItemFilterSettings.Body ? cmiFilterBodyHeavy.IsChecked : false;
+			ItemFilterSettings.BodyDocent = ItemFilterSettings.Body ? cmiFilterBodyDocent.IsChecked : false;
+			ItemFilterSettings.Eye = tbFilterEye.IsChecked ?? false;
+			ItemFilterSettings.Feet = tbFilterFeet.IsChecked ?? false;
+			ItemFilterSettings.Finger = tbFilterFinger.IsChecked ?? false;
+			ItemFilterSettings.Hand = tbFilterHand.IsChecked ?? false;
+			ItemFilterSettings.Head = tbFilterHead.IsChecked ?? false;
+			ItemFilterSettings.Neck = tbFilterNeck.IsChecked ?? false;
+			ItemFilterSettings.Offhand = tbFilterOffhand.IsChecked ?? false;
+			ItemFilterSettings.OffhandShieldBuckler = ItemFilterSettings.Offhand ? cmiFilterOffhandBuckler.IsChecked : false;
+			ItemFilterSettings.OffhandShieldSmall = ItemFilterSettings.Offhand ? cmiFilterOffhandSmall.IsChecked : false;
+			ItemFilterSettings.OffhandShieldLarge = ItemFilterSettings.Offhand ? cmiFilterOffhandLarge.IsChecked : false;
+			ItemFilterSettings.OffhandShieldTower = ItemFilterSettings.Offhand ? cmiFilterOffhandTower.IsChecked : false;
+			ItemFilterSettings.OffhandShieldOrb = ItemFilterSettings.Offhand ? cmiFilterOffhandOrb.IsChecked : false;
+			ItemFilterSettings.OffhandWeapon = ItemFilterSettings.Offhand ? cmiFilterOffhandWeapon.IsChecked : false;
+			ItemFilterSettings.Trinket = tbFilterTrinket.IsChecked ?? false;
+			ItemFilterSettings.Waist = tbFilterWaist.IsChecked ?? false;
+			ItemFilterSettings.Weapon = tbFilterWeapon.IsChecked ?? false;
+			ItemFilterSettings.WeaponSimpleClub = ItemFilterSettings.Weapon ? cmiFilterWeaponSimpleClub.IsChecked : false;
+			ItemFilterSettings.WeaponSimpleQuarterstaff = ItemFilterSettings.Weapon ? cmiFilterWeaponSimpleQuarterstaff.IsChecked : false;
+			ItemFilterSettings.WeaponSimpleDagger = ItemFilterSettings.Weapon ? cmiFilterWeaponSimpleDagger.IsChecked : false;
+			ItemFilterSettings.WeaponSimpleSickle = ItemFilterSettings.Weapon ? cmiFilterWeaponSimpleSickle.IsChecked : false;
+			ItemFilterSettings.WeaponSimpleLightMace = ItemFilterSettings.Weapon ? cmiFilterWeaponSimpleLightMace.IsChecked : false;
+			ItemFilterSettings.WeaponSimpleHeavyMace = ItemFilterSettings.Weapon ? cmiFilterWeaponSimpleHeavyMace.IsChecked : false;
+			ItemFilterSettings.WeaponSimpleMorningstar = ItemFilterSettings.Weapon ? cmiFilterWeaponSimpleMorningstar.IsChecked : false;
+			ItemFilterSettings.WeaponSimpleLightXbow = ItemFilterSettings.Weapon ? cmiFilterWeaponSimpleLightXbow.IsChecked : false;
+			ItemFilterSettings.WeaponSimpleHeavyXbow = ItemFilterSettings.Weapon ? cmiFilterWeaponSimpleHeavyXbow.IsChecked : false;
+			ItemFilterSettings.WeaponMartialHandaxe = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialHandaxe.IsChecked : false;
+			ItemFilterSettings.WeaponMartialBattleAxe = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialBattleAxe.IsChecked : false;
+			ItemFilterSettings.WeaponMartialGreatAxe = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialGreatAxe.IsChecked : false;
+			ItemFilterSettings.WeaponMartialKukri = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialKukri.IsChecked : false;
+			ItemFilterSettings.WeaponMartialShortSword = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialShortSword.IsChecked : false;
+			ItemFilterSettings.WeaponMartialLongSword = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialLongSword.IsChecked : false;
+			ItemFilterSettings.WeaponMartialGreatSword = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialGreatSword.IsChecked : false;
+			ItemFilterSettings.WeaponMartialScimitar = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialScimitar.IsChecked : false;
+			ItemFilterSettings.WeaponMartialFalchion = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialFalchion.IsChecked : false;
+			ItemFilterSettings.WeaponMartialRapier = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialRapier.IsChecked : false;
+			ItemFilterSettings.WeaponMartialLightPick = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialLightPick.IsChecked : false;
+			ItemFilterSettings.WeaponMartialHeavyPick = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialHeavyPick.IsChecked : false;
+			ItemFilterSettings.WeaponMartialLightHammer = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialLightHammer.IsChecked : false;
+			ItemFilterSettings.WeaponMartialWarHammer = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialWarHammer.IsChecked : false;
+			ItemFilterSettings.WeaponMartialMaul = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialMaul.IsChecked : false;
+			ItemFilterSettings.WeaponMartialGreatClub = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialGreatClub.IsChecked : false;
+			ItemFilterSettings.WeaponMartialShortBow = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialShortBow.IsChecked : false;
+			ItemFilterSettings.WeaponMartialLongBow = ItemFilterSettings.Weapon ? cmiFilterWeaponMartialLongBow.IsChecked : false;
+			ItemFilterSettings.WeaponExoticBastardSword = ItemFilterSettings.Weapon ? cmiFilterWeaponExoticBastardSword.IsChecked : false;
+			ItemFilterSettings.WeaponExoticDwarvenWarAxe = ItemFilterSettings.Weapon ? cmiFilterWeaponExoticDwarvenWarAxe.IsChecked : false;
+			ItemFilterSettings.WeaponExoticKama = ItemFilterSettings.Weapon ? cmiFilterWeaponExoticKama.IsChecked : false;
+			ItemFilterSettings.WeaponExoticKhopesh = ItemFilterSettings.Weapon ? cmiFilterWeaponExoticKhopesh.IsChecked : false;
+			ItemFilterSettings.WeaponExoticHandwraps = ItemFilterSettings.Weapon ? cmiFilterWeaponExoticHandwraps.IsChecked : false;
+			ItemFilterSettings.WeaponExoticRuneArm = ItemFilterSettings.Weapon ? cmiFilterWeaponExoticRuneArm.IsChecked : false;
+			ItemFilterSettings.WeaponExoticGreatXbow = ItemFilterSettings.Weapon ? cmiFilterWeaponExoticGreatXbow.IsChecked : false;
+			ItemFilterSettings.WeaponExoticRepeatLightXbow = ItemFilterSettings.Weapon ? cmiFilterWeaponExoticRepeatLightXbow.IsChecked : false;
+			ItemFilterSettings.WeaponExoticRepeatHeavyXbow = ItemFilterSettings.Weapon ? cmiFilterWeaponExoticRepeatHeavyXbow.IsChecked : false;
+			ItemFilterSettings.WeaponThrowingAxe = ItemFilterSettings.Weapon ? cmiFilterWeaponThrowingAxe.IsChecked : false;
+			ItemFilterSettings.WeaponThrowingDagger = ItemFilterSettings.Weapon ? cmiFilterWeaponThrowingDagger.IsChecked : false;
+			ItemFilterSettings.WeaponThrowingHammer = ItemFilterSettings.Weapon ? cmiFilterWeaponThrowingHammer.IsChecked : false;
+			ItemFilterSettings.WeaponThrowingDart = ItemFilterSettings.Weapon ? cmiFilterWeaponThrowingDart.IsChecked : false;
+			ItemFilterSettings.WeaponThrowingShuriken = ItemFilterSettings.Weapon ? cmiFilterWeaponThrowingShuriken.IsChecked : false;
+			ItemFilterSettings.Wrist = tbFilterWrist.IsChecked ?? false;
 		}
 
 		private void TxtSearchBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -92,220 +157,22 @@ namespace DDONamedGearPlanner
 			//  - display warning and return
 		}
 
-		#region Filter Checked Events
-
-		private void TbFilterBack_Checked(object sender, RoutedEventArgs e)
+		private void TbFilterBody_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			ItemFilterSettings.Back = true;
+			cmiFilterBodyCloth.IsChecked = cmiFilterBodyLight.IsChecked = cmiFilterBodyMedium.IsChecked = cmiFilterBodyHeavy.IsChecked = cmiFilterBodyDocent.IsChecked = !tbFilterBody.IsChecked ?? false;
 		}
 
-		private void TbFilterBack_Unchecked(object sender, RoutedEventArgs e)
+		private void TbFilterOffhand_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			ItemFilterSettings.Back = false;
+			cmiFilterOffhandBuckler.IsChecked = cmiFilterOffhandSmall.IsChecked = cmiFilterOffhandLarge.IsChecked = cmiFilterOffhandTower.IsChecked = cmiFilterOffhandOrb.IsChecked = cmiFilterOffhandWeapon.IsChecked = !tbFilterOffhand.IsChecked ?? false;
 		}
 
-		private void TbFilterBody_Checked(object sender, RoutedEventArgs e)
+		private void FilterMenuItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
 		{
-			ItemFilterSettings.Body = true;
-			ItemFilterSettings.BodyCloth = true;
-			ItemFilterSettings.BodyLight = true;
-			ItemFilterSettings.BodyMedium = true;
-			ItemFilterSettings.BodyHeavy = true;
-			ItemFilterSettings.BodyDocent = true;
+			MenuItem mi = sender as MenuItem;
+			mi.IsChecked = !mi.IsChecked;
+			foreach (MenuItem cmi in mi.Items)
+				cmi.IsChecked = mi.IsChecked;
 		}
-
-		private void TbFilterBody_Unchecked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Body = false;
-			ItemFilterSettings.BodyCloth = false;
-			ItemFilterSettings.BodyLight = false;
-			ItemFilterSettings.BodyMedium = false;
-			ItemFilterSettings.BodyHeavy = false;
-			ItemFilterSettings.BodyDocent = false;
-		}
-
-		private void TbFilterEye_Checked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Eye = true;
-		}
-
-		private void TbFilterEye_Unchecked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Eye = false;
-		}
-
-		private void TbFilterFeet_Checked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Feet = true;
-		}
-
-		private void TbFilterFeet_Unchecked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Feet = false;
-		}
-
-		private void TbFilterFinger_Checked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Finger = true;
-		}
-
-		private void TbFilterFinger_Unchecked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Finger = false;
-		}
-
-		private void TbFilterHand_Checked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Hand = true;
-		}
-
-		private void TbFilterHand_Unchecked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Hand = false;
-		}
-
-		private void TbFilterHead_Checked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Head = true;
-		}
-
-		private void TbFilterHead_Unchecked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Head = false;
-		}
-
-		private void TbFilterNeck_Checked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Neck = true;
-		}
-
-		private void TbFilterNeck_Unchecked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Neck = false;
-		}
-
-		private void TbFilterOffhand_Checked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Offhand = true;
-			ItemFilterSettings.OffhandShield = true;
-			ItemFilterSettings.OffhandShieldBuckler = true;
-			ItemFilterSettings.OffhandShieldSmall = true;
-			ItemFilterSettings.OffhandShieldLarge = true;
-			ItemFilterSettings.OffhandShieldTower = true;
-			ItemFilterSettings.OffhandShieldOrb = true;
-			ItemFilterSettings.OffhandWeapon = true;
-		}
-
-		private void TbFilterOffhand_Unchecked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Offhand = false;
-			ItemFilterSettings.OffhandShield = false;
-			ItemFilterSettings.OffhandShieldBuckler = false;
-			ItemFilterSettings.OffhandShieldSmall = false;
-			ItemFilterSettings.OffhandShieldLarge = false;
-			ItemFilterSettings.OffhandShieldTower = false;
-			ItemFilterSettings.OffhandShieldOrb = false;
-			ItemFilterSettings.OffhandWeapon = false;
-		}
-
-		private void TbFilterTrinket_Checked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Trinket = true;
-		}
-
-		private void TbFilterTrinket_Unchecked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Trinket = false;
-		}
-
-		private void TbFilterWaist_Checked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Waist = true;
-		}
-
-		private void TbFilterWaist_Unchecked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Waist = false;
-		}
-
-		private void TbFilterWeapon_Checked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Weapon = true;
-			ItemFilterSettings.WeaponSimple = true;
-			ItemFilterSettings.WeaponSimpleClub = true;
-			ItemFilterSettings.WeaponSimpleDagger = true;
-			ItemFilterSettings.WeaponSimpleHeavyMace = true;
-			ItemFilterSettings.WeaponSimpleHeavyXbow = true;
-			ItemFilterSettings.WeaponSimpleLightMace = true;
-			ItemFilterSettings.WeaponSimpleLightXbow = true;
-			ItemFilterSettings.WeaponSimpleMorningstar = true;
-			ItemFilterSettings.WeaponSimpleQuarterstaff = true;
-			ItemFilterSettings.WeaponSimpleSickle = true;
-			ItemFilterSettings.WeaponMartial = true;
-			ItemFilterSettings.WeaponMartialBattleAxe = true;
-			ItemFilterSettings.WeaponMartialFalchion = true;
-			ItemFilterSettings.WeaponMartialGreatAxe = true;
-			ItemFilterSettings.WeaponMartialGreatClub = true;
-			ItemFilterSettings.WeaponMartialGreatSword = true;
-			ItemFilterSettings.WeaponMartialHandaxe = true;
-			ItemFilterSettings.WeaponMartialHeavyPick = true;
-			ItemFilterSettings.WeaponMartialKukri = true;
-			ItemFilterSettings.WeaponMartialLightHammer = true;
-			ItemFilterSettings.WeaponMartialLightPick = true;
-			ItemFilterSettings.WeaponMartialLongBow = true;
-			ItemFilterSettings.WeaponMartialLongSword = true;
-			ItemFilterSettings.WeaponMartialMaul = true;
-			ItemFilterSettings.WeaponMartialRapier = true;
-			ItemFilterSettings.WeaponMartialScimitar = true;
-			ItemFilterSettings.WeaponMartialShortBow = true;
-			ItemFilterSettings.WeaponMartialShortSword = true;
-			ItemFilterSettings.WeaponMartialWarHammer = true;
-		}
-
-		private void TbFilterWeapon_Unchecked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Weapon = false;
-			ItemFilterSettings.WeaponSimple = false;
-			ItemFilterSettings.WeaponSimpleClub = false;
-			ItemFilterSettings.WeaponSimpleDagger = false;
-			ItemFilterSettings.WeaponSimpleHeavyMace = false;
-			ItemFilterSettings.WeaponSimpleHeavyXbow = false;
-			ItemFilterSettings.WeaponSimpleLightMace = false;
-			ItemFilterSettings.WeaponSimpleLightXbow = false;
-			ItemFilterSettings.WeaponSimpleMorningstar = false;
-			ItemFilterSettings.WeaponSimpleQuarterstaff = false;
-			ItemFilterSettings.WeaponSimpleSickle = false;
-			ItemFilterSettings.WeaponMartial = false;
-			ItemFilterSettings.WeaponMartialBattleAxe = false;
-			ItemFilterSettings.WeaponMartialFalchion = false;
-			ItemFilterSettings.WeaponMartialGreatAxe = false;
-			ItemFilterSettings.WeaponMartialGreatClub = false;
-			ItemFilterSettings.WeaponMartialGreatSword = false;
-			ItemFilterSettings.WeaponMartialHandaxe = false;
-			ItemFilterSettings.WeaponMartialHeavyPick = false;
-			ItemFilterSettings.WeaponMartialKukri = false;
-			ItemFilterSettings.WeaponMartialLightHammer = false;
-			ItemFilterSettings.WeaponMartialLightPick = false;
-			ItemFilterSettings.WeaponMartialLongBow = false;
-			ItemFilterSettings.WeaponMartialLongSword = false;
-			ItemFilterSettings.WeaponMartialMaul = false;
-			ItemFilterSettings.WeaponMartialRapier = false;
-			ItemFilterSettings.WeaponMartialScimitar = false;
-			ItemFilterSettings.WeaponMartialShortBow = false;
-			ItemFilterSettings.WeaponMartialShortSword = false;
-			ItemFilterSettings.WeaponMartialWarHammer = false;
-		}
-
-		private void TbFilterWrist_Checked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Wrist = true;
-		}
-
-		private void TbFilterWrist_Unchecked(object sender, RoutedEventArgs e)
-		{
-			ItemFilterSettings.Wrist = false;
-		}
-
-		#endregion
 	}
 }
