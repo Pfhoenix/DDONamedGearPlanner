@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDONamedGearPlanner", "DDON
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDOWikiCrawler", "DDOWikiCrawler\DDOWikiCrawler.csproj", "{807A3ACC-F6CE-4D3C-9DA7-676F40650504}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDOWikiParser", "DDOWikiParser\DDOWikiParser.csproj", "{74663F2B-F465-4565-8FCC-D02B046B0432}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{807A3ACC-F6CE-4D3C-9DA7-676F40650504}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{807A3ACC-F6CE-4D3C-9DA7-676F40650504}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{807A3ACC-F6CE-4D3C-9DA7-676F40650504}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74663F2B-F465-4565-8FCC-D02B046B0432}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74663F2B-F465-4565-8FCC-D02B046B0432}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74663F2B-F465-4565-8FCC-D02B046B0432}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74663F2B-F465-4565-8FCC-D02B046B0432}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
