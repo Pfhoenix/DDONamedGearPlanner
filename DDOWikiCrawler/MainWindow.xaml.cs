@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -156,17 +157,20 @@ namespace DDOWikiCrawler
 				if (e.CrawledPage.Uri.AbsolutePath.StartsWith("/page/Item:"))
 				{
 					// generate filename for html cache file
-					string filename = e.CrawledPage.Uri.AbsolutePath.Substring(11);
-					foreach (char c in Path.GetInvalidFileNameChars())
-						filename = filename.Replace(c, '_');
-					filename += ".html";
-					filename = Path.Combine(HtmlCachePath, filename);
-					// check if html cache file exists
-					if (!File.Exists(filename))
+					string filename = WebUtility.UrlDecode(e.CrawledPage.Uri.AbsolutePath).Substring(11);
+					if (!filename.StartsWith("+") && !filename.StartsWith("-"))
 					{
-						File.WriteAllText(Path.Combine(HtmlCachePath, filename), e.CrawledPage.Content.Text);
+						foreach (char c in Path.GetInvalidFileNameChars())
+							filename = filename.Replace(c, '_');
+						filename += ".html";
+						filename = Path.Combine(HtmlCachePath, filename);
+						// check if html cache file exists
+						if (!File.Exists(filename))
+						{
+							File.WriteAllText(Path.Combine(HtmlCachePath, filename), e.CrawledPage.Content.Text);
+						}
+						Dispatcher.Invoke(new Action(() => { AddToItemCachedPagesList(WebUtility.UrlDecode(e.CrawledPage.Uri.ToString()), filename); }));
 					}
-					Dispatcher.Invoke(new Action(() => { AddToItemCachedPagesList(e.CrawledPage.Uri.ToString(), filename); }));
 				}
 			}
 		}
