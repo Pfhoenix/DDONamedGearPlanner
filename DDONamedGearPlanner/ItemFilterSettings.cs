@@ -2,29 +2,18 @@
 {
 	public static class ItemFilterSettings
 	{
-		public static bool Back;
-		public static bool Body;
+		public static SlotType Slots;
 		public static bool BodyCloth;
 		public static bool BodyLight;
 		public static bool BodyMedium;
 		public static bool BodyHeavy;
 		public static bool BodyDocent;
-		public static bool Eye;
-		public static bool Feet;
-		public static bool Finger;
-		public static bool Hand;
-		public static bool Head;
-		public static bool Neck;
-		public static bool Offhand;
 		public static bool OffhandShieldBuckler;
 		public static bool OffhandShieldSmall;
 		public static bool OffhandShieldLarge;
 		public static bool OffhandShieldTower;
 		public static bool OffhandShieldOrb;
 		public static bool OffhandWeapon;
-		public static bool Trinket;
-		public static bool Waist;
-		public static bool Weapon;
 		public static bool WeaponSimpleClub;
 		public static bool WeaponSimpleQuarterstaff;
 		public static bool WeaponSimpleDagger;
@@ -66,6 +55,5 @@
 		public static bool WeaponThrowingHammer;
 		public static bool WeaponThrowingDart;
 		public static bool WeaponThrowingShuriken;
-		public static bool Wrist;
 	}
 }
