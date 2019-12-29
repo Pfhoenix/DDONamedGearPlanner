@@ -53,12 +53,6 @@ namespace DDONamedGearPlanner
 		Throwing = 8
 	}
 
-	[Flags]
-	public enum WeaponType
-	{
-
-	}
-
 	public class ItemProperty
 	{
 		public string Property;
