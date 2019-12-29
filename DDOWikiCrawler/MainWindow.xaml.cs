@@ -19,6 +19,7 @@ namespace DDOWikiCrawler
 		string HtmlCachePath;
 		CancellationTokenSource cts = new CancellationTokenSource();
 		bool onFirstPage = false;
+		bool recrawling = false;
 		TreeViewItem currentTVI;
 
 		public MainWindow()
@@ -27,6 +28,11 @@ namespace DDOWikiCrawler
 
 			HtmlCachePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "HtmlCache");
 			Directory.CreateDirectory(HtmlCachePath);
+		}
+
+		async void CrawlTreeViewItem(TreeViewItem tvi)
+		{
+			
 		}
 
 		private async void BtnStart_Click(object sender, RoutedEventArgs e)
@@ -67,18 +73,27 @@ namespace DDOWikiCrawler
 				tbStatusBar.Text = "Category crawl took " + (sw.ElapsedMilliseconds / 1000.0) + " seconds";
 				btnStop.IsEnabled = false;
 				btnStart.IsEnabled = true;
-				btnStart.Content = "Get Items";
+				btnStart.Content = "Get All Items";
 			}
 			else
 			{
-				tbStatusBar.Text = "Category crawl started at " + DateTime.Now.ToShortTimeString() + " ...";
+				if (tvCachedPages.SelectedItem == null || !((TreeViewItem)tvCachedPages.SelectedItem).HasItems)
+				{
+					recrawling = false;
+					tbStatusBar.Text = "Item crawl started at " + DateTime.Now.ToShortTimeString() + "...";
+				}
+				else
+				{
+					recrawling = true;
+					tbStatusBar.Text = "Item recrawl started at " + DateTime.Now.ToShortTimeString() + "...";
+				}
+
 				Stopwatch sw = new Stopwatch();
 				sw.Start();
 
-				foreach (TreeViewItem tvi in tvCachedPages.Items)
+				if (recrawling)
 				{
 					onFirstPage = true;
-					currentTVI = tvi;
 
 					var config = new CrawlConfiguration
 					{
@@ -99,14 +114,46 @@ namespace DDOWikiCrawler
 					};
 					crawler.PageCrawlCompleted += ItemCrawlCompleted;
 
-					await crawler.CrawlAsync(new Uri(tvi.Tag.ToString()), cts);
+					await crawler.CrawlAsync(new Uri((tvCachedPages.SelectedItem as TreeViewItem).Tag.ToString()), cts);
+				}
+				else
+				{
+					foreach (TreeViewItem tvi in tvCachedPages.Items)
+					{
+						onFirstPage = true;
+						currentTVI = tvi;
+
+						var config = new CrawlConfiguration
+						{
+							MinCrawlDelayPerDomainMilliSeconds = 100,
+							MaxCrawlDepth = 1
+						};
+						PoliteWebCrawler crawler = new PoliteWebCrawler(config);
+						crawler.PageCrawlStarting += PageCrawlStarting;
+						crawler.ShouldCrawlPageDecisionMaker = (ptc, cc) =>
+						{
+							if (string.Compare(ptc.Uri.Authority, "ddowiki.com", true) != 0) return new CrawlDecision { Allow = false, Reason = "Not on ddowiki domain" };
+							if (!ptc.Uri.AbsolutePath.StartsWith("/page/")) return new CrawlDecision { Allow = false, Reason = "Only crawl pages" };
+							if (!onFirstPage && !ptc.Uri.AbsolutePath.Contains("Item:")) return new CrawlDecision { Allow = false, Reason = "Not an item page" };
+
+							onFirstPage = false;
+
+							return new CrawlDecision { Allow = true };
+						};
+						crawler.PageCrawlCompleted += ItemCrawlCompleted;
+
+						await crawler.CrawlAsync(new Uri(tvi.Tag.ToString()), cts);
+					}
 				}
 
 				sw.Stop();
-				tbStatusBar.Text = "Item crawl took " + (sw.ElapsedMilliseconds / 1000.0) + " seconds";
+				if (recrawling) tbStatusBar.Text = "Item recrawl took ";
+				else tbStatusBar.Text = "Item crawl took ";
+				tbStatusBar.Text += (sw.ElapsedMilliseconds / 1000.0) + " seconds";
 
 				btnStop.IsEnabled = false;
-				btnStart.Content = "Done";
+				btnStart.Content = "Recrawl Items";
+				btnStart.IsEnabled = true;
 			}
 		}
 
@@ -131,7 +178,7 @@ namespace DDOWikiCrawler
 		void CategoryCrawlCompleted(object sender, PageCrawlCompletedArgs e)
 		{
 			var httpStatus = e.CrawledPage.HttpResponseMessage.StatusCode;
-			if (httpStatus == System.Net.HttpStatusCode.OK)
+			if (httpStatus == HttpStatusCode.OK)
 			{
 				if (e.CrawledPage.Uri.AbsolutePath.Contains("/page/Category:"))
 					Dispatcher.Invoke(new Action(() => { AddToCategoryCachedPagesList(e.CrawledPage.Uri.ToString()); }));
@@ -152,7 +199,7 @@ namespace DDOWikiCrawler
 		void ItemCrawlCompleted(object sender, PageCrawlCompletedArgs e)
 		{
 			var httpStatus = e.CrawledPage.HttpResponseMessage.StatusCode;
-			if (httpStatus == System.Net.HttpStatusCode.OK)
+			if (httpStatus == HttpStatusCode.OK)
 			{
 				if (e.CrawledPage.Uri.AbsolutePath.StartsWith("/page/Item:"))
 				{
@@ -164,6 +211,8 @@ namespace DDOWikiCrawler
 							filename = filename.Replace(c, '_');
 						filename += ".html";
 						filename = Path.Combine(HtmlCachePath, filename);
+						// recrawling means overwriting existing files
+						if (File.Exists(filename) && recrawling) File.Delete(filename);
 						// check if html cache file exists
 						if (!File.Exists(filename))
 						{
@@ -188,7 +237,12 @@ namespace DDOWikiCrawler
 		{
 			if (e.Key == Key.Delete || e.Key == Key.Back)
 			{
-				tvCachedPages.Items.Remove(tvCachedPages.SelectedItem);
+				TreeViewItem tvi = tvCachedPages.SelectedItem as TreeViewItem;
+				if (!tvi.HasItems)
+				{
+					if (File.Exists(tvi.Tag.ToString())) File.Delete(tvi.Tag.ToString());
+					tvCachedPages.Items.Remove(tvi);
+				}
 			}
 		}
 
@@ -197,6 +251,18 @@ namespace DDOWikiCrawler
 			TreeViewItem tvi = tvCachedPages.SelectedItem as TreeViewItem;
 			string uri = tvi.Tag.ToString();
 			UpdateCurrentUri(uri);
+			if (tvi.Tag.ToString().Contains("Category"))
+			{
+				if (tvi.HasItems) btnStart.Content = "Recrawl Items";
+				else btnStart.Content = "Get All Items";
+
+				if (!btnStop.IsEnabled) btnStart.IsEnabled = true;
+			}
+			else
+			{
+				btnStart.Content = null;
+				btnStart.IsEnabled = false;
+			}
 		}
 
 		private void TvCachedPages_MouseDoubleClick(object sender, MouseButtonEventArgs e)
