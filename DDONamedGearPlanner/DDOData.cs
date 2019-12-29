@@ -66,11 +66,19 @@ namespace DDONamedGearPlanner
 		public int Value;
 	}
 
-	public class DDOData
+	public class DDOItemData
 	{
 		public string Name;
+		public string WikiURL;
 		public SlotType Slot;
 		public int Category;
 		public List<ItemProperty> Properties = new List<ItemProperty>();
+
+		public ItemProperty AddProperty(string prop, string type, int value)
+		{
+			ItemProperty ip = new ItemProperty { Property = prop, Type = type, Value = value };
+			Properties.Add(ip);
+			return ip;
+		}
 	}
 }
