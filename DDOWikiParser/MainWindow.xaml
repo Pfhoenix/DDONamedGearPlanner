@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDOWikiParser"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="DDOWiki Parser" Height="650" Width="600">
     <DockPanel>
 		<Menu DockPanel.Dock="Top" Height="20" VerticalAlignment="Top">
 			<MenuItem Header="_File">
@@ -13,8 +13,9 @@
 				<Separator/>
 				<MenuItem Header="E_xit"/>
 			</MenuItem>
+			<MenuItem Header="View Error Log" Click="ViewErrorLog_Click"/>
 		</Menu>
-		<StatusBar DockPanel.Dock="Bottom" Height="20" VerticalAlignment="Bottom">
+		<StatusBar DockPanel.Dock="Bottom" Height="22" VerticalAlignment="Bottom">
 			<StatusBar.ItemsPanel>
 				<ItemsPanelTemplate>
 					<Grid>
@@ -40,6 +41,15 @@
 				<ProgressBar Name="pbProgressBar" Height="16" Width="240"/>
 			</StatusBarItem>
 		</StatusBar>
-		<TreeView DockPanel.Dock="Left" Name="tvList" HorizontalAlignment="Left" Width="200"></TreeView>
+		<TreeView DockPanel.Dock="Left" Name="tvList" HorizontalAlignment="Left" Width="200" SelectedItemChanged="TvList_SelectedItemChanged"/>
+		<ListView Name="lvDetails">
+			<ListView.View>
+				<GridView>
+					<GridViewColumn Header="Property" Width="186" DisplayMemberBinding="{Binding Property}" />
+					<GridViewColumn Header="Type" Width="100" DisplayMemberBinding="{Binding Type}" />
+					<GridViewColumn Header="Value" Width="100" DisplayMemberBinding="{Binding Value}" />
+				</GridView>
+			</ListView.View>
+		</ListView>
 	</DockPanel>
 </Window>
