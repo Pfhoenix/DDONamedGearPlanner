@@ -45,9 +45,29 @@
 		<ListView Name="lvDetails">
 			<ListView.View>
 				<GridView>
-					<GridViewColumn Header="Property" Width="186" DisplayMemberBinding="{Binding Property}" />
-					<GridViewColumn Header="Type" Width="100" DisplayMemberBinding="{Binding Type}" />
-					<GridViewColumn Header="Value" Width="100" DisplayMemberBinding="{Binding Value}" />
+					<GridViewColumn Header="Property" Width="196">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Property}">
+									<TextBlock.ToolTip>
+										<TextBlock Text="{Binding Property}"/>
+									</TextBlock.ToolTip>
+								</TextBlock>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+					<GridViewColumn Header="Type" Width="120">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Type}">
+									<TextBlock.ToolTip>
+										<TextBlock Text="{Binding Type}"/>
+									</TextBlock.ToolTip>
+								</TextBlock>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+					<GridViewColumn Header="Value" Width="70" DisplayMemberBinding="{Binding Value}" />
 				</GridView>
 			</ListView.View>
 		</ListView>
