@@ -233,10 +233,12 @@ namespace DDOWikiParser
 						else if (p.EndsWith("Acid Resistance")) p = "Acid Resistance";
 						else if (p.EndsWith("Sonic Resistance")) p = "Sonic Resistance";
 						else if (p.EndsWith("Spell Focus")) p = "Spell DCs";
+						else if (p.EndsWith("Spell Focus Mastery")) p = "Spell DCs";
 						else if (p.EndsWith("Corrosion")) p = "Acid Spell Power";
 						else if (p.EndsWith("Glaciation")) p = "Cold Spell Power";
 						else if (p.EndsWith("Magnetism")) p = "Electric Spell Power";
 						else if (p.EndsWith("Combustion")) p = "Fire Spell Power";
+						else if (p.EndsWith("Radiance")) p = "Light Spell Power";
 						else if (p.EndsWith("Devotion")) p = "Positive Spell Power";
 						else if (p.EndsWith("Acid Lore")) p = "Acid Spell Critical Chance";
 						else if (p.EndsWith("Fire Lore")) p = "Fire Spell Critical Chance";
@@ -257,6 +259,19 @@ namespace DDOWikiParser
 						{
 							p = "Melee Threat Reduction";
 							v = "";
+						}
+						else if (p.EndsWith("Open Lock")) p = "Open Lock";
+						else if (p == "Greater Elemental Energy")
+						{
+							p = "Hit Points";
+							v = "greater elemental energy";
+							vi = 20;
+						}
+						else if (p == "Greater Elemental Spell Power")
+						{
+							p = "Spell Points";
+							v = "greater elemental spell power";
+							vi = 100;
 						}
 					}
 					else
@@ -493,6 +508,21 @@ namespace DDOWikiParser
 					data.AddProperty("Electric Spell Power", v, vi, null);
 					data.AddProperty("Sonic Spell Power", v, vi, null);
 				}
+				else if (p.EndsWith("Nullification"))
+				{
+					data.AddProperty("Negative Spell Power", v, vi, null);
+					data.AddProperty("Poison Spell Power", v, vi, null);
+				}
+				else if (p.EndsWith("Seeker"))
+				{
+					data.AddProperty("Confirm Critical Hits", v, vi, null);
+					data.AddProperty("Critical Hit Damage", v, vi, null);
+				}
+				else if (p.EndsWith("Deception"))
+				{
+					data.AddProperty("Sneak Attack Attack", v, vi, null);
+					data.AddProperty("Sneak Attack Damage", v, (int)Math.Round(vi * 1.5f), null);
+				}
 				else data.AddProperty(p, v, vi, null);
 
 				return true;
@@ -675,14 +705,21 @@ namespace DDOWikiParser
 						{
 							if (a.GetAttribute("href").IndexOf("/page/Named_item_sets") > -1)
 							{
-								int s = a.InnerText.IndexOf(" Set", StringComparison.InvariantCultureIgnoreCase);
-								string p;
-								if (s > -1) p = a.InnerText.Substring(0, s).Trim();
-								else p = a.InnerText;
+								string p = a.InnerText;
 								data.AddProperty(p, "set", 0, null);
 								break;
 							}
 						}
+					}
+					else if (e.InnerXml.StartsWith("Against the Slave Lords Set Bonus"))
+					{
+						options = new List<ItemProperty>();
+						string d = data.Name.StartsWith("Legendary ") ? "Legendary " : "";
+						options.Add(new ItemProperty { Property = d + "Slave Lord's Might", Type = "set" });
+						options.Add(new ItemProperty { Property = d + "Slave Lord's Sorcery", Type = "set" });
+						options.Add(new ItemProperty { Property = d + "Slave's Endurance", Type = "set" });
+
+						data.AddProperty("Against the Slave Lords Set Bonus", null, 0, options);
 					}
 					else ParseEnhancement(data, e);
 				}
@@ -714,7 +751,6 @@ namespace DDOWikiParser
 				}
 				else if (r.InnerText.StartsWith("Armor Bonus"))
 				{
-					int j = 0;
 					string a = r.InnerText.Substring(11).Replace("+", "").Replace("\n", "");
 					if (data.Category == (int)ArmorCategory.Docent)
 					{

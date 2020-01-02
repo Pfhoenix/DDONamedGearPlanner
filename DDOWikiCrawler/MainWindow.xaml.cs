@@ -30,11 +30,6 @@ namespace DDOWikiCrawler
 			Directory.CreateDirectory(HtmlCachePath);
 		}
 
-		async void CrawlTreeViewItem(TreeViewItem tvi)
-		{
-			
-		}
-
 		private async void BtnStart_Click(object sender, RoutedEventArgs e)
 		{
 			btnStart.IsEnabled = false;
