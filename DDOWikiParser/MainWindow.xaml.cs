@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using Sgml;
 using DDONamedGearPlanner;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace DDOWikiParser
 {
@@ -43,6 +44,55 @@ namespace DDOWikiParser
 		string[] files;
 		string ErrorFile = "errors.log";
 
+		string[] NullTypeProperties =
+		{
+			"Bludgeoning",
+			"Holy",
+			"Axiomatic",
+			"Evil Outsider Bane",
+			"Elf Bane",
+			"Mithral",
+			"Spikes",
+			"Keen",
+			"Greater Construct Bane",
+			"Entropic",
+			"Hemorrhaging",
+			"Disintegration",
+			"Returning",
+			"Greater Elf Bane",
+			"Unbalancing",
+			"Incredible Potential",
+			"Greater Giant Bane",
+			"Giant Slayer",
+			"Undead Guard",
+			"Antipodal",
+			"Impactful",
+			"Fire Guard",
+			"Ice Guard",
+			"Starter",
+			"Swim like a Fish",
+			"Reverberating",
+			"Jolting",
+			"Blunted Ammunition",
+			"Force",
+			"Lesser Incorporeal Bane",
+			"Greater Dispelling",
+			"Intercession Ward",
+			"Life-Devouring",
+			"Strength Sapping",
+			"Weakening",
+			"True Chaos",
+			"Corrosive Salt Guard",
+			"Vulnerability Guard",
+			"Undead Bane",
+			"Fiery",
+			"Silver",
+			"Life Shield",
+			"Immunity to Fear",
+			"Regeneration",
+			"Acid Guard",
+		};
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -62,8 +112,7 @@ namespace DDOWikiParser
 		{
 			FolderBrowserDialog fbd = new FolderBrowserDialog();
 			fbd.SelectedPath = AppDomain.CurrentDomain.BaseDirectory;
-			DialogResult dr = fbd.ShowDialog();
-			if (dr == System.Windows.Forms.DialogResult.OK)
+			if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 			{
 				files = Directory.GetFiles(fbd.SelectedPath);
 				pbProgressBar.Minimum = 0;
@@ -143,14 +192,48 @@ namespace DDOWikiParser
 			int c = s.IndexOfAny(numbers);
 			if (c > -1)
 			{
-				int ce = s.LastIndexOfAny(numbers, Math.Min(c + 5, s.Length - 1));
-				string n = s.Substring(c, ce - c + 1);
+				int e = c;
+				for (int i = e; i < s.Length; i++)
+				{
+					if (!numbers.Contains(s[i]))
+					{
+						e = i;
+						break;
+					}
+				}
+				if (e == c) e = s.Length - 1;
+				string n = s.Substring(c, e - c);
 				int.TryParse(n, out c);
 
 				return c;
 			}
 
 			return 0;
+		}
+
+		string ParseSetName(XmlElement e)
+		{
+			var aa = e.GetElementsByTagName("a");
+			foreach (XmlElement a in aa)
+			{
+				if (a.GetAttribute("href").IndexOf("/page/Named_item_sets") > -1)
+				{
+					return a.InnerText.Trim();
+				}
+			}
+
+			return null;
+		}
+
+		string ParseAugmentSlot(string text)
+		{
+			string[] split = text.Split(' ');
+			for (int i = 0; i < split.Length - 1; i++)
+			{
+				if (split[i] == "Augment" && split[i + 1] == "Slot") return split[i - 1].ToLower();
+			}
+
+			return null;
 		}
 
 		bool ParseEnhancement(DDOItemData data, XmlNode enh)
@@ -160,9 +243,28 @@ namespace DDOWikiParser
 
 			if (trimmed.Contains(" Augment Slot"))
 			{
-				string[] split = trimmed.Split(' ');
-				data.AddProperty("Augment Slot", split[1].ToLower(), 0, null);
-
+				data.AddProperty("Augment Slot", ParseAugmentSlot(trimmed), 0, null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Alarphon's Staff: Spell Selection"))
+			{
+				data.AddProperty("Alarphon's Staff: Spell Selection", null, 0, null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Alchemical (Prototype)"))
+			{
+				data.AddProperty("Alchemical (Prototype)", null, 0, null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Feat:"))
+			{
+				int f = trimmed.IndexOf("Feat:", 5);
+				data.AddProperty("Feat", trimmed.Substring(5, f - 5).Trim(), 0, null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Absorb Enchantment Spells"))
+			{
+				data.AddProperty("Absorb Enchantment Spells", null, 0, null);
 				return true;
 			}
 			else if (!trimmed.StartsWith("Mythic "))
@@ -184,23 +286,69 @@ namespace DDOWikiParser
 				{
 					vi = ParseNumber(p);
 					p = "Arcane Spell Failure";
-					v = "";
+					v = null;
 				}
 				else if (p.StartsWith("Twilight") || p.StartsWith("Greater Twilight"))
 				{
 					vi = ParseNumber(p);
 					p = "Arcane Spell Failure";
-					v = "";
+					v = null;
 				}
+				else if (p.StartsWith("Underwater Action")) v = null;
+				else if (p.StartsWith("Feather Falling")) v = null;
+				else if (p.StartsWith("Ghost Touch")) v = null;
+				else if (p.StartsWith("True Seeing")) v = null;
+				else if (p.StartsWith("Impact ")) v = null;
+				else if (p.StartsWith("Efficient Metamagic - "))
+				{
+					c = p.IndexOf(' ', 22);
+					p = p.Substring(22, c - 22) + " Spell Point Reduction";
+					vi = ParseNumber(v);
+					v = "enhancement";
+				}
+				else if (p.StartsWith("Improved Metamagic"))
+				{
+					string[] split = v.Split(':');
+					v = "enhancement";
+					vi = ParseNumber(split[2]);
+					p = split[1].Trim() + " Spell Point Reduction";
+				}
+				else if (p.Contains("Healing Amplification"))
+				{
+					p = "Healing Amplification";
+					vi = ParseNumber(v);
+					c = v.IndexOf('(');
+					v = v.Substring(c + 1, v.IndexOf(' ', c) - c - 1).ToLower();
+				}
+				else if (p.StartsWith("Curse of "))
+				{
+					c = v.IndexOf("Penalty to ") + 11;
+					p = v.Substring(c, v.IndexOf('.', c) - c);
+					vi = -ParseNumber(v);
+					v = null;
+				}
+				else if (p.StartsWith("Hard hitting secret")) return false;
+				else if (p.StartsWith("Required Trait")) return false;
+				else if (p.Contains("Arcane Augmentation"))
+				{
+					string[] split = p.Split(' ');
+					if (split[0] == "Arcane") data.AddProperty("Effective Sorceror/Wizard Caster Level " + split[2], "arcane", 2, null);
+					else if (split[1] == "Arcane" && split[0] == "Lesser") data.AddProperty("Effective Arcane Caster Level " + split[3], "arcane", 1, null);
+					else if (split[1] == "Arcane" && split[0] == "Improved") data.AddProperty("Effective Arcane Caster Level " + split[3], "arcane", 3, null);
+					return true;
+				}
+				/*else if (p.Contains(" (spell)"))
+				{
+					LogError("- found \" (spell)\" in " + data.Name);
+					return true;
+				}*/
 				else
 				{
 					// attempt to find a numerical value to use as a stopping point for the property name
 					c = p.IndexOfAny(numbers);
 					if (c > -1)
 					{
-						int ce = p.LastIndexOfAny(numbers, Math.Min(c + 5, p.Length - 1));
-						string n = p.Substring(c, ce - c + 1);
-						int.TryParse(n, out vi);
+						vi = ParseNumber(p);
 						if (p[c - 1] == '+') p = p.Substring(0, c - 1).Trim();
 						else p = p.Substring(0, c).Trim();
 
@@ -214,7 +362,7 @@ namespace DDOWikiParser
 							v = "natural armor";
 						}
 						else if (p.StartsWith("Hardened Exterior")) p = "Armor Class";
-						else if (p.StartsWith("Shield")) p = "Armor Class";
+						else if (p == "Shield") p = "Armor Class";
 						else if (p.EndsWith("Physical Sheltering")) p = "Physical Resistance Rating";
 						else if (p.EndsWith("Magical Sheltering")) p = "Magical Resistance Rating";
 						else if (p.StartsWith("Melee Alacrity")) p = "Melee Attack Speed";
@@ -224,7 +372,11 @@ namespace DDOWikiParser
 							p = "Move Speed";
 							v = "enhancement";
 						}
-						else if (p.StartsWith("Magical Efficiency")) p = "Spell Point Cost %";
+						else if (p.StartsWith("Magical Efficiency"))
+						{
+							p = "Spell Point Cost %";
+							v = "enhancement";
+						}
 						else if (p.EndsWith("False Life")) p = "Hit Points";
 						else if (p.StartsWith("Vitality")) p = "Hit Points";
 						else if (p.EndsWith("Cold Resistance")) p = "Cold Resistance";
@@ -250,16 +402,9 @@ namespace DDOWikiParser
 						else if (p.EndsWith("Repair Lore")) p = "Repair Spell Critical Chance";
 						else if (p.EndsWith("Sonic Lore")) p = "Sonic Spell Critical Chance";
 						else if (p.EndsWith("Spellcasting Implement")) p = "Universal Spell Power";
-						else if (p.EndsWith("Distant Diversion"))
-						{
-							p = "Ranged Threat Reduction";
-							v = "";
-						}
-						else if (p.EndsWith("Diversion"))
-						{
-							p = "Melee Threat Reduction";
-							v = "";
-						}
+						else if (p.EndsWith("Distant Diversion")) p = "Ranged Threat Reduction";
+						else if (p.EndsWith("Mystic Diversion")) p = "Magic Threat Reduction";
+						else if (p.EndsWith("Diversion")) p = "Melee Threat Reduction";
 						else if (p.EndsWith("Open Lock")) p = "Open Lock";
 						else if (p == "Greater Elemental Energy")
 						{
@@ -273,6 +418,13 @@ namespace DDOWikiParser
 							v = "greater elemental spell power";
 							vi = 100;
 						}
+						else if (p.EndsWith("Deception")) v = "enhancement";
+						else if (p.StartsWith("Shield Bashing "))
+						{
+							p = "Automatic Secondary Shield Bash";
+							v = "equipment";
+						}
+						else if (NullTypeProperties.Contains(p)) v = null;
 					}
 					else
 					{
@@ -301,10 +453,10 @@ namespace DDOWikiParser
 								p = p.Substring(0, c);
 								// we flag this for special handling later
 								if (p == "Parrying") v = numerals[vi - 1];
+								else if (p.EndsWith("Deception")) v = numerals[vi - 1];
 							}
 						}
 
-						// standardize property names
 						if (p.EndsWith("Wizardry"))
 						{
 							p = "Spell Points";
@@ -361,32 +513,165 @@ namespace DDOWikiParser
 							v = "enhancement";
 							vi *= 10;
 						}
+						else if (p == "Silver Flame")
+						{
+							p = "Turn Undead Hit Dice";
+							v = null;
+							vi = 6;
+						}
+						else if (p == "Proficiency") v = v.Substring(0, v.IndexOf("Proficiency"));
+						else if (p.EndsWith("Lightning Resistance"))
+						{
+							p = "Electric Resistance";
+							vi = ParseNumber(v);
+							v = "enhancement";
+						}
+						else if (p.EndsWith("Cold Resistance"))
+						{
+							p = "Cold Resistance";
+							vi = ParseNumber(v);
+							v = "enhancement";
+						}
+						else if (p.EndsWith("Fire Resistance"))
+						{
+							p = "Fire Resistance";
+							vi = ParseNumber(v);
+							v = "enhancement";
+						}
+						else if (p.IndexOf("Hidden effect", StringComparison.InvariantCultureIgnoreCase) == 0)
+						{
+							if (v == "Increases threat generated from spells by 25%")
+							{
+								p = "Magic Threat Generation";
+								v = "enhancement";
+								vi = 25;
+							}
+							else if (v.StartsWith("Demonic Drain"))
+							{
+								p = "Demonic Drain";
+								v = null;
+								vi = 0;
+							}
+							else if (v.StartsWith("Cacophonic Guard"))
+							{
+								p = "Cacophonic Guard";
+								v = null;
+								vi = 0;
+							}
+							else if (v == "around 5% on-being-hit chance to be Crippled and gain DR 20/- for 20 seconds")
+							{
+								p = "Defiance";
+								v = null;
+								vi = 0;
+							}
+							else if (v.StartsWith("Stone Paws"))
+							{
+								p = "Stone Paws";
+								v = null;
+								vi = 0;
+							}
+							else if (v.StartsWith("Will Save "))
+							{
+								p = "Will";
+								vi = ParseNumber(v);
+								c = v.IndexOf(vi.ToString());
+								if (v[c - 1] == '-') vi = -vi;
+								c = v.IndexOf(" bonus to ", StringComparison.InvariantCultureIgnoreCase);
+								if (c > -1)
+								{
+									int ce = v.LastIndexOf(' ', c - 1);
+									v = Regex.Replace(v.Substring(ce + 1, c - ce), @"\W+", "");
+									v = Regex.Replace(v, @"^\d+", "");
+									v = v.ToLower();
+								}
+								else v = "resistance";
+							}
+							else if (v.StartsWith("Madstone Reaction"))
+							{
+								p = "Madstone Reaction";
+								v = null;
+								vi = 0;
+							}
+							else if (v.StartsWith("Increases spellcasting, melee, and ranged threat by "))
+							{
+								vi = ParseNumber(v);
+								data.AddProperty("Melee Threat Generation", "enhancement", vi, null);
+								data.AddProperty("Ranged Threat Generation", "enhancement", vi, null);
+								data.AddProperty("Magic Threat Generation", "enhancement", vi, null);
+								return true;
+							}
+							else if (v == "On critical hits, this weapon saps the target") return false;
+						}
+						else if (p.EndsWith("Reinforced Fists"))
+						{
+							if (p == "Reinforced Fists") data.AddProperty("Reinforced Fists", "enhancement", 0.5f, null);
+							else if (p.StartsWith("Greater")) data.AddProperty("Reinforced Fists", "enhancement", 1, null);
+							else if (p.StartsWith("Superior")) data.AddProperty("Reinforced Fists", "enhancement", 1.5f, null);
+							return true;
+						}
+						else if (p.EndsWith("Vorpal"))
+						{
+							if (p.StartsWith("Improved ")) vi = 2;
+							else if (p.StartsWith("Greater ")) vi = 3;
+							else if (p.StartsWith("Sovereign")) vi = 4;
+							else vi = 1;
+							p = "Vorpal";
+							v = "enhancement";
+						}
+						else if (p == "Proof Against Poison")
+						{
+							p = "Poison Immunity";
+							v = null;
+						}
+						else if (p.EndsWith("False Life"))
+						{
+							p = "Hit Points";
+							vi = ParseNumber(v);
+							v = null;
+						}
+						else if (NullTypeProperties.Contains(p)) v = null;
 					}
 				}
 
 				// attempt to find a type to the bonus/value
-				c = v.IndexOf(" bonus to ", StringComparison.InvariantCultureIgnoreCase);
-				if (c == -1) c = v.IndexOf(" bonuses to ", StringComparison.InvariantCultureIgnoreCase);
-				if (c > -1)
+				if (v != null)
 				{
-					int ce = v.LastIndexOf(' ', c - 1);
-					v = Regex.Replace(v.Substring(ce + 1, c - ce), @"\W+", "");
-					v = Regex.Replace(v, @"^\d+", "");
-					v = v.ToLower();
+					c = v.IndexOf(" bonus to ", StringComparison.InvariantCultureIgnoreCase);
+					if (c == -1) c = v.IndexOf(" bonus on ", StringComparison.InvariantCultureIgnoreCase);
+					if (c == -1) c = v.IndexOf(" bonuses to ", StringComparison.InvariantCultureIgnoreCase);
+					if (c == -1) c = v.IndexOf(" bonuses on ", StringComparison.InvariantCultureIgnoreCase);
+					if (c > -1)
+					{
+						int ce = v.LastIndexOf(' ', c - 1);
+						v = Regex.Replace(v.Substring(ce + 1, c - ce), @"\W+", "");
+						v = Regex.Replace(v, @"^\d+", "");
+						v = v.ToLower();
 
-					// we found a bonus type, let's try to clean up a redundant reference in the property name
-					if (p.IndexOf(v, StringComparison.InvariantCultureIgnoreCase) == 0)
-						p = p.Substring(p.IndexOf(' ') + 1).Trim();
+						// we found a bonus type, let's try to clean up a redundant reference in the property name
+						if (p.IndexOf(v, StringComparison.InvariantCultureIgnoreCase) == 0)
+							p = p.Substring(p.IndexOf(' ') + 1).Trim();
+					}
 				}
 
-				// special case check for weapon or armor base enhancement
-				if (string.IsNullOrWhiteSpace(p) && v == "enhancement")
+				if (string.IsNullOrWhiteSpace(p))
 				{
-					if (data.Slot == SlotType.Body || data.Slot == SlotType.Offhand) p = "Armor Class";
-					else if (data.Slot == SlotType.Weapon) p = "Attack and Damage";
+					// special case check for weapon or armor base enhancement
+					if (v == "enhancement")
+					{
+						if (data.Slot == SlotType.Body || data.Slot == SlotType.Offhand) p = "Armor Class";
+						else if (data.Slot == SlotType.Weapon) p = "Attack and Damage";
+					}
+					else if (v != "orb")
+					{
+						// this may require further refinement in the future if new items are added with properties that are called "+X whatever"
+						data.AddProperty("Attack vs Evil", "enhancement", vi, null);
+						data.AddProperty("Damage vs Evil", "enhancement", vi, null);
+						return true;
+					}
 				}
 
 				// some enhancements have multiple effects, and we want to capture them individually
+				// others require a final processing
 				if (p == "Attack and Damage")
 				{
 					data.AddProperty("Attack", v, vi, null);
@@ -520,14 +805,110 @@ namespace DDOWikiParser
 				}
 				else if (p.EndsWith("Deception"))
 				{
-					data.AddProperty("Sneak Attack Attack", v, vi, null);
-					data.AddProperty("Sneak Attack Damage", v, (int)Math.Round(vi * 1.5f), null);
+					if (numerals.Contains(v))
+					{
+						data.AddProperty("Sneak Attack Attack", "enhancement", vi, null);
+						data.AddProperty("Sneak Attack Damage", "enhancement", vi * 2, null);
+					}
+					else
+					{
+						data.AddProperty("Sneak Attack Attack", v, vi, null);
+						data.AddProperty("Sneak Attack Damage", v, (int)Math.Round(vi * 1.5f), null);
+					}
+				}
+				else if (p == "Command")
+				{
+					data.AddProperty("Bluff", v, vi, null);
+					data.AddProperty("Diplomacy", v, vi, null);
+					data.AddProperty("Haggle", v, vi, null);
+					data.AddProperty("Hide", null, -6, null);
+					data.AddProperty("Intimidate", v, vi, null);
+					data.AddProperty("Perform", v, vi, null);
+					data.AddProperty("Use Magic Device", v, vi, null);
+				}
+				else if (p == "Fortification")
+				{
+					vi = ParseNumber(v);
+					if (vi != 0) data.AddProperty(p, "enhancement", vi, null);
+				}
+				else if (p.EndsWith(" Threat Reduction"))
+				{
+					if (vi == 0)
+					{
+						vi = ParseNumber(v);
+						v = null;
+					}
+					else if (v.StartsWith("This item")) v = "enhancement";
+
+					data.AddProperty(p, v, vi, null);
+				}
+				else if (p == "Stealth Strike")
+				{
+					data.AddProperty("Ranged Threat Reduction", null, 15, null);
+					data.AddProperty("Magic Threat Reduction", null, 15, null);
+				}
+				else if (p == "Adamantine")
+				{
+					if (v.StartsWith("Adamantine weapons ")) data.AddProperty(p, null, 0, null);
+					else
+					{
+						vi = ParseNumber(v);
+						c = v.IndexOf(vi.ToString());
+						if (c > -1)
+						{
+							int si = v.IndexOf('/', c);
+							v = v.Substring(si + 1, v.IndexOf('.', si) - si - 1);
+
+							data.AddProperty("Damage Reduction", v, vi, null);
+						}
+					}
+				}
+				else if (p == "Alchemical Conservation")
+				{
+					data.AddProperty("Ki Generation", "enhanced ki", 1, null);
+					data.AddProperty("Action Boosts", null, 1, null);
+					data.AddProperty("Turn Undead Uses", null, 1, null);
+					data.AddProperty("Bard Song Uses", null, 1, null);
+				}
+				else if (p == "Sneak Attack Bonus")
+				{
+					data.AddProperty("Sneak Attack Attack", "enhancement", vi, null);
+					data.AddProperty("Sneak Attack Damage", "enhancement", (int)Math.Round(vi * 1.5, MidpointRounding.AwayFromZero), null);
+				}
+				else if (p == "Improved Bashing")
+				{
+					if (vi > 0)
+					{
+						string[] split = v.Split(':');
+						vi = ParseNumber(split[split.Length - 1]);
+						data.AddProperty("Automatic Secondary Shield Bash", "enhancement", vi, null);
+					}
+
+					data.AddProperty(p, null, 0, null);
 				}
 				else data.AddProperty(p, v, vi, null);
 
 				return true;
 			}
 			else return false;
+		}
+
+		List<ItemProperty> ParseOptions(DDOItemData data, XmlElement e)
+		{
+			var options = new List<ItemProperty>();
+
+			var lis = e.GetElementsByTagName("li");
+			foreach (XmlElement li in lis)
+			{
+				if (ParseEnhancement(data, li))
+				{
+					ItemProperty ip = data.Properties[data.Properties.Count - 1];
+					data.Properties.Remove(ip);
+					options.Add(ip);
+				}
+			}
+
+			return options;
 		}
 
 		void ParseEnhancements(DDOItemData data, XmlElement row)
@@ -551,19 +932,9 @@ namespace DDOWikiParser
 						var lis = e.GetElementsByTagName("li");
 						if (lis.Count == 0)
 						{
-							// check for a hyperlink to Named item sets
-							var aa = e.GetElementsByTagName("a");
-							foreach (XmlElement a in aa)
-							{
-								if (a.GetAttribute("href").IndexOf("/page/Named_item_sets") > -1)
-								{
-									string p = a.InnerText.Trim();
-									options.Add(new ItemProperty { Property = p, Type = "set" });
-									break;
-								}
-							}
-
-							if (options.Count == 0) options = null;
+							string p = ParseSetName(e);
+							if (p != null) options.Add(new ItemProperty { Property = p, Type = "set" });
+							else options = null;
 						}
 						else
 						{
@@ -648,12 +1019,8 @@ namespace DDOWikiParser
 						{
 							if (a.GetAttribute("href").IndexOf("/page/Named_item_sets") > -1)
 							{
-								int s = a.InnerText.IndexOf(" Set", StringComparison.InvariantCultureIgnoreCase);
-								string p;
-								if (s > -1) p = a.InnerText.Substring(0, s).Trim();
-								else p = a.InnerText;
-								if (options.Find(m => m.Property == p) == null)
-									options.Add(new ItemProperty { Property = p, Type = "set" });
+								if (options.Find(m => m.Property == a.InnerText) == null)
+									options.Add(new ItemProperty { Property = a.InnerText, Type = "set" });
 							}
 						}
 
@@ -683,20 +1050,55 @@ namespace DDOWikiParser
 					}
 					else if (e.InnerText.StartsWith("One of the following"))
 					{
-						options = new List<ItemProperty>();
-
+						data.AddProperty("Random", null, 0, ParseOptions(data, e));
+					}
+					else if (e.InnerText.StartsWith("Upgradeable Item (Stormreaver)"))
+					{
 						var lis = e.GetElementsByTagName("li");
 						foreach (XmlElement li in lis)
 						{
-							if (ParseEnhancement(data, li))
+							// property is added
+							if (li.ChildNodes.Count == 2)
 							{
-								ItemProperty ip = data.Properties[data.Properties.Count - 1];
-								data.Properties.Remove(ip);
-								options.Add(ip);
+								ParseEnhancement(data, li.ChildNodes[1]);
+							}
+							// property is replaced
+							else if (li.ChildNodes.Count == 3)
+							{
+								ParseEnhancement(data, li.ChildNodes[0]);
+								ItemProperty op = data.Properties[data.Properties.Count - 1];
+								data.Properties.Remove(op);
+								ItemProperty cp = data.Properties.Find(p => p.Property == op.Property && p.Type == op.Type && p.Value == op.Value);
+								data.Properties.Remove(cp);
+								ParseEnhancement(data, li.ChildNodes[2]);
 							}
 						}
-
-						data.AddProperty("Random", null, 0, options);
+					}
+					else if (e.InnerText.StartsWith("Attuned to Heroism"))
+					{
+						var lis = e.GetElementsByTagName("li");
+						foreach (XmlElement li in lis)
+						{
+							if (li.InnerText.StartsWith("Attuned ")) continue;
+							if (li.InnerText.Contains(" Augment Slot"))
+							{
+								data.AddProperty("Augment Slot", ParseAugmentSlot(li.InnerText), 0, null);
+							}
+							else
+							{
+								string set = ParseSetName(li);
+								if (set != null)
+								{
+									// Planar Conflux isn't really a set on its own, it's the option of three sets
+									data.AddProperty("Planar Conflux", null, 0, new List<ItemProperty>
+									{
+										new ItemProperty { Property = "Planar Focus: Erudition", Type = "set" },
+										new ItemProperty { Property = "Planar Focus: Prowess", Type = "set" },
+										new ItemProperty { Property = "Planar Focus: Subterfuge", Type = "set" }
+									});
+								}
+							}
+						}
 					}
 					else if (e.InnerXml.IndexOf("/page/Named_item_sets") > -1)
 					{
@@ -953,6 +1355,8 @@ namespace DDOWikiParser
 				string itemName = tableNodes[0].InnerText.Replace(" - DDO wiki", "");
 				itemName = itemName.Substring(itemName.IndexOf(':') + 1);
 
+				if (itemName.Contains("(historic)")) continue;
+
 				DDOItemData data = new DDOItemData { Name = itemName };
 
 				// reconstruct the original URL
@@ -1012,6 +1416,150 @@ namespace DDOWikiParser
 		private void ViewErrorLog_Click(object sender, RoutedEventArgs e)
 		{
 			System.Diagnostics.Process.Start(ErrorFile);
+		}
+
+		List<DDOItemData> AllItems;
+		DDODataset dataset;
+		string datasetFilepath;
+
+		void TraverseItems(ItemCollection ic)
+		{
+			foreach (TreeViewItem tvi in ic)
+			{
+				if (tvi.Items.Count > 0) TraverseItems(tvi.Items);
+				else
+				{
+					DDOItemData item = tvi.Tag as DDOItemData;
+					int si = -1;
+					for (int i = 0; i < AllItems.Count; i++)
+					{
+						if (string.Compare(item.Name, AllItems[i].Name, true) < 0)
+						{
+							si = i;
+							break;
+						}
+					}
+					if (si == -1) AllItems.Add(item);
+					else AllItems.Insert(si, item);
+				}
+			}
+		}
+
+		private void SaveMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			FolderBrowserDialog fbd = new FolderBrowserDialog();
+			fbd.SelectedPath = AppDomain.CurrentDomain.BaseDirectory;
+			if (fbd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+			datasetFilepath = Path.Combine(fbd.SelectedPath, "ddodata.dat");
+
+			dataset = new DDODataset();
+			dataset.Initialize();
+
+			// first go through all set bonuses and populate the properties into the itemproperty list
+			foreach (var set in dataset.Sets)
+			{
+				foreach (var sb in set.Value.SetBonuses)
+				{
+					foreach (var b in sb.Bonuses) dataset.AddItemProperty(b.Property, b.Type, null);
+				}
+			}
+
+			// sort all items alphabetically into a single list
+			AllItems = new List<DDOItemData>();
+			TraverseItems(tvList.Items);
+
+			BackgroundWorker bw = new BackgroundWorker();
+			bw.WorkerReportsProgress = true;
+			bw.DoWork += ProcessItems;
+			bw.ProgressChanged += ProcessItemsProgress;
+			bw.RunWorkerCompleted += ProcessItemsCompleted;
+			bw.RunWorkerAsync();
+		}
+
+		private void ProcessItemsCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			tbProgressText.Text = null;
+			tbStatusBarText.Text = "Saving dataset...";
+			// write dataset out to file
+			FileStream fs = new FileStream(datasetFilepath, FileMode.Create);
+			BinaryFormatter bf = new BinaryFormatter();
+			try
+			{
+				bf.Serialize(fs, dataset);
+				tbStatusBarText.Text = "Dataset saved";
+			}
+			catch (Exception ex)
+			{
+				tbStatusBarText.Text = "Error saving dataset";
+				System.Windows.MessageBox.Show("Error writing ddo dataset!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+			finally
+			{
+				fs.Close();
+			}
+		}
+
+		private void ProcessItemsProgress(object sender, ProgressChangedEventArgs e)
+		{
+			tbProgressText.Text = (e.ProgressPercentage + 1).ToString() + " of " + AllItems.Count;
+			tbStatusBarText.Text = "Processing item : " + AllItems[e.ProgressPercentage].Name;
+		}
+
+		private void ProcessItems(object sender, DoWorkEventArgs e)
+		{
+			for (int i = 0; i < AllItems.Count; i++)
+			{
+				(sender as BackgroundWorker).ReportProgress(i);
+				string result = dataset.AddItem(AllItems[i]);
+				if (result != null) LogError(result);
+			}
+		}
+
+		private void GenerateItemPropertyReport_Click(object sender, RoutedEventArgs e)
+		{
+			if (dataset == null)
+			{
+				System.Windows.MessageBox.Show("Save dataset first", "Hey", MessageBoxButton.OK, MessageBoxImage.Stop);
+				return;
+			}
+
+			string filename = "item property report.txt";
+			File.Delete(filename);
+			var file = File.AppendText(filename);
+
+			foreach (var ip in dataset.ItemProperties)
+			{
+				bool propwritten = false;
+				foreach (var item in ip.Value.Items)
+				{
+					bool itemwritten = false;
+					foreach (var p in item.Properties)
+					{
+						if (p.Property != ip.Key) continue;
+						if (p.Type != null && p.Type.Contains(" "))
+						{
+							if (!propwritten)
+							{
+								file.WriteLine("[" + ip.Key + "]");
+								propwritten = true;
+							}
+							if (!itemwritten)
+							{
+								file.WriteLine("{" + item.Name + "}");
+								itemwritten = true;
+							}
+							file.WriteLine(p.Type);
+						}
+					}
+				}
+
+				if (propwritten) file.WriteLine("");
+			}
+
+			file.Flush();
+			file.Close();
+
+			System.Diagnostics.Process.Start(filename);
 		}
 	}
 }

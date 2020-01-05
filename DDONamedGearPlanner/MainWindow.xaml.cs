@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,15 +22,43 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		DDODataset dataset;
 		List<string> ItemsInList = new List<string>();
 
 		public MainWindow()
 		{
 			InitializeComponent();
 
+			if (!LoadDDODataset())
+			{
+				Close();
+				return;
+			}
+
 			lbItemList.ItemsSource = ItemsInList;
 
 			SetFilter(CustomFilter);
+		}
+
+		bool LoadDDODataset()
+		{
+			FileStream fs = new FileStream("ddodata.dat", FileMode.Open);
+			try
+			{
+				BinaryFormatter bf = new BinaryFormatter();
+				dataset = (DDODataset)bf.Deserialize(fs);
+
+				return true;
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show("Error loading DDO dataset - " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				return false;
+			}
+			finally
+			{
+				fs.Close();
+			}
 		}
 
 		public void SetFilter(Predicate<object> filter)

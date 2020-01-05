@@ -10,10 +10,14 @@
 		<Menu DockPanel.Dock="Top" Height="20" VerticalAlignment="Top">
 			<MenuItem Header="_File">
 				<MenuItem Header="_Load" Click="MenuItem_Click"/>
+				<MenuItem Header="_Save" Click="SaveMenuItem_Click"/>
 				<Separator/>
 				<MenuItem Header="E_xit"/>
 			</MenuItem>
-			<MenuItem Header="View Error Log" Click="ViewErrorLog_Click"/>
+			<MenuItem Header="Developer">
+				<MenuItem Header="Generate Item Property Report" Click="GenerateItemPropertyReport_Click"/>
+				<MenuItem Header="View Error Log" Click="ViewErrorLog_Click"/>
+			</MenuItem>
 		</Menu>
 		<StatusBar DockPanel.Dock="Bottom" Height="22" VerticalAlignment="Bottom">
 			<StatusBar.ItemsPanel>
