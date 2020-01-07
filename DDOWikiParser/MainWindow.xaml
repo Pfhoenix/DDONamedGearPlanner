@@ -12,7 +12,7 @@
 				<MenuItem Header="_Load" Click="MenuItem_Click"/>
 				<MenuItem Header="_Save" Click="SaveMenuItem_Click"/>
 				<Separator/>
-				<MenuItem Header="E_xit"/>
+				<MenuItem Header="E_xit" Click="ExitMenuItem_Click"/>
 			</MenuItem>
 			<MenuItem Header="Developer">
 				<MenuItem Header="Generate Item Property Report" Click="GenerateItemPropertyReport_Click"/>

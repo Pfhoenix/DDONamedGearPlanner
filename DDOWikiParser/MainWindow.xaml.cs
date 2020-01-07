@@ -44,7 +44,7 @@ namespace DDOWikiParser
 		string[] files;
 		string ErrorFile = "errors.log";
 
-		string[] NullTypeProperties =
+		/*string[] NullTypeProperties =
 		{
 			"Bludgeoning",
 			"Holy",
@@ -91,7 +91,34 @@ namespace DDOWikiParser
 			"Immunity to Fear",
 			"Regeneration",
 			"Acid Guard",
-		};
+			"Spiked",
+			"Spike Guard",
+			"Masterwork",
+			"Fetters of Unreality",
+			"Disease: Unholy Tear",
+			"Limb Chopper",
+			"Metalline",
+			"Disruption",
+			"Antimagic Spike",
+			"Telekinesis Guard",
+			"Trace of Madness",
+			"Metal Fatigue",
+			"Negative Energy Absorption",
+			"Taint of Evil",
+			"Haste Guard",
+			"Ethereal",
+			"Boon of Undeath",
+			"Freedom of Movement",
+			"Medusa Fury",
+			"Demon Fever",
+			"Wounding",
+			"Fusible",
+			"Lesser Undead Bane",
+			"Improved Paralyzing",
+			"Bodyfeeder",
+			"Bewildering",
+			"Slay Living",
+		};*/
 
 		public MainWindow()
 		{
@@ -230,20 +257,52 @@ namespace DDOWikiParser
 			string[] split = text.Split(' ');
 			for (int i = 0; i < split.Length - 1; i++)
 			{
-				if (split[i] == "Augment" && split[i + 1] == "Slot") return split[i - 1].ToLower();
+				if (split[i] == "Augment" && split[i + 1].StartsWith("Slot")) return split[i - 1].ToLower();
 			}
 
 			return null;
 		}
 
+		string ParseFirstChildText(XmlNode e)
+		{
+			XmlNode child = e.FirstChild;
+			while (child.HasChildNodes) child = child.FirstChild;
+			return child.InnerText.Trim();
+		}
+
 		bool ParseEnhancement(DDOItemData data, XmlNode enh)
 		{
 			string trimmed = enh.InnerText.Trim();
-			string xml = enh.InnerXml.Trim();
+			//string xml = enh.InnerXml.Trim();
 
-			if (trimmed.Contains(" Augment Slot"))
+			//if (ParseText(data, trimmed)) return true;
+
+			if (trimmed.StartsWith("If at least ", StringComparison.InvariantCultureIgnoreCase)) return false;
+			else if (trimmed.StartsWith("Bound to Character", StringComparison.InvariantCultureIgnoreCase) || trimmed.StartsWith("Bound to Account", StringComparison.InvariantCultureIgnoreCase)) return false;
+			else if (trimmed.StartsWith("Craftable (")) return false;
+			else if (trimmed.StartsWith("Better Offhanded")) return false;
+			else if (trimmed.StartsWith("Mythic ")) return false;
+			else if (trimmed.StartsWith("Unverified")) return false;
+			else if (trimmed.StartsWith("Echoes of 2006"))
+			{
+				data.AddProperty("Echoes of 2006", null, 0, null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Shield Bonus"))
+			{
+				string a = trimmed.Substring(12).Replace("+", "").Replace("\n", "");
+				int.TryParse(a, out int ac);
+				data.AddProperty("Armor Class", "shield", ac, null);
+				return true;
+			}
+			else if (trimmed.Contains(" Augment Slot"))
 			{
 				data.AddProperty("Augment Slot", ParseAugmentSlot(trimmed), 0, null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Orange Slot"))
+			{
+				data.AddProperty("Augment Slot", "orange", 0, null);
 				return true;
 			}
 			else if (trimmed.StartsWith("Alarphon's Staff: Spell Selection"))
@@ -267,14 +326,148 @@ namespace DDOWikiParser
 				data.AddProperty("Absorb Enchantment Spells", null, 0, null);
 				return true;
 			}
-			else if (!trimmed.StartsWith("Mythic "))
+			else if (trimmed.StartsWith("Lesser Absorption of Beholder and Doomsphere Spells"))
 			{
-				int c = trimmed.IndexOf(':');
-				string p = c > -1 ? trimmed.Substring(0, c).Trim() : trimmed;
-				string v = c > -1 ? trimmed.Substring(c + 1).Trim() : "";
-				int vi = 0;
+				data.AddProperty("Absorb Beholder and Doomsphere Spells", null, 0, null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Absorb Beholder Spells"))
+			{
+				data.AddProperty("Absorb Beholder Spells", null, 0, null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Absorbs Magic Missiles -"))
+			{
+				data.AddProperty("Absorbs Magic Missiles", null, ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Upgradeable - Tier ")) return false;
+			else if (trimmed.StartsWith("Strength -"))
+			{
+				data.AddProperty("Strength", null, -ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Dexterity -"))
+			{
+				data.AddProperty("Dexterity", null, -ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Constitution -"))
+			{
+				data.AddProperty("Constitution", null, -ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Intelligence -"))
+			{
+				data.AddProperty("Intelligence", null, -ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Wisdom -"))
+			{
+				data.AddProperty("Wisdom", null, -ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Charisma -"))
+			{
+				data.AddProperty("Charisma", null, -ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Spell Absorption -"))
+			{
+				int a = ParseNumber(trimmed);
+				data.AddProperty("Acid Absorption", null, a, null);
+				data.AddProperty("Cold Absorption", null, a, null);
+				data.AddProperty("Electric Absorption", null, a, null);
+				data.AddProperty("Fire Absorption", null, a, null);
+				data.AddProperty("Force Absorption", null, a, null);
+				data.AddProperty("Light Absorption", null, a, null);
+				data.AddProperty("Negative Absorption", null, a, null);
+				data.AddProperty("Poison Absorption", null, a, null);
+				data.AddProperty("Positive Absorption", null, a, null);
+				data.AddProperty("Repair Absorption", null, a, null);
+				data.AddProperty("Sonic Absorption", null, a, null);
 
-				if (p.StartsWith("DRDamage Reduction "))
+				data.AddProperty("Spell Absorption", null, ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Negative Energy Absorption -"))
+			{
+				data.AddProperty("Negative Absorption", null, ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Whirlwind Absorption -"))
+			{
+				data.AddProperty("Whirlwind Absorption", null, ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Absorb Doomsphere Spells -"))
+			{
+				data.AddProperty("Absorb Doomsphere Spells", null, ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Percussive Maintenance"))
+			{
+				data.AddProperty("Percussive Maintenance", null, 0, null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Thunder-Forged (Tier"))
+			{
+				data.AddProperty(trimmed.Substring(0, trimmed.IndexOf(')') + 1), null, 0, null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Magestar Absorption"))
+			{
+				data.AddProperty("Magestar Absorption", null, ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Absorbs Magic Missiles"))
+			{
+				data.AddProperty("Absorbs Magic Missiles", null, ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Scarab of Protection Ward"))
+			{
+				data.AddProperty("Absorbs Negative Energy, Death Effects, and Energy Drain", null, ParseNumber(trimmed), null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Absorb Petrification"))
+			{
+				data.AddProperty("Absorbs Petrification", null, ParseNumber(trimmed), null);
+				return true;
+			}
+			else
+			{
+				// check for spell charges first
+				int c = trimmed.IndexOf("Caster level:", StringComparison.InvariantCultureIgnoreCase);
+				string p;
+				string v;
+				int vi = 0;
+				if (c > -1)
+				{
+					p = "Spell";
+					v = ParseFirstChildText(enh);
+					c = trimmed.IndexOfAny(numbers, trimmed.IndexOf("Charges:"));
+					for (int i = c + 1; i < trimmed.Length; i++)
+					{
+						if (!numbers.Contains(trimmed[i]))
+						{
+							int.TryParse(trimmed.Substring(c, i - c), out vi);
+							data.AddProperty(p, v, vi, null);
+							return true;
+						}
+					}
+				}
+				
+				c = trimmed.IndexOf(':');
+				p = c > -1 ? trimmed.Substring(0, c).Trim() : trimmed;
+				v = c > -1 ? trimmed.Substring(c + 1).Trim() : "";
+				string origv = v;
+
+				if (p == "Superior Stability")
+				{
+					v = null;
+				}
+				else if (p.StartsWith("DRDamage Reduction "))
 				{
 					v = p.Substring(19);
 					string[] split = v.Split('/');
@@ -294,11 +487,6 @@ namespace DDOWikiParser
 					p = "Arcane Spell Failure";
 					v = null;
 				}
-				else if (p.StartsWith("Underwater Action")) v = null;
-				else if (p.StartsWith("Feather Falling")) v = null;
-				else if (p.StartsWith("Ghost Touch")) v = null;
-				else if (p.StartsWith("True Seeing")) v = null;
-				else if (p.StartsWith("Impact ")) v = null;
 				else if (p.StartsWith("Efficient Metamagic - "))
 				{
 					c = p.IndexOf(' ', 22);
@@ -332,9 +520,25 @@ namespace DDOWikiParser
 				else if (p.Contains("Arcane Augmentation"))
 				{
 					string[] split = p.Split(' ');
-					if (split[0] == "Arcane") data.AddProperty("Effective Sorceror/Wizard Caster Level " + split[2], "arcane", 2, null);
+					if (split[0] == "Arcane") data.AddProperty("Effective Arcane Caster Level " + split[2], "arcane", 2, null);
 					else if (split[1] == "Arcane" && split[0] == "Lesser") data.AddProperty("Effective Arcane Caster Level " + split[3], "arcane", 1, null);
 					else if (split[1] == "Arcane" && split[0] == "Improved") data.AddProperty("Effective Arcane Caster Level " + split[3], "arcane", 3, null);
+					return true;
+				}
+				else if (p.Contains("Divine Augmentation"))
+				{
+					string[] split = p.Split(' ');
+					if (split[0] == "Divine") data.AddProperty("Effective Divine Caster Level " + split[2], "divine", 2, null);
+					else if (split[1] == "Divine" && split[0] == "Lesser") data.AddProperty("Effective Divine Caster Level " + split[3], "divine", 1, null);
+					else if (split[1] == "Divine" && split[0] == "Improved") data.AddProperty("Effective Divine Caster Level " + split[3], "divine", 3, null);
+					return true;
+				}
+				else if (p.Contains("Evocation Augmentation"))
+				{
+					string[] split = p.Split(' ');
+					if (split[0] == "Evocation") data.AddProperty("Effective Evocation Caster Level " + split[2], "equipment", 2, null);
+					else if (split[1] == "Evocation" && split[0] == "Lesser") data.AddProperty("Effective Evocation Caster Level " + split[3], "equipment", 1, null);
+					else if (split[1] == "Evocation" && split[0] == "Improved") data.AddProperty("Effective Evocation Caster Level " + split[3], "equipment", 3, null);
 					return true;
 				}
 				/*else if (p.Contains(" (spell)"))
@@ -344,12 +548,18 @@ namespace DDOWikiParser
 				}*/
 				else
 				{
+					#region Enhancement parsing with a numerical value in the name
 					// attempt to find a numerical value to use as a stopping point for the property name
 					c = p.IndexOfAny(numbers);
 					if (c > -1)
 					{
 						vi = ParseNumber(p);
 						if (p[c - 1] == '+') p = p.Substring(0, c - 1).Trim();
+						else if (p[c - 1] == '-')
+						{
+							p = p.Substring(0, c - 1).Trim();
+							vi = -vi;
+						}
 						else p = p.Substring(0, c).Trim();
 
 						// standardize property names
@@ -379,11 +589,11 @@ namespace DDOWikiParser
 						}
 						else if (p.EndsWith("False Life")) p = "Hit Points";
 						else if (p.StartsWith("Vitality")) p = "Hit Points";
-						else if (p.EndsWith("Cold Resistance")) p = "Cold Resistance";
-						else if (p.EndsWith("Fire Resistance")) p = "Fire Resistance";
-						else if (p.EndsWith("Electric Resistance")) p = "Electric Resistance";
-						else if (p.EndsWith("Acid Resistance")) p = "Acid Resistance";
-						else if (p.EndsWith("Sonic Resistance")) p = "Sonic Resistance";
+						else if (p.EndsWith("Cold Resistance") || p.EndsWith("Cold Resistance - ")) p = "Cold Resistance";
+						else if (p.EndsWith("Fire Resistance") || p.EndsWith("Fire Resistance - ")) p = "Fire Resistance";
+						else if (p.EndsWith("Electric Resistance") || p.EndsWith("Electric Resistance - ")) p = "Electric Resistance";
+						else if (p.EndsWith("Acid Resistance") || p.EndsWith("Acid Resistance - ")) p = "Acid Resistance";
+						else if (p.EndsWith("Sonic Resistance") || p.EndsWith("Sonic Resistance - ")) p = "Sonic Resistance";
 						else if (p.EndsWith("Spell Focus")) p = "Spell DCs";
 						else if (p.EndsWith("Spell Focus Mastery")) p = "Spell DCs";
 						else if (p.EndsWith("Corrosion")) p = "Acid Spell Power";
@@ -424,17 +634,56 @@ namespace DDOWikiParser
 							p = "Automatic Secondary Shield Bash";
 							v = "equipment";
 						}
-						else if (NullTypeProperties.Contains(p)) v = null;
+						else if (p.EndsWith("Negative Amplification"))
+						{
+							string[] split = p.Split(' ');
+							if (split.Length == 2) v = "enhancement";
+							else v = split[0].ToLower();
+							p = "Negative Healing Amplification";
+						}
+						else if (p.EndsWith("Repair Amplification"))
+						{
+							if (p.StartsWith("Insightful")) v = "insight";
+							else v = "enhancement";
+							p = "Repair Amplification";
+						}
+						else if (p.EndsWith("Light Guard")) p = "Light Guard";
+						else if (p.EndsWith("Good Guard")) p = "Good Guard";
+						else if (p.EndsWith("Evil Guard")) p = "Evil Guard";
+						else if (p.EndsWith("Negative Guard")) p = "Negative Guard";
+						else if (p == "Hallowed") p = "Turn Undead Maximum Hit Dice";
+						else if (p == "Sacred") p = "Turn Undead Effective Level";
+						else if (p.StartsWith("Construct Fortification "))
+						{
+							p = "Fortification";
+							v = "insight";
+						}
+						else if (p.StartsWith("Exceptional Fortification"))
+						{
+							p = "Fortification";
+							v = "exceptional";
+						}
+						else if (p.StartsWith("Unwieldy "))
+						{
+							p = "Dexterity";
+							vi = -vi;
+						}
+						else if (p.EndsWith("Enhanced Ki"))
+						{
+							p = "Ki Generation";
+							v = "enhanced ki";
+						}
+						//else if (NullTypeProperties.Contains(p)) v = null;
 					}
+					#endregion
+					#region Enhancement parsing with a roman numeral or nothing else in the name
 					else
 					{
 						// no numbers means either roman numerals or just a name
 						// bypass processing the innertext by finding the first <a> element and grabbing its inner text
 
 						// first try to drill down to the first child with no children
-						XmlNode child = enh.FirstChild;
-						while (child.HasChildNodes) child = child.FirstChild;
-						p = child.InnerText.Trim();
+						p = ParseFirstChildText(enh);
 						c = p.LastIndexOf(' ');
 						if (c > -1)
 						{
@@ -515,7 +764,7 @@ namespace DDOWikiParser
 						}
 						else if (p == "Silver Flame")
 						{
-							p = "Turn Undead Hit Dice";
+							p = "Turn Undead Total Hit Dice";
 							v = null;
 							vi = 6;
 						}
@@ -535,6 +784,24 @@ namespace DDOWikiParser
 						else if (p.EndsWith("Fire Resistance"))
 						{
 							p = "Fire Resistance";
+							vi = ParseNumber(v);
+							v = "enhancement";
+						}
+						else if (p.EndsWith("Acid Resistance"))
+						{
+							p = "Acid Resistance";
+							vi = ParseNumber(v);
+							v = "enhancement";
+						}
+						else if (p.EndsWith("Sonic Resistance"))
+						{
+							p = "Sonic Resistance";
+							vi = ParseNumber(v);
+							v = "enhancement";
+						}
+						else if (p.EndsWith("Light Resistance"))
+						{
+							p = "Light Resistance";
 							vi = ParseNumber(v);
 							v = "enhancement";
 						}
@@ -629,8 +896,163 @@ namespace DDOWikiParser
 							vi = ParseNumber(v);
 							v = null;
 						}
-						else if (NullTypeProperties.Contains(p)) v = null;
+						else if (p == "Single-Mindedness")
+						{
+							p = "Enchantment Spell DCs";
+							v = null;
+							vi = -2;
+						}
+						else if (p == "Invulnerability")
+						{
+							p = "Damage Reduction";
+							v = "magic";
+							vi = 5;
+						}
+						else if (p == "Bashing" && vi > 0)
+						{
+							p = "Automatic Secondary Shield Bash";
+							v = "enhancement";
+						}
+						else if (p == "Calamitous Blows")
+						{
+							p = "Doublestrike";
+							vi = ParseNumber(v);
+						}
+						else if (p == "Rune-fueled Warding")
+						{
+							p = "Damage Reduction";
+							v = "-";
+							vi = 30;
+						}
+						else if (p == "Blunt Trauma")
+						{
+							p = "Critical Multiplier on 19-20";
+							v = "melee";
+							vi = 1;
+						}
+						else if (p == "Elasticity")
+						{
+							p = "Critical Multiplier on 19-20";
+							v = "ranged";
+							vi = 1;
+						}
+						else if (p == "Mind Drain")
+						{
+							p = "Maximum Spell Points %";
+							vi = -5;
+						}
+						else if (p == "Power Store")
+						{
+							p = "Spell Point Cost %";
+							vi = 10;
+						}
+						else if (p == "Lesser Turning")
+						{
+							p = "Turn Undead Uses";
+							vi = 2;
+						}
+						else if (p == "Faith")
+						{
+							p = "Damage Reduction";
+							v = "evil";
+							vi = 5;
+						}
+						else if (p == "Inspiring Echoes")
+						{
+							p = "Bard Song Regeneration";
+							vi = ParseNumber(v);
+						}
+						else if (p.EndsWith("Fire Augmentation"))
+						{
+							v = numerals[vi - 1];
+							if (p.StartsWith("Improved")) vi = 3;
+							else vi = 1;
+							p = "Fire Spell Caster Level";
+						}
+						else if (p == "Fleshmaker")
+						{
+							vi = ParseNumber(v);
+							p = "Positive Healing Amplification";
+							v = "enhancement";
+						}
+						else if (p == "Power Drain")
+						{
+							vi = -ParseNumber(v);
+							p = "Spell Points";
+						}
+						else if (p == "Minor Turning")
+						{
+							p = "Turn Undead Uses";
+							vi = ParseNumber(v);
+							v = "enhancement";
+						}
+						else if (p == "Augment Summoning")
+						{
+							p = "Feat";
+							v = "Augment Summoning";
+						}
+						else if (p == "Action Boost Enhancement")
+						{
+							p = "Action Boost Uses";
+							vi = ParseNumber(v);
+							v = "enhancement";
+						}
+						else if (p == "Shield Proficiency: Tower Shield")
+						{
+							v = p;
+							p = "Feat";
+						}
+						else if (p == "Proficiency: Greatclub")
+						{
+							v = p;
+							p = "Feat";
+						}
+						else if (p == "Magical Null")
+						{
+							vi = ParseNumber(v);
+							p = "Arcane Spell Failure Chance";
+						}
+						else if (p == "Diehard")
+						{
+							v = p;
+							p = "Feat";
+						}
+						else if (p == "Minor Action Boost Enhancement")
+						{
+							p = "Action Boost Uses";
+							vi = 1;
+							v = "enhancement";
+						}
+						else if (p == "Class Required:") p = "Class Required";
+						else if (p == "Mind Turbulence")
+						{
+							p = "Concentration";
+							vi = -10;
+						}
+						else if (p == "Treason")
+						{
+							p = "Melee Threat Reduction";
+							vi = ParseNumber(v);
+						}
+						else if (p == "Holding On")
+						{
+							p = "Range of Unconsciousness";
+							vi = ParseNumber(v);
+						}
+						else if (p == "Weapon Focus: Falchion")
+						{
+							v = "Weapon Focus: Slashing";
+							p = "Feat";
+						}
+						else if (p == "Anger")
+						{
+							p = "Rage Uses";
+							v = "enhancement";
+							vi = 3;
+						}
+						//else if (NullTypeProperties.Contains(p)) v = null;
 					}
+					#endregion
 				}
 
 				// attempt to find a type to the bonus/value
@@ -849,8 +1271,8 @@ namespace DDOWikiParser
 				}
 				else if (p == "Adamantine")
 				{
-					if (v.StartsWith("Adamantine weapons ")) data.AddProperty(p, null, 0, null);
-					else
+					data.AddProperty(p, null, 0, null);
+					if (!v.StartsWith("Adamantine weapons "))
 					{
 						vi = ParseNumber(v);
 						c = v.IndexOf(vi.ToString());
@@ -886,11 +1308,101 @@ namespace DDOWikiParser
 
 					data.AddProperty(p, null, 0, null);
 				}
-				else data.AddProperty(p, v, vi, null);
+				else if (p == "Flametouched Iron")
+				{
+					data.AddProperty("Fortitude vs Evil Outsiders", "enhancement", 1, null);
+					data.AddProperty("Reflex vs Evil Outsiders", "enhancement", 1, null);
+					data.AddProperty("Will vs Evil Outsiders", "enhancement", 1, null);
+				}
+				else if (p == "Anchoring")
+				{
+					data.AddProperty("Immunity to Haste", null, 0, null);
+					data.AddProperty("Immunity to Banishment", null, 0, null);
+				}
+				else if (p == "Overfocus")
+				{
+					data.AddProperty("Search", null, -10, null);
+					data.AddProperty("Spot", null, -10, null);
+				}
+				else if (p == "Dazing")
+				{
+					data.AddProperty(p, null, vi, null);
+					data.AddProperty("Stunning", "enhancement", vi * 2, null);
+				}
+				else if (p == "Linguistics")
+				{
+					data.AddProperty("Bluff Cooldown", "enhancement", vi, null);
+					data.AddProperty("Diplomacy Cooldown", "enhancement", vi, null);
+					data.AddProperty("Intimidate Cooldown", "enhancement", vi, null);
+				}
+				else if (p == "Extra Smites")
+				{
+					data.AddProperty("Smite Evil Uses", null, vi, null);
+					data.AddProperty("Smite Evil Regeneration", null, 10, null);
+				}
+				else if (p == "Occultation")
+				{
+					vi = ParseNumber(v);
+					data.AddProperty("Melee Threat Reduction", "enhancement", vi, null);
+					data.AddProperty("Ranged Threat Reduction", "enhancement", vi, null);
+					data.AddProperty("Magic Threat Reduction", "enhancement", vi, null);
+				}
+				else if (p == "Blood")
+				{
+					data.AddProperty("Positive Healing Amplification", "enhancement", 20, null);
+					data.AddProperty("Fortification", null, -10, null);
+				}
+				else if (p == "Eternal Faith")
+				{
+					data.AddProperty("Turn Undead Check", null, 2, null);
+					data.AddProperty("Turn Undead Max Hit Dice", null, 2, null);
+					data.AddProperty("Turn Undead Total Hit Dice", null, 4, null);
+				}
+				else if (p.EndsWith("Elemental Resistance - "))
+				{
+					data.AddProperty("Acid Resistance", v, vi, null);
+					data.AddProperty("Cold Resistance", v, vi, null);
+					data.AddProperty("Electric Resistance", v, vi, null);
+					data.AddProperty("Fire Resistance", v, vi, null);
+				}
+				else if (p == "Marksmanship")
+				{
+					data.AddProperty("Ranged Attack", null, 2, null);
+					data.AddProperty("Ranged Damage", null, 1, null);
+				}
+				else if (p == "Flawed Shadowscale Armor")
+				{
+					List<ItemProperty> options = new List<ItemProperty>();
+					options.Add(new ItemProperty { Property = "Shadow Caster", Type = "set" });
+					options.Add(new ItemProperty { Property = "Shadow Disciple", Type = "set" });
+					if (data.Category >= (int)ArmorCategory.Light) options.Add(new ItemProperty { Property = "Shadow Killer", Type = "set" });
+					if (data.Category >= (int)ArmorCategory.Medium) options.Add(new ItemProperty { Property = "Shadow Striker", Type = "set" });
+					if (data.Category >= (int)ArmorCategory.Heavy) options.Add(new ItemProperty { Property = "Shadow Guardian", Type = "set" });
+					if (data.Category >= (int)ArmorCategory.Docent) options.Add(new ItemProperty { Property = "Shadow Construct", Type = "set" });
+
+					data.AddProperty(p, null, 0, options);
+				}
+				else if (p == "Block Elements")
+				{
+					vi = ParseNumber(v);
+					data.AddProperty("Acid Absorption", null, vi, null);
+					data.AddProperty("Cold Absorption", null, vi, null);
+					data.AddProperty("Electric Absorption", null, vi, null);
+					data.AddProperty("Fire Absorption", null, vi, null);
+					data.AddProperty("Sonic Absorption", null, vi, null);
+				}
+				else if (p == "Rebellion")
+				{
+					vi = ParseNumber(v);
+					v = "enhancement";
+					data.AddProperty("Melee Threat Reduction", v, vi, null);
+					data.AddProperty("Ranged Threat Reduction", v, vi, null);
+					data.AddProperty("Magic Threat Reduction", v, vi, null);
+				}
+				else data.AddProperty(p, origv == v ? null : v, vi, null);
 
 				return true;
 			}
-			else return false;
 		}
 
 		List<ItemProperty> ParseOptions(DDOItemData data, XmlElement e)
@@ -1052,25 +1564,38 @@ namespace DDOWikiParser
 					{
 						data.AddProperty("Random", null, 0, ParseOptions(data, e));
 					}
-					else if (e.InnerText.StartsWith("Upgradeable Item (Stormreaver)"))
+					else if (e.InnerText.StartsWith("Upgradeable Item (Temple of Elemental Evil)")) ParseEnhancement(data, e);
+					else if (e.InnerText.StartsWith("Upgradeable Item (") || e.InnerText.StartsWith("Suppressed Power"))
 					{
 						var lis = e.GetElementsByTagName("li");
 						foreach (XmlElement li in lis)
 						{
-							// property is added
-							if (li.ChildNodes.Count == 2)
-							{
-								ParseEnhancement(data, li.ChildNodes[1]);
-							}
+							if (li.InnerText.StartsWith("Adds ")) ParseEnhancement(data, li.ChildNodes[1]);
+							else if (li.InnerText.StartsWith("Becomes ")) continue;
 							// property is replaced
-							else if (li.ChildNodes.Count == 3)
+							else if (li.ChildNodes.Count >= 3)
 							{
+								int props = data.Properties.Count;
+								// mimic adding the enhancement being replaced in order to get a copy of it
 								ParseEnhancement(data, li.ChildNodes[0]);
-								ItemProperty op = data.Properties[data.Properties.Count - 1];
-								data.Properties.Remove(op);
-								ItemProperty cp = data.Properties.Find(p => p.Property == op.Property && p.Type == op.Type && p.Value == op.Value);
-								data.Properties.Remove(cp);
-								ParseEnhancement(data, li.ChildNodes[2]);
+								int count = data.Properties.Count;
+								List<ItemProperty> op = new List<ItemProperty>();
+								// remove the new copies and store in a separate list
+								for (int i = 0; i < count - props; i++)
+								{
+									op.Add(data.Properties[data.Properties.Count - 1]);
+									data.Properties.RemoveAt(data.Properties.Count - 1);
+								}
+								// remove the original properties that match the copies made
+								foreach (ItemProperty ip in op)
+								{
+									ItemProperty cp = data.Properties.Find(p => p.Property == ip.Property && p.Type == ip.Type && p.Value == ip.Value);
+									data.Properties.Remove(cp);
+								}
+								// add the new enhancement
+								if (li.ChildNodes.Count <= 4) ParseEnhancement(data, li.ChildNodes[2]);
+								// this should catch the special case of a spell being parsed
+								else ParseEnhancement(data, li.ChildNodes[3]);
 							}
 						}
 					}
@@ -1079,7 +1604,8 @@ namespace DDOWikiParser
 						var lis = e.GetElementsByTagName("li");
 						foreach (XmlElement li in lis)
 						{
-							if (li.InnerText.StartsWith("Attuned ")) continue;
+							if (li.InnerText.Trim().StartsWith("Attuned by")) continue;
+							if (!li.ParentNode.ParentNode.InnerText.Trim().StartsWith("Attuned by")) continue;
 							if (li.InnerText.Contains(" Augment Slot"))
 							{
 								data.AddProperty("Augment Slot", ParseAugmentSlot(li.InnerText), 0, null);
@@ -1097,6 +1623,33 @@ namespace DDOWikiParser
 										new ItemProperty { Property = "Planar Focus: Subterfuge", Type = "set" }
 									});
 								}
+								else if (li.InnerText.StartsWith("Adds ")) ParseEnhancement(data, li.ChildNodes[1]);
+								else if (li.InnerText.StartsWith("Becomes ")) continue;
+								// property is replaced
+								else if (li.ChildNodes.Count >= 3)
+								{
+									int props = data.Properties.Count;
+									// mimic adding the enhancement being replaced in order to get a copy of it
+									ParseEnhancement(data, li.ChildNodes[0]);
+									int count = data.Properties.Count;
+									List<ItemProperty> op = new List<ItemProperty>();
+									// remove the new copies and store in a separate list
+									for (int i = 0; i < count - props; i++)
+									{
+										op.Add(data.Properties[data.Properties.Count - 1]);
+										data.Properties.RemoveAt(data.Properties.Count - 1);
+									}
+									// remove the original properties that match the copies made
+									foreach (ItemProperty ip in op)
+									{
+										ItemProperty cp = data.Properties.Find(p => p.Property == ip.Property && p.Type == ip.Type && p.Value == ip.Value);
+										data.Properties.Remove(cp);
+									}
+									// add the new enhancement
+									if (li.ChildNodes.Count <= 4) ParseEnhancement(data, li.ChildNodes[2]);
+									// this should catch the special case of a spell being parsed
+									else ParseEnhancement(data, li.ChildNodes[3]);
+								}
 							}
 						}
 					}
@@ -1113,7 +1666,7 @@ namespace DDOWikiParser
 							}
 						}
 					}
-					else if (e.InnerXml.StartsWith("Against the Slave Lords Set Bonus"))
+					else if (e.InnerText.StartsWith("Against the Slave Lords Set Bonus"))
 					{
 						options = new List<ItemProperty>();
 						string d = data.Name.StartsWith("Legendary ") ? "Legendary " : "";
@@ -1216,12 +1769,6 @@ namespace DDOWikiParser
 				else if (r.InnerText.StartsWith("Minimum Level"))
 				{
 					ParseMinimumLevel(data, r);
-				}
-				else if (r.InnerText.StartsWith("Shield Bonus"))
-				{
-					string a = r.InnerText.Substring(12).Replace("+", "").Replace("\n", "");
-					int.TryParse(a, out int ac);
-					data.AddProperty("Armor Class", "shield", ac, null);
 				}
 				else if (r.InnerText.StartsWith("Enhancements"))
 				{
@@ -1560,6 +2107,11 @@ namespace DDOWikiParser
 			file.Close();
 
 			System.Diagnostics.Process.Start(filename);
+		}
+
+		private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			Close();
 		}
 	}
 }
