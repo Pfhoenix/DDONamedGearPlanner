@@ -5,167 +5,226 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDONamedGearPlanner"
         mc:Ignorable="d"
+		x:Name="ddoplanner"
         Title="DDO Named Gear Planner" Height="700" Width="800" ResizeMode="CanMinimize">
 	
 	<Window.Resources>
-		<ContextMenu x:Key="cmFilterBody">
-			<MenuItem Header="Cloth" IsCheckable="True"/>
-			<MenuItem Header="Light" IsCheckable="True"/>
-			<MenuItem Header="Medium" IsCheckable="True"/>
-			<MenuItem Header="Heavy" IsCheckable="True"/>
-			<MenuItem Header="Docents" IsCheckable="True"/>
-		</ContextMenu>
+		<ResourceDictionary>
+			<Style TargetType="{x:Type ToolTip}">
+				<Style.Triggers>
+					<Trigger Property="Content" Value="{x:Null}">
+						<Setter Property="Visibility" Value="Collapsed"/>
+					</Trigger>
+				</Style.Triggers>
+			</Style>
+		</ResourceDictionary>
 	</Window.Resources>
 	
 	<DockPanel Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+		<Menu DockPanel.Dock="Top">
+			<MenuItem Header="_File">
+				<MenuItem Header="_New Gear Set" Command="New" />
+				<MenuItem Header="_Load Gear Set" Command="Open" />
+				<MenuItem Header="_Save Gear Set" Command="Save" />
+				<MenuItem Header="Save Gear Set _As" Command="SaveAs" />
+				<Separator />
+				<MenuItem Header="E_xit" Click="ExitMenuItem_Click" />
+			</MenuItem>
+		</Menu>
 		<StackPanel DockPanel.Dock="Left" Width="187" HorizontalAlignment="Left">
-			<Grid>
-				<DockPanel>
-					<Menu DockPanel.Dock="Top">
-						<MenuItem Header="_File">
-							<MenuItem Header="_New Gear Set" Command="New" />
-							<MenuItem Header="_Load Gear Set" Command="Open" />
-							<MenuItem Header="_Save Gear Set" Command="Save" />
-							<MenuItem Header="Save Gear Set _As" Command="SaveAs" />
-							<Separator />
-							<MenuItem Header="E_xit" Click="MenuItem_Click" />
-						</MenuItem>
-					</Menu>
-					<GroupBox x:Name="groupBox" Header="Filters by slot" Height="194" VerticalAlignment="Top" Width="187" HorizontalAlignment="Left">
-						<Grid>
-							<Grid.RowDefinitions>
-								<RowDefinition/>
-								<RowDefinition/>
-								<RowDefinition/>
-								<RowDefinition/>
-							</Grid.RowDefinitions>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition/>
-								<ColumnDefinition/>
-								<ColumnDefinition/>
-								<ColumnDefinition/>
-							</Grid.ColumnDefinitions>
+			<GroupBox x:Name="groupBox" Header="Filters by slot" Height="194" VerticalAlignment="Top" Width="187" HorizontalAlignment="Left">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition/>
+						<RowDefinition/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
 
-							<ToggleButton Grid.Column="0" Grid.Row="0" Name="tbFilterBack" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" Width="40" Height="40" ToolTip="Back">
-								<Image Source="Resources/slot_bg_back.png" Width="32" Height="32"/>
-							</ToggleButton>
-							<ToggleButton Grid.Column="1" Grid.Row="0" Name="tbFilterBody" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Body" MouseDoubleClick="TbFilterBody_MouseDoubleClick">
-								<ToggleButton.ContextMenu>
-									<ContextMenu>
-										<MenuItem Name="cmiFilterBodyCloth" Header="Cloth" IsCheckable="True"/>
-										<MenuItem Name="cmiFilterBodyLight" Header="Light" IsCheckable="True"/>
-										<MenuItem Name="cmiFilterBodyMedium" Header="Medium" IsCheckable="True"/>
-										<MenuItem Name="cmiFilterBodyHeavy" Header="Heavy" IsCheckable="True"/>
-										<MenuItem Name="cmiFilterBodyDocent" Header="Docents" IsCheckable="True"/>
-									</ContextMenu>
-								</ToggleButton.ContextMenu>
-								<Image Source="Resources/slot_bg_body.png" Width="32" Height="32"/>
-							</ToggleButton>
-							<ToggleButton Grid.Column="2" Grid.Row="0" Name="tbFilterEye" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Eye">
-								<Image Source="Resources/slot_bg_Eye.png" Width="32" Height="32"/>
-							</ToggleButton>
-							<ToggleButton Grid.Column="3" Grid.Row="0" Name="tbFilterFeet" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Feet">
-								<Image Source="Resources/slot_bg_feet.png" Width="32" Height="32"/>
-							</ToggleButton>
-							<ToggleButton Grid.Column="0" Grid.Row="1" Name="tbFilterFinger" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Finger">
-								<Image Source="Resources/slot_bg_finger1.png" Width="32" Height="32"/>
-							</ToggleButton>
-							<ToggleButton Grid.Column="1" Grid.Row="1" Name="tbFilterHand" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Hand">
-								<Image Source="Resources/slot_bg_hand.png" Width="32" Height="32"/>
-							</ToggleButton>
-							<ToggleButton Grid.Column="2" Grid.Row="1" Name="tbFilterHead" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Head">
-								<Image Source="Resources/slot_bg_head.png" Width="32" Height="32"/>
-							</ToggleButton>
-							<ToggleButton Grid.Column="3" Grid.Row="1" Name="tbFilterNeck" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Neck">
-								<Image Source="Resources/slot_bg_neck.png" Width="32" Height="32"/>
-							</ToggleButton>
-							<ToggleButton Grid.Column="0" Grid.Row="2" Name="tbFilterTrinket" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Trinket">
-								<Image Source="Resources/slot_bg_trinket.png" Width="32" Height="32"/>
-							</ToggleButton>
-							<ToggleButton Grid.Column="1" Grid.Row="2" Name="tbFilterWaist" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Waist">
-								<Image Source="Resources/slot_bg_waist.png" Width="32" Height="32"/>
-							</ToggleButton>
-							<ToggleButton Grid.Column="2" Grid.Row="2" Name="tbFilterWrist" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Wrist">
-								<Image Source="Resources/slot_bg_wrist.png" Width="32" Height="32"/>
-							</ToggleButton>
-							<ToggleButton Grid.Column="3" Grid.Row="2" Name="tbFilterWeapon" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Weapon">
-								<Image Source="Resources/slot_bg_weapon.png" Width="32" Height="32"/>
-								<ToggleButton.ContextMenu>
-									<ContextMenu>
-										<MenuItem Name="cmiFilterWeaponSimple" Header="Simple" Mouse.PreviewMouseUp="FilterMenuItem_MouseLeftButtonUp">
-											<MenuItem Name="cmiFilterWeaponSimpleClub" Header="Club" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponSimpleQuarterstaff" Header="Quarterstaff" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponSimpleDagger" Header="Dagger" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponSimpleSickle" Header="Sickle" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponSimpleLightMace" Header="Light Mace" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponSimpleHeavyMace" Header="Heavy Mace" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponSimpleMorningstar" Header="Morningstar" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponSimpleLightXbow" Header="Light Crossbow" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponSimpleHeavyXbow" Header="Heavy Crossbow" IsCheckable="True"/>
-										</MenuItem>
-										<MenuItem Header="Martial" Mouse.PreviewMouseUp="FilterMenuItem_MouseLeftButtonUp">
-											<MenuItem Name="cmiFilterWeaponMartialHandaxe" Header="Handaxe" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialBattleAxe" Header="Battle Axe" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialGreatAxe" Header="Great Axe" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialKukri" Header="Kukri" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialShortSword" Header="Short Sword" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialLongSword" Header="Long Sword" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialGreatSword" Header="Great Sword" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialScimitar" Header="Scimitar" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialFalchion" Header="Falchion" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialRapier" Header="Rapier" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialLightPick" Header="Light Pick" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialHeavyPick" Header="Heavy Pick" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialLightHammer" Header="Light Hammer" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialWarHammer" Header="War Hammer" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialMaul" Header="Maul" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialGreatClub" Header="Great Club" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialShortBow" Header="Short Bow" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponMartialLongBow" Header="Long Bow" IsCheckable="True"/>
-										</MenuItem>
-										<MenuItem Header="Exotic" Mouse.PreviewMouseUp="FilterMenuItem_MouseLeftButtonUp">
-											<MenuItem Name="cmiFilterWeaponExoticBastardSword" Header="Bastard Sword" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponExoticDwarvenWarAxe" Header="Dwarven War Axe" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponExoticKama" Header="Kama" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponExoticKhopesh" Header="Khopesh" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponExoticHandwraps" Header="Handwraps" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponExoticRuneArm" Header="RuneArm" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponExoticGreatXbow" Header="Great Crossbow" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponExoticRepeatLightXbow" Header="Repeating Light Crossbow" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponExoticRepeatHeavyXbow" Header="Repeating Heavy Crossbow" IsCheckable="True"/>
-										</MenuItem>
-										<MenuItem Header="Throwing" Mouse.PreviewMouseUp="FilterMenuItem_MouseLeftButtonUp">
-											<MenuItem Name="cmiFilterWeaponThrowingAxe" Header="Throwing Axe" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponThrowingDagger" Header="Throwing Dagger" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponThrowingHammer" Header="Throwing Hammer" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponThrowingDart" Header="Dart" IsCheckable="True"/>
-											<MenuItem Name="cmiFilterWeaponThrowingShuriken" Header="Shuriken" IsCheckable="True"/>
-										</MenuItem>
-									</ContextMenu>
-								</ToggleButton.ContextMenu>
-							</ToggleButton>
-							<ToggleButton Grid.Column="0" Grid.Row="3" Name="tbFilterOffhand" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Offhand" MouseDoubleClick="TbFilterOffhand_MouseDoubleClick">
-								<Image Source="Resources/slot_bg_offhand.png" Width="32" Height="32"/>
-								<ToggleButton.ContextMenu>
-									<ContextMenu>
-										<MenuItem Name="cmiFilterOffhandBuckler" Header="Bucklers" IsCheckable="True"/>
-										<MenuItem Name="cmiFilterOffhandSmall" Header="Small Shields" IsCheckable="True"/>
-										<MenuItem Name="cmiFilterOffhandLarge" Header="Large Shields" IsCheckable="True"/>
-										<MenuItem Name="cmiFilterOffhandTower" Header="Tower Shields" IsCheckable="True"/>
-										<MenuItem Name="cmiFilterOffhandOrb" Header="Orbs" IsCheckable="True"/>
-										<MenuItem Name="cmiFilterOffhandWeapon" Header="Weapons" IsCheckable="True"/>
-									</ContextMenu>
-								</ToggleButton.ContextMenu>
-							</ToggleButton>
-							<Button Grid.Column="1" Grid.Row="3" Name="btnFilterAll" VerticalAlignment="Center" Width="40" Height="20" Click="BtnFilterAll_Click">All</Button>
-							<Button Grid.Column="2" Grid.Row="3" Name="btnFilterClear" VerticalAlignment="Center" Width="40" Height="20" Click="BtnFilterClear_Click">Clear</Button>
-							<Button Grid.Column="3" Grid.Row="3" Name="btnFilterApply" VerticalAlignment="Center" Width="40" Height="20" Click="BtnFilterApply_Click">Apply</Button>
-						</Grid>
-					</GroupBox>
-				</DockPanel>
-			</Grid>
+					<ToggleButton Grid.Column="0" Grid.Row="0" Name="tbFilterBack" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" Width="40" Height="40" ToolTip="Back" IsChecked="True">
+						<Image Source="Resources/slot_bg_back.png" Width="32" Height="32"/>
+					</ToggleButton>
+					<ToggleButton Grid.Column="1" Grid.Row="0" Name="tbFilterBody" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Body" MouseDoubleClick="TbFilterBody_MouseDoubleClick" IsChecked="True">
+						<ToggleButton.ContextMenu>
+							<ContextMenu>
+								<MenuItem Name="cmiFilterBodyCloth" Header="Cloth" IsCheckable="True" IsChecked="True"/>
+								<MenuItem Name="cmiFilterBodyLight" Header="Light" IsCheckable="True" IsChecked="True"/>
+								<MenuItem Name="cmiFilterBodyMedium" Header="Medium" IsCheckable="True" IsChecked="True"/>
+								<MenuItem Name="cmiFilterBodyHeavy" Header="Heavy" IsCheckable="True" IsChecked="True"/>
+								<MenuItem Name="cmiFilterBodyDocent" Header="Docents" IsCheckable="True" IsChecked="True"/>
+							</ContextMenu>
+						</ToggleButton.ContextMenu>
+						<Image Source="Resources/slot_bg_body.png" Width="32" Height="32"/>
+					</ToggleButton>
+					<ToggleButton Grid.Column="2" Grid.Row="0" Name="tbFilterEye" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Eye" IsChecked="True">
+						<Image Source="Resources/slot_bg_Eye.png" Width="32" Height="32"/>
+					</ToggleButton>
+					<ToggleButton Grid.Column="3" Grid.Row="0" Name="tbFilterFeet" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Feet" IsChecked="True">
+						<Image Source="Resources/slot_bg_feet.png" Width="32" Height="32"/>
+					</ToggleButton>
+					<ToggleButton Grid.Column="0" Grid.Row="1" Name="tbFilterFinger" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Finger" IsChecked="True">
+						<Image Source="Resources/slot_bg_finger1.png" Width="32" Height="32"/>
+					</ToggleButton>
+					<ToggleButton Grid.Column="1" Grid.Row="1" Name="tbFilterHand" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Hand" IsChecked="True">
+						<Image Source="Resources/slot_bg_hand.png" Width="32" Height="32"/>
+					</ToggleButton>
+					<ToggleButton Grid.Column="2" Grid.Row="1" Name="tbFilterHead" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Head" IsChecked="True">
+						<Image Source="Resources/slot_bg_head.png" Width="32" Height="32"/>
+					</ToggleButton>
+					<ToggleButton Grid.Column="3" Grid.Row="1" Name="tbFilterNeck" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Neck" IsChecked="True">
+						<Image Source="Resources/slot_bg_neck.png" Width="32" Height="32"/>
+					</ToggleButton>
+					<ToggleButton Grid.Column="0" Grid.Row="2" Name="tbFilterTrinket" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Trinket" IsChecked="True">
+						<Image Source="Resources/slot_bg_trinket.png" Width="32" Height="32"/>
+					</ToggleButton>
+					<ToggleButton Grid.Column="1" Grid.Row="2" Name="tbFilterWaist" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Waist" IsChecked="True">
+						<Image Source="Resources/slot_bg_waist.png" Width="32" Height="32"/>
+					</ToggleButton>
+					<ToggleButton Grid.Column="2" Grid.Row="2" Name="tbFilterWrist" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Wrist" IsChecked="True">
+						<Image Source="Resources/slot_bg_wrist.png" Width="32" Height="32"/>
+					</ToggleButton>
+					<ToggleButton Grid.Column="3" Grid.Row="2" Name="tbFilterWeapon" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Weapon" IsChecked="True">
+						<Image Source="Resources/slot_bg_weapon.png" Width="32" Height="32"/>
+						<ToggleButton.ContextMenu>
+							<ContextMenu>
+								<MenuItem Name="cmiFilterWeaponSimple" Header="Simple" Mouse.PreviewMouseUp="FilterMenuItem_MouseLeftButtonUp" IsChecked="True">
+									<MenuItem Name="cmiFilterWeaponSimpleClub" Header="Club" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponSimpleQuarterstaff" Header="Quarterstaff" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponSimpleDagger" Header="Dagger" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponSimpleSickle" Header="Sickle" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponSimpleLightMace" Header="Light Mace" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponSimpleHeavyMace" Header="Heavy Mace" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponSimpleMorningstar" Header="Morningstar" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponSimpleLightXbow" Header="Light Crossbow" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponSimpleHeavyXbow" Header="Heavy Crossbow" IsCheckable="True" IsChecked="True"/>
+								</MenuItem>
+								<MenuItem Header="Martial" Mouse.PreviewMouseUp="FilterMenuItem_MouseLeftButtonUp" IsChecked="True">
+									<MenuItem Name="cmiFilterWeaponMartialHandaxe" Header="Handaxe" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialBattleAxe" Header="Battle Axe" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialGreatAxe" Header="Great Axe" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialKukri" Header="Kukri" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialShortSword" Header="Short Sword" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialLongSword" Header="Long Sword" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialGreatSword" Header="Great Sword" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialScimitar" Header="Scimitar" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialFalchion" Header="Falchion" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialRapier" Header="Rapier" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialLightPick" Header="Light Pick" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialHeavyPick" Header="Heavy Pick" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialLightHammer" Header="Light Hammer" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialWarHammer" Header="War Hammer" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialMaul" Header="Maul" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialGreatClub" Header="Great Club" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialShortBow" Header="Short Bow" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponMartialLongBow" Header="Long Bow" IsCheckable="True" IsChecked="True"/>
+								</MenuItem>
+								<MenuItem Header="Exotic" Mouse.PreviewMouseUp="FilterMenuItem_MouseLeftButtonUp" IsChecked="True">
+									<MenuItem Name="cmiFilterWeaponExoticBastardSword" Header="Bastard Sword" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponExoticDwarvenWarAxe" Header="Dwarven War Axe" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponExoticKama" Header="Kama" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponExoticKhopesh" Header="Khopesh" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponExoticHandwraps" Header="Handwraps" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponExoticRuneArm" Header="RuneArm" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponExoticGreatXbow" Header="Great Crossbow" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponExoticRepeatLightXbow" Header="Repeating Light Crossbow" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponExoticRepeatHeavyXbow" Header="Repeating Heavy Crossbow" IsCheckable="True" IsChecked="True"/>
+								</MenuItem>
+								<MenuItem Header="Throwing" Mouse.PreviewMouseUp="FilterMenuItem_MouseLeftButtonUp" IsChecked="True">
+									<MenuItem Name="cmiFilterWeaponThrowingAxe" Header="Throwing Axe" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponThrowingDagger" Header="Throwing Dagger" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponThrowingHammer" Header="Throwing Hammer" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponThrowingDart" Header="Dart" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponThrowingShuriken" Header="Shuriken" IsCheckable="True" IsChecked="True"/>
+								</MenuItem>
+							</ContextMenu>
+						</ToggleButton.ContextMenu>
+					</ToggleButton>
+					<ToggleButton Grid.Column="0" Grid.Row="3" Name="tbFilterOffhand" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Offhand" MouseDoubleClick="TbFilterOffhand_MouseDoubleClick" IsChecked="True">
+						<Image Source="Resources/slot_bg_offhand.png" Width="32" Height="32"/>
+						<ToggleButton.ContextMenu>
+							<ContextMenu>
+								<MenuItem Name="cmiFilterOffhandBuckler" Header="Bucklers" IsCheckable="True" IsChecked="True"/>
+								<MenuItem Name="cmiFilterOffhandSmall" Header="Small Shields" IsCheckable="True" IsChecked="True"/>
+								<MenuItem Name="cmiFilterOffhandLarge" Header="Large Shields" IsCheckable="True" IsChecked="True"/>
+								<MenuItem Name="cmiFilterOffhandTower" Header="Tower Shields" IsCheckable="True" IsChecked="True"/>
+								<MenuItem Name="cmiFilterOffhandOrb" Header="Orbs" IsCheckable="True" IsChecked="True"/>
+							</ContextMenu>
+						</ToggleButton.ContextMenu>
+					</ToggleButton>
+					<Button Grid.Column="1" Grid.Row="3" Name="btnFilterAll" VerticalAlignment="Center" Width="40" Height="20" Click="BtnFilterAll_Click">All</Button>
+					<Button Grid.Column="2" Grid.Row="3" Name="btnFilterClear" VerticalAlignment="Center" Width="40" Height="20" Click="BtnFilterClear_Click">Clear</Button>
+					<Button Grid.Column="3" Grid.Row="3" Name="btnFilterApply" VerticalAlignment="Center" Width="40" Height="20" Click="BtnFilterApply_Click">Apply</Button>
+				</Grid>
+			</GroupBox>
 			<TextBox Name="txtSearchBox" Margin="0,2,0,0" TextChanged="TxtSearchBox_TextChanged"/>
-			<ListBox Name="lbItemList" Height="429" MouseDoubleClick="LbItemList_MouseDoubleClick"/>
+			<ListView Name="lvItemList" Height="429" MouseUp="LvItemList_MouseUp" MouseLeave="LvItemList_MouseLeave" MouseDoubleClick="LvItemList_MouseDoubleClick" SelectionChanged="LvItemList_SelectionChanged">
+				<ListView.View>
+					<GridView>
+						<GridViewColumn Header="Name" Width="120">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Name}">
+										<TextBlock.ToolTip>
+											<TextBlock Text="{Binding Name}"/>
+										</TextBlock.ToolTip>
+								</TextBlock>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+						<GridViewColumn Header="Slot" Width="61" DisplayMemberBinding="{Binding Slot}"/>
+					</GridView>
+				</ListView.View>
+				<ListView.ItemContainerStyle>
+					<Style TargetType="ListViewItem">
+						<EventSetter Event="PreviewMouseRightButtonDown" Handler="ListViewItem_PreviewMouseRightButtonDown" />
+					</Style>
+				</ListView.ItemContainerStyle>
+			</ListView>
 		</StackPanel>
+		<StackPanel DockPanel.Dock="Left" Width="250" HorizontalAlignment="Left" Margin="3,0,0,0">
+			<Grid VerticalAlignment="Top">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="90"/>
+					<RowDefinition Height="90"/>
+					<RowDefinition Height="90"/>
+					<RowDefinition Height="90"/>
+					<RowDefinition Height="90"/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<local:EquipmentSlotControl Grid.Column="0" Grid.Row="0" x:Name="EyeSlot" Slot="Eye" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+				<local:EquipmentSlotControl Grid.Column="1" Grid.Row="0" x:Name="HeadSlot" Slot="Head" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<local:EquipmentSlotControl Grid.Column="2" Grid.Row="0" x:Name="NeckSlot" Slot="Neck" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<local:EquipmentSlotControl Grid.Column="3" Grid.Row="0" x:Name="TrinketSlot" Slot="Trinket" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+				<local:EquipmentSlotControl Grid.Column="0" Grid.Row="1" x:Name="BodySlot" Slot="Body" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2">
+					<Button>Gear Set Filters</Button>
+					<Button>Slot Filters</Button>
+					<Button>Import Item Set</Button>
+				</StackPanel>
+				<local:EquipmentSlotControl Grid.Column="3" Grid.Row="1" x:Name="BackSlot" Slot="Back" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<local:EquipmentSlotControl Grid.Column="0" Grid.Row="2" x:Name="WristSlot" Slot="Wrist" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<local:EquipmentSlotControl Grid.Column="3" Grid.Row="2" x:Name="WaistSlot" Slot="Waist" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<local:EquipmentSlotControl Grid.Column="0" Grid.Row="3" x:Name="Finger1Slot" Slot="Finger1" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+				<local:EquipmentSlotControl Grid.Column="1" Grid.Row="3" x:Name="FeetSlot" Slot="Feet" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<local:EquipmentSlotControl Grid.Column="2" Grid.Row="3" x:Name="HandSlot" Slot="Hand" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+				<local:EquipmentSlotControl Grid.Column="3" Grid.Row="3" x:Name="Finger2Slot" Slot="Finger2" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+				<local:EquipmentSlotControl Grid.Column="0" Grid.Row="4" x:Name="WeaponSlot" Slot="Weapon" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+				<local:EquipmentSlotControl Grid.Column="1" Grid.Row="4" x:Name="OffhandSlot" Slot="Offhand" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+			</Grid>
+		</StackPanel>
+		<TabControl Name="tcPropertyAreas">
+			<TabItem Name="tciGearSet" Header="Gear Set"/>
+		</TabControl>
 	</DockPanel>
 </Window>

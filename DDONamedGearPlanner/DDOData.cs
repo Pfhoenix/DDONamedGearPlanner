@@ -4,6 +4,24 @@ using System.Linq;
 
 namespace DDONamedGearPlanner
 {
+	public enum EquipmentSlotType
+	{
+		Back,
+		Body,
+		Eye,
+		Feet,
+		Finger1,
+		Finger2,
+		Hand,
+		Head,
+		Neck,
+		Offhand,
+		Trinket,
+		Waist,
+		Weapon,
+		Wrist
+	}
+
 	[Flags]
 	public enum SlotType
 	{
@@ -65,9 +83,9 @@ namespace DDONamedGearPlanner
 	[Serializable]
 	public class DDOItemData
 	{
-		public string Name;
+		public string Name { get; set; }
 		public string WikiURL;
-		public SlotType Slot;
+		public SlotType Slot { get; set; }
 		public int Category;
 		public List<ItemProperty> Properties = new List<ItemProperty>();
 
@@ -6843,6 +6861,232 @@ namespace DDONamedGearPlanner
 								Property = "Universal Spell Power",
 								Type = "artifact",
 								Value = 50
+							}
+						}
+					}
+				}
+			});
+			#endregion
+
+			// these aren't really sets, but the easiest way to model them is by defining them as sets
+			// that are options for the items that can have them
+			#region Thunder-Forged abilities
+			Sets.Add("Shadow Caster", new DDOItemSet
+			{
+				Name = "Shadow Caster",
+				WikiURL = "",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 1,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Concentration",
+								Type = "profane",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell DCs",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell DCs",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell DCs",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell DCs",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Force Spell DCs",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Light Spell DCs",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell DCs",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Poison Spell DCs",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Spell DCs",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Spell DCs",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sonic Spell DCs",
+								Type = "profane",
+								Value = 1
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Shadow Disciple", new DDOItemSet
+			{
+				Name = "Shadow Disciple",
+				WikiURL = "",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 1,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Concentration",
+								Type = "profane",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Tactical DCs",
+								Type = "profane",
+								Value = 1
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Shadow Killer", new DDOItemSet
+			{
+				Name = "Shadow Killer",
+				WikiURL = "",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 1,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sneak Attack Damage",
+								Type = "profane",
+								Value = 12 // this is really 2d6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Reflex",
+								Type = "profane",
+								Value = 1
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Shadow Striker", new DDOItemSet
+			{
+				Name = "Shadow Striker",
+				WikiURL = "",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 1,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Doublestrike",
+								Type = "profane",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Attack Speed",
+								Type = "enhancement",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Attack Speed",
+								Type = "enhancement",
+								Value = 20
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Shadow Guardian", new DDOItemSet
+			{
+				Name = "Shadow Guardian",
+				WikiURL = "",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 1,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Damage Reduction",
+								Type = "epic",
+								Value = 60
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Shadow Construct", new DDOItemSet
+			{
+				Name = "Shadow Construct",
+				WikiURL = "",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 1,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Amplification",
+								Type = "profane",
+								Value = 10
 							}
 						}
 					}

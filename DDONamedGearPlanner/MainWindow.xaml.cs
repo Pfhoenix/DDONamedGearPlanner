@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -22,8 +23,10 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		DDODataset dataset;
-		List<string> ItemsInList = new List<string>();
+		public static DDODataset dataset;
+
+		EquipmentSlotControl[] EquipmentSlots = new EquipmentSlotControl[14];
+		EquipmentSlotControl SelectedESC;
 
 		public MainWindow()
 		{
@@ -35,8 +38,9 @@ namespace DDONamedGearPlanner
 				return;
 			}
 
-			lbItemList.ItemsSource = ItemsInList;
+			BtnFilterApply_Click(null, null);
 
+			lvItemList.ItemsSource = dataset.Items;
 			SetFilter(CustomFilter);
 		}
 
@@ -61,30 +65,106 @@ namespace DDONamedGearPlanner
 			}
 		}
 
+		public void RegisterEquipmentSlot(EquipmentSlotControl esc)
+		{
+			EquipmentSlots[(int)esc.Slot] = esc;
+			esc.EquipmentSlotClicked += EquipmentSlotClicked;
+			esc.EquipmentSlotCleared += EquipmentSlotCleared;
+		}
+
 		public void SetFilter(Predicate<object> filter)
 		{
-			if (lbItemList.Items.CurrentItem != null && !filter(lbItemList.Items.CurrentItem))
+			if (lvItemList.Items.CurrentItem != null && !filter(lvItemList.Items.CurrentItem))
 			{
-				lbItemList.SelectedItem = null;
+				lvItemList.SelectedItem = null;
 			}
-			lbItemList.Items.Filter = filter;
-			if (lbItemList.Items.CurrentItem == null && !lbItemList.Items.IsEmpty)
-				lbItemList.Items.MoveCurrentToFirst();
+			lvItemList.Items.Filter = filter;
+			if (lvItemList.Items.CurrentItem == null && !lvItemList.Items.IsEmpty)
+				lvItemList.Items.MoveCurrentToFirst();
 		}
 
 		private bool CustomFilter(object obj)
 		{
-			if (string.IsNullOrWhiteSpace(txtSearchBox.Text))
+			DDOItemData item = obj as DDOItemData;
+			if ((ItemFilterSettings.Slots & item.Slot) == 0) return false;
+			if (item.Slot == SlotType.Body)
 			{
-				return true;
+				if ((ArmorCategory)item.Category == ArmorCategory.Cloth && !ItemFilterSettings.BodyCloth) return false;
+				if ((ArmorCategory)item.Category == ArmorCategory.Light && !ItemFilterSettings.BodyLight) return false;
+				if ((ArmorCategory)item.Category == ArmorCategory.Medium && !ItemFilterSettings.BodyMedium) return false;
+				if ((ArmorCategory)item.Category == ArmorCategory.Heavy && !ItemFilterSettings.BodyHeavy) return false;
+				if ((ArmorCategory)item.Category == ArmorCategory.Docent && !ItemFilterSettings.BodyDocent) return false;
 			}
-			else
+			else if (item.Slot == SlotType.Offhand)
 			{
-				return obj.ToString().IndexOf(txtSearchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0;
+				if ((OffhandCategory)item.Category == OffhandCategory.Buckler && !ItemFilterSettings.OffhandShieldBuckler) return false;
+				if ((OffhandCategory)item.Category == OffhandCategory.Small && !ItemFilterSettings.OffhandShieldSmall) return false;
+				if ((OffhandCategory)item.Category == OffhandCategory.Large && !ItemFilterSettings.OffhandShieldLarge) return false;
+				if ((OffhandCategory)item.Category == OffhandCategory.Tower && !ItemFilterSettings.OffhandShieldTower) return false;
+				if ((OffhandCategory)item.Category == OffhandCategory.Orb && !ItemFilterSettings.OffhandShieldOrb) return false;
 			}
+			else if (item.Slot == SlotType.Weapon)
+			{
+				if ((WeaponCategory)item.Category == WeaponCategory.Simple)
+				{
+					if (ItemFilterSettings.WeaponSimpleClub && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Club") return false;
+					if (ItemFilterSettings.WeaponSimpleDagger && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Dagger") return false;
+					if (ItemFilterSettings.WeaponSimpleHeavyMace && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Heavy Mace") return false;
+					if (ItemFilterSettings.WeaponSimpleHeavyXbow && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Heavy Crossbow") return false;
+					if (ItemFilterSettings.WeaponSimpleLightMace && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Light Mace") return false;
+					if (ItemFilterSettings.WeaponSimpleLightXbow && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Light Crossbow") return false;
+					if (ItemFilterSettings.WeaponSimpleMorningstar && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Morningstar") return false;
+					if (ItemFilterSettings.WeaponSimpleQuarterstaff && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Quarterstaff") return false;
+					if (ItemFilterSettings.WeaponSimpleSickle && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Sickle") return false;
+				}
+				else if ((WeaponCategory)item.Category == WeaponCategory.Martial)
+				{
+					if (ItemFilterSettings.WeaponMartialBattleAxe && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Battle Axe") return false;
+					if (ItemFilterSettings.WeaponMartialFalchion && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Falchion") return false;
+					if (ItemFilterSettings.WeaponMartialGreatAxe && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Great Axe") return false;
+					if (ItemFilterSettings.WeaponMartialGreatClub && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Great Club") return false;
+					if (ItemFilterSettings.WeaponMartialGreatSword && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Great Sword") return false;
+					if (ItemFilterSettings.WeaponMartialHandaxe && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Hand Axe") return false;
+					if (ItemFilterSettings.WeaponMartialHeavyPick && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Heavy Pick") return false;
+					if (ItemFilterSettings.WeaponMartialKukri && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Kukri") return false;
+					if (ItemFilterSettings.WeaponMartialLightHammer && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Light Hammer") return false;
+					if (ItemFilterSettings.WeaponMartialLightPick && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Light Pick") return false;
+					if (ItemFilterSettings.WeaponMartialLongBow && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Long Bow") return false;
+					if (ItemFilterSettings.WeaponMartialLongSword && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Long Sword") return false;
+					if (ItemFilterSettings.WeaponMartialMaul && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Maul") return false;
+					if (ItemFilterSettings.WeaponMartialRapier && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Rapier") return false;
+					if (ItemFilterSettings.WeaponMartialScimitar && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Scimitar") return false;
+					if (ItemFilterSettings.WeaponMartialShortBow && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Short Bow") return false;
+					if (ItemFilterSettings.WeaponMartialShortSword && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Short Sword") return false;
+					if (ItemFilterSettings.WeaponMartialWarHammer && item.Properties.Find(i => i.Property == "Weapon Type").Type != "War Hammer") return false;
+				}
+				else if ((WeaponCategory)item.Category == WeaponCategory.Exotic)
+				{
+					if (ItemFilterSettings.WeaponExoticBastardSword && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Bastard Sword") return false;
+					if (ItemFilterSettings.WeaponExoticDwarvenWarAxe && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Dwarven War Axe") return false;
+					if (ItemFilterSettings.WeaponExoticGreatXbow && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Great Crossbow") return false;
+					if (ItemFilterSettings.WeaponExoticHandwraps && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Handwraps") return false;
+					if (ItemFilterSettings.WeaponExoticKama && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Kama") return false;
+					if (ItemFilterSettings.WeaponExoticKhopesh && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Khopesh") return false;
+					if (ItemFilterSettings.WeaponExoticRepeatHeavyXbow && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Repeating Heavy Crossbow") return false;
+					if (ItemFilterSettings.WeaponExoticRepeatLightXbow && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Repeating Light Crossbow") return false;
+					if (ItemFilterSettings.WeaponExoticRuneArm && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Rune Arm") return false;
+				}
+				else if ((WeaponCategory)item.Category == WeaponCategory.Throwing)
+				{
+					if (ItemFilterSettings.WeaponThrowingAxe && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Throwing Axe") return false;
+					if (ItemFilterSettings.WeaponThrowingDagger && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Throwing Dagger") return false;
+					if (ItemFilterSettings.WeaponThrowingDart && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Dart") return false;
+					if (ItemFilterSettings.WeaponThrowingHammer && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Throwing Hammer") return false;
+					if (ItemFilterSettings.WeaponThrowingShuriken && item.Properties.Find(i => i.Property == "Weapon Type").Type != "Shuriken") return false;
+				}
+			}
+
+			if (string.IsNullOrWhiteSpace(txtSearchBox.Text)) return true;
+			else return item.Name.IndexOf(txtSearchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 
-		private void MenuItem_Click(object sender, RoutedEventArgs e)
+		private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			Close();
 		}
@@ -101,7 +181,6 @@ namespace DDONamedGearPlanner
 
 		private void BtnFilterApply_Click(object sender, RoutedEventArgs e)
 		{
-			ItemsInList.Clear();
 			txtSearchBox.Text = null;
 			ItemFilterSettings.Slots = SlotType.None;
 			ItemFilterSettings.Slots |= tbFilterBack.IsChecked.Value ? SlotType.Back : 0;
@@ -123,7 +202,6 @@ namespace DDONamedGearPlanner
 			ItemFilterSettings.OffhandShieldLarge = tbFilterOffhand.IsChecked.Value ? cmiFilterOffhandLarge.IsChecked : false;
 			ItemFilterSettings.OffhandShieldTower = tbFilterOffhand.IsChecked.Value ? cmiFilterOffhandTower.IsChecked : false;
 			ItemFilterSettings.OffhandShieldOrb = tbFilterOffhand.IsChecked.Value ? cmiFilterOffhandOrb.IsChecked : false;
-			ItemFilterSettings.OffhandWeapon = tbFilterOffhand.IsChecked.Value ? cmiFilterOffhandWeapon.IsChecked : false;
 			ItemFilterSettings.Slots |= tbFilterTrinket.IsChecked.Value ? SlotType.Trinket : 0;
 			ItemFilterSettings.Slots |= tbFilterWaist.IsChecked.Value ? SlotType.Waist : 0;
 			ItemFilterSettings.Slots |= tbFilterWeapon.IsChecked.Value ? SlotType.Weapon : 0;
@@ -169,23 +247,13 @@ namespace DDONamedGearPlanner
 			ItemFilterSettings.WeaponThrowingDart = tbFilterWeapon.IsChecked.Value ? cmiFilterWeaponThrowingDart.IsChecked : false;
 			ItemFilterSettings.WeaponThrowingShuriken = tbFilterWeapon.IsChecked.Value ? cmiFilterWeaponThrowingShuriken.IsChecked : false;
 			ItemFilterSettings.Slots |= tbFilterWrist.IsChecked.Value ? SlotType.Wrist : 0;
+
+			if (sender != null) CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
 		}
 
 		private void TxtSearchBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			CollectionViewSource.GetDefaultView(lbItemList.ItemsSource).Refresh();
-		}
-
-		private void LbItemList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			// validate user double-clicked over an item
-
-			// get the slot the item belongs in
-			//  - special case check for an open finger slot
-			//  - if both finger slots are full, check for one not locked
-
-			// check if slot is filled and locked
-			//  - display warning and return
+			CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
 		}
 
 		private void TbFilterBody_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -195,7 +263,7 @@ namespace DDONamedGearPlanner
 
 		private void TbFilterOffhand_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			cmiFilterOffhandBuckler.IsChecked = cmiFilterOffhandSmall.IsChecked = cmiFilterOffhandLarge.IsChecked = cmiFilterOffhandTower.IsChecked = cmiFilterOffhandOrb.IsChecked = cmiFilterOffhandWeapon.IsChecked = !tbFilterOffhand.IsChecked ?? false;
+			cmiFilterOffhandBuckler.IsChecked = cmiFilterOffhandSmall.IsChecked = cmiFilterOffhandLarge.IsChecked = cmiFilterOffhandTower.IsChecked = cmiFilterOffhandOrb.IsChecked = !tbFilterOffhand.IsChecked ?? false;
 		}
 
 		private void FilterMenuItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -204,6 +272,134 @@ namespace DDONamedGearPlanner
 			mi.IsChecked = !mi.IsChecked;
 			foreach (MenuItem cmi in mi.Items)
 				cmi.IsChecked = mi.IsChecked;
+		}
+
+		private void LvItemList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			// validate user double-clicked over an item
+			if (lvItemList.SelectedItem == null) return;
+
+			DDOItemData item = lvItemList.SelectedItem as DDOItemData;
+			EquipmentSlotControl esc = null;
+			// get the slot the item belongs in
+			//  - special case check for an open finger slot
+			//  - if both finger slots are full, check for one not locked
+			if (item.Slot == SlotType.Finger)
+			{
+				if (EquipmentSlots[(int)EquipmentSlotType.Finger1].Item == null) esc = EquipmentSlots[(int)EquipmentSlotType.Finger1];
+				else if (EquipmentSlots[(int)EquipmentSlotType.Finger2].Item == null) esc = EquipmentSlots[(int)EquipmentSlotType.Finger2];
+				else if (!EquipmentSlots[(int)EquipmentSlotType.Finger1].IsLocked) esc = EquipmentSlots[(int)EquipmentSlotType.Finger1];
+				else if (!EquipmentSlots[(int)EquipmentSlotType.Finger2].IsLocked) esc = EquipmentSlots[(int)EquipmentSlotType.Finger2];
+			}
+			else
+			{
+				esc = EquipmentSlots[(int)(EquipmentSlotType)Enum.Parse(typeof(EquipmentSlotType), item.Slot.ToString())];
+			}
+
+			if (esc == null || esc.IsLocked) MessageBox.Show("Can't load an item into a locked slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
+			else
+			{
+				esc.SetItem(item);
+				// update gearset properties
+			}
+		}
+
+		private void EquipmentSlotClicked(EquipmentSlotControl esc, MouseButton button)
+		{
+			if (button == MouseButton.Right)
+			{
+				if (esc.Item != null) System.Diagnostics.Process.Start(esc.Item.WikiURL);
+				return;
+			}
+
+			if (SelectedESC == esc)
+			{
+				OpenPropertiesTab(SelectedESC.Item);
+				return;
+			}
+
+			if (SelectedESC != null)
+			{
+				SelectedESC.IsSelected = false;
+				SelectedESC.SetSelectBorder(false);
+				SelectedESC = null;
+			}
+			if (esc.Item != null)
+			{
+				SelectedESC = esc;
+				SelectedESC.IsSelected = true;
+				SelectedESC.SetSelectBorder(true);
+				OpenPropertiesTab(SelectedESC.Item);
+			}
+		}
+
+		void OpenPropertiesTab(DDOItemData item)
+		{
+			// first search for an existing tab for the item
+			foreach (TabItem ti in tcPropertyAreas.Items)
+			{
+				if (ti.Header.ToString() == item.Name)
+				{
+					tcPropertyAreas.SelectedItem = ti;
+					return;
+				}
+			}
+
+			TabItem nti = new TabItem();
+			nti.Header = item.Name;
+			nti.MouseRightButtonUp += PropertyTabRightButtonUp;
+
+			tcPropertyAreas.Items.Add(nti);
+			tcPropertyAreas.SelectedItem = nti;
+		}
+
+		bool ItemRightClicked;
+		DDOItemData RightClickedItem;
+
+		private void LvItemList_MouseUp(object sender, MouseButtonEventArgs e)
+		{
+			if (ItemRightClicked && e.RightButton == MouseButtonState.Released)
+			{
+				ItemRightClicked = false;
+				System.Diagnostics.Process.Start(RightClickedItem.WikiURL);
+				RightClickedItem = null;
+			}
+		}
+
+		private void LvItemList_MouseLeave(object sender, MouseEventArgs e)
+		{
+			ItemRightClicked = false;
+		}
+
+		private void ListViewItem_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			var item = sender as ListViewItem;
+			if (item != null)
+			{
+				RightClickedItem = item.Content as DDOItemData;
+				if (RightClickedItem != null) ItemRightClicked = true;
+			}
+		}
+
+		private void EquipmentSlotCleared(EquipmentSlotControl esc)
+		{
+			if (esc.IsSelected)
+			{
+				esc.IsSelected = false;
+				esc.SetSelectBorder(false);
+				SelectedESC = null;
+			}
+		}
+
+		private void PropertyTabRightButtonUp(object sender, MouseButtonEventArgs e)
+		{
+			TabItem ti = sender as TabItem;
+			tcPropertyAreas.Items.Remove(ti);
+		}
+
+		private void LvItemList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			OpenPropertiesTab(lvItemList.SelectedItem as DDOItemData);
 		}
 	}
 }

@@ -55,6 +55,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="EquipmentSlotControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -64,6 +68,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DDOData.cs" />
+    <Compile Include="EquipmentSlotControl.xaml.cs">
+      <DependentUpon>EquipmentSlotControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ItemFilterSettings.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -114,6 +121,29 @@
     <Resource Include="Resources\slot_bg_waist.png" />
     <Resource Include="Resources\slot_bg_weapon.png" />
     <Resource Include="Resources\slot_bg_wrist.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\slot_fill_back.png" />
+    <Resource Include="Resources\slot_fill_body_cloth.png" />
+    <Resource Include="Resources\slot_fill_body_docent.png" />
+    <Resource Include="Resources\slot_fill_body_heavy.png" />
+    <Resource Include="Resources\slot_fill_body_light.png" />
+    <Resource Include="Resources\slot_fill_body_medium.png" />
+    <Resource Include="Resources\slot_fill_eye.png" />
+    <Resource Include="Resources\slot_fill_feet.png" />
+    <Resource Include="Resources\slot_fill_finger.png" />
+    <Resource Include="Resources\slot_fill_hand.png" />
+    <Resource Include="Resources\slot_fill_head.png" />
+    <Resource Include="Resources\slot_fill_neck.png" />
+    <Resource Include="Resources\slot_fill_offhand_buckler.png" />
+    <Resource Include="Resources\slot_fill_offhand_large.png" />
+    <Resource Include="Resources\slot_fill_offhand_orb.png" />
+    <Resource Include="Resources\slot_fill_offhand_small.png" />
+    <Resource Include="Resources\slot_fill_offhand_tower.png" />
+    <Resource Include="Resources\slot_fill_trinket.png" />
+    <Resource Include="Resources\slot_fill_waist.png" />
+    <Resource Include="Resources\slot_fill_weapon.png" />
+    <Resource Include="Resources\slot_fill_wrist.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

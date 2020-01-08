@@ -589,11 +589,11 @@ namespace DDOWikiParser
 						}
 						else if (p.EndsWith("False Life")) p = "Hit Points";
 						else if (p.StartsWith("Vitality")) p = "Hit Points";
-						else if (p.EndsWith("Cold Resistance") || p.EndsWith("Cold Resistance - ")) p = "Cold Resistance";
-						else if (p.EndsWith("Fire Resistance") || p.EndsWith("Fire Resistance - ")) p = "Fire Resistance";
-						else if (p.EndsWith("Electric Resistance") || p.EndsWith("Electric Resistance - ")) p = "Electric Resistance";
-						else if (p.EndsWith("Acid Resistance") || p.EndsWith("Acid Resistance - ")) p = "Acid Resistance";
-						else if (p.EndsWith("Sonic Resistance") || p.EndsWith("Sonic Resistance - ")) p = "Sonic Resistance";
+						else if (p.EndsWith("Cold Resistance") || p.Trim().EndsWith("Cold Resistance -")) p = "Cold Resistance";
+						else if (p.EndsWith("Fire Resistance") || p.Trim().EndsWith("Fire Resistance -")) p = "Fire Resistance";
+						else if (p.EndsWith("Electric Resistance") || p.Trim().EndsWith("Electric Resistance -")) p = "Electric Resistance";
+						else if (p.EndsWith("Acid Resistance") || p.Trim().EndsWith("Acid Resistance -")) p = "Acid Resistance";
+						else if (p.EndsWith("Sonic Resistance") || p.Trim().EndsWith("Sonic Resistance -")) p = "Sonic Resistance";
 						else if (p.EndsWith("Spell Focus")) p = "Spell DCs";
 						else if (p.EndsWith("Spell Focus Mastery")) p = "Spell DCs";
 						else if (p.EndsWith("Corrosion")) p = "Acid Spell Power";
@@ -1050,6 +1050,31 @@ namespace DDOWikiParser
 							v = "enhancement";
 							vi = 3;
 						}
+						else if (p == "Maximum Charge Tier")
+						{
+							for (int i = 0; i < numerals.Length; i++)
+							{
+								if (numerals[i] == v)
+								{
+									vi = i + 1;
+									break;
+								}
+							}
+						}
+						else if (p == "Rune Arm Imbue")
+						{
+							v = v.Substring(0, v.IndexOf("Rune Arm Imbue"));
+							string[] split = v.Split(' ');
+							for (int i = 0; i < numerals.Length; i++)
+							{
+								if (numerals[i] == split[split.Length - 1])
+								{
+									vi = i + 1;
+									break;
+								}
+							}
+							v = v.Substring(0, v.Length - split[split.Length - 1].Length).Trim();
+						}
 						//else if (NullTypeProperties.Contains(p)) v = null;
 					}
 					#endregion
@@ -1398,6 +1423,13 @@ namespace DDOWikiParser
 					data.AddProperty("Melee Threat Reduction", v, vi, null);
 					data.AddProperty("Ranged Threat Reduction", v, vi, null);
 					data.AddProperty("Magic Threat Reduction", v, vi, null);
+				}
+				else if (p == "Elemental Absorption")
+				{
+					data.AddProperty("Acid Absorption", v, vi, null);
+					data.AddProperty("Cold Absorption", v, vi, null);
+					data.AddProperty("Electric Absorption", v, vi, null);
+					data.AddProperty("Fire Absorption", v, vi, null);
 				}
 				else data.AddProperty(p, origv == v ? null : v, vi, null);
 
@@ -1863,6 +1895,15 @@ namespace DDOWikiParser
 				else if (r.InnerText.StartsWith("Minimum level"))
 				{
 					ParseMinimumLevel(data, r);
+				}
+				// because rune arms don't follow the standard weapon format
+				else if (r.InnerText.StartsWith("Required Trait") && r.InnerText.Contains("Rune Arm"))
+				{
+					data.Slot = SlotType.Weapon;
+					data.Category = (int)WeaponCategory.Exotic;
+					data.AddProperty("Weapon Type", "Rune Arm", 0, null);
+					data.AddProperty("Handedness", null, 1, null);
+					tvpath = "Weapon|Exotic|" + data.Name;
 				}
 				else if (r.InnerText.StartsWith("Enchantments"))
 				{
