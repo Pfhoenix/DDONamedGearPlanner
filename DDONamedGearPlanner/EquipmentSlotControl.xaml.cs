@@ -23,7 +23,7 @@ namespace DDONamedGearPlanner
 		public bool IsLocked = false;
 		public DDOItemData Item;
 
-		MainWindow ParentWindow;
+		PlannerWindow ParentWindow;
 
 		protected static BitmapImage[] SlotBGImages;
 		protected static Dictionary<string, BitmapImage> SlotFillImages;
@@ -114,16 +114,22 @@ namespace DDONamedGearPlanner
 		private void EquipmentSlotControl_Loaded(object sender, RoutedEventArgs e)
 		{
 			DependencyObject dobj = Parent;
-			while (!(dobj is MainWindow))
+			while (!(dobj is PlannerWindow))
 			{
 				if (dobj == null) break;
 				dobj = VisualTreeHelper.GetParent(dobj);
 			}
 			if (dobj != null)
 			{
-				ParentWindow = dobj as MainWindow;
+				ParentWindow = dobj as PlannerWindow;
 				ParentWindow.RegisterEquipmentSlot(this);
 			}
+		}
+
+		public void SetLockStatus(bool b)
+		{
+			tbLock.IsChecked = b;
+			UpdateLockStatus();
 		}
 
 		void UpdateLockStatus()

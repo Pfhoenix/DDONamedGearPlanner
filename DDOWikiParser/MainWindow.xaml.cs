@@ -602,6 +602,7 @@ namespace DDOWikiParser
 						else if (p.EndsWith("Combustion")) p = "Fire Spell Power";
 						else if (p.EndsWith("Radiance")) p = "Light Spell Power";
 						else if (p.EndsWith("Devotion")) p = "Positive Spell Power";
+						else if (p.EndsWith("Impulse")) p = "Force Spell Power";
 						else if (p.EndsWith("Acid Lore")) p = "Acid Spell Critical Chance";
 						else if (p.EndsWith("Fire Lore")) p = "Fire Spell Critical Chance";
 						else if (p.EndsWith("Ice Lore")) p = "Cold Spell Critical Chance";

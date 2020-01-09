@@ -74,9 +74,9 @@ namespace DDONamedGearPlanner
 	[Serializable]
 	public class ItemProperty
 	{
-		public string Property;
-		public string Type;
-		public float Value;
+		public string Property { get; set; }
+		public string Type { get; set; }
+		public float Value { get; set; }
 		public List<ItemProperty> Options;
 	}
 

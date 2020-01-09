@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -9,26 +8,22 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace DDONamedGearPlanner
 {
 	/// <summary>
-	/// Interaction logic for MainWindow.xaml
+	/// Interaction logic for PlannerWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class PlannerWindow : Window
 	{
 		public static DDODataset dataset;
 
 		EquipmentSlotControl[] EquipmentSlots = new EquipmentSlotControl[14];
 		EquipmentSlotControl SelectedESC;
 
-		public MainWindow()
+		public PlannerWindow()
 		{
 			InitializeComponent();
 
@@ -335,6 +330,8 @@ namespace DDONamedGearPlanner
 
 		void OpenPropertiesTab(DDOItemData item)
 		{
+			if (item == null) return;
+
 			// first search for an existing tab for the item
 			foreach (TabItem ti in tcPropertyAreas.Items)
 			{
@@ -351,6 +348,10 @@ namespace DDONamedGearPlanner
 
 			tcPropertyAreas.Items.Add(nti);
 			tcPropertyAreas.SelectedItem = nti;
+
+			ListViewItemProperties lvip = new ListViewItemProperties();
+			nti.Content = lvip;
+			lvip.SetItem(item);
 		}
 
 		bool ItemRightClicked;
@@ -400,6 +401,22 @@ namespace DDONamedGearPlanner
 		private void LvItemList_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			OpenPropertiesTab(lvItemList.SelectedItem as DDOItemData);
+		}
+
+		private void UnlockClearAll(object sender, RoutedEventArgs e)
+		{
+			for (int i = 0; i < EquipmentSlots.Length; i++)
+			{
+				EquipmentSlots[i].SetLockStatus(false);
+				EquipmentSlots[i].SetItem(null);
+			}
+
+			// wipe calculated gear set
+		}
+
+		private void ImportNamedSet(object sender, RoutedEventArgs e)
+		{
+
 		}
 	}
 }

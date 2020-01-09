@@ -59,7 +59,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="ListViewItemProperties.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PlannerWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -72,8 +76,11 @@
       <DependentUpon>EquipmentSlotControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ItemFilterSettings.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="ListViewItemProperties.xaml.cs">
+      <DependentUpon>ListViewItemProperties.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PlannerWindow.xaml.cs">
+      <DependentUpon>PlannerWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
