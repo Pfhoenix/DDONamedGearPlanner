@@ -93,7 +93,7 @@
 						<Image Source="Resources/slot_bg_weapon.png" Width="32" Height="32"/>
 						<ToggleButton.ContextMenu>
 							<ContextMenu>
-								<MenuItem Name="cmiFilterWeaponSimple" Header="Simple" Mouse.PreviewMouseUp="FilterMenuItem_MouseLeftButtonUp" IsChecked="True">
+								<MenuItem Name="cmiFilterWeaponSimple" Header="Simple" IsChecked="True" Mouse.PreviewMouseUp="FilterMenuItem_MouseLeftButtonUp">
 									<MenuItem Name="cmiFilterWeaponSimpleClub" Header="Club" IsCheckable="True" IsChecked="True"/>
 									<MenuItem Name="cmiFilterWeaponSimpleQuarterstaff" Header="Quarterstaff" IsCheckable="True" IsChecked="True"/>
 									<MenuItem Name="cmiFilterWeaponSimpleDagger" Header="Dagger" IsCheckable="True" IsChecked="True"/>
@@ -129,8 +129,7 @@
 									<MenuItem Name="cmiFilterWeaponExoticDwarvenWarAxe" Header="Dwarven War Axe" IsCheckable="True" IsChecked="True"/>
 									<MenuItem Name="cmiFilterWeaponExoticKama" Header="Kama" IsCheckable="True" IsChecked="True"/>
 									<MenuItem Name="cmiFilterWeaponExoticKhopesh" Header="Khopesh" IsCheckable="True" IsChecked="True"/>
-									<MenuItem Name="cmiFilterWeaponExoticHandwraps" Header="Handwraps" IsCheckable="True" IsChecked="True"/>
-									<MenuItem Name="cmiFilterWeaponExoticRuneArm" Header="RuneArm" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponExoticHandwraps" Header="Handwrap" IsCheckable="True" IsChecked="True"/>
 									<MenuItem Name="cmiFilterWeaponExoticGreatXbow" Header="Great Crossbow" IsCheckable="True" IsChecked="True"/>
 									<MenuItem Name="cmiFilterWeaponExoticRepeatLightXbow" Header="Repeating Light Crossbow" IsCheckable="True" IsChecked="True"/>
 									<MenuItem Name="cmiFilterWeaponExoticRepeatHeavyXbow" Header="Repeating Heavy Crossbow" IsCheckable="True" IsChecked="True"/>
@@ -154,6 +153,7 @@
 								<MenuItem Name="cmiFilterOffhandLarge" Header="Large Shields" IsCheckable="True" IsChecked="True"/>
 								<MenuItem Name="cmiFilterOffhandTower" Header="Tower Shields" IsCheckable="True" IsChecked="True"/>
 								<MenuItem Name="cmiFilterOffhandOrb" Header="Orbs" IsCheckable="True" IsChecked="True"/>
+								<MenuItem Name="cmiFilterOffhandRuneArm" Header="Rune Arm" IsCheckable="True" IsChecked="True"/>
 							</ContextMenu>
 						</ToggleButton.ContextMenu>
 					</ToggleButton>

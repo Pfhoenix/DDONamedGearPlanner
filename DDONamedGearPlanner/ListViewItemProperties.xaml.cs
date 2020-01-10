@@ -25,5 +25,14 @@ namespace DDONamedGearPlanner
 				}
 			}
 		}
+
+		public void SetSetBonuses(DDOItemSetBonus sb)
+		{
+			lvDetails.Items.Clear();
+			foreach (var p in sb.Bonuses)
+			{
+				lvDetails.Items.Add(new { p.Property, p.Type, p.Value });
+			}
+		}
 	}
 }

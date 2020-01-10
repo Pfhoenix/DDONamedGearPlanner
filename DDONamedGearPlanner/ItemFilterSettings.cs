@@ -13,7 +13,7 @@
 		public static bool OffhandShieldLarge;
 		public static bool OffhandShieldTower;
 		public static bool OffhandShieldOrb;
-		public static bool OffhandWeapon;
+		public static bool OffhandRuneArm;
 		public static bool WeaponSimpleClub;
 		public static bool WeaponSimpleQuarterstaff;
 		public static bool WeaponSimpleDagger;

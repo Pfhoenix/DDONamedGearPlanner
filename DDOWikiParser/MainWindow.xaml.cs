@@ -27,7 +27,7 @@ namespace DDOWikiParser
 			"Great Club",
 			"Maul",
 			"Great Sword",
-			"Handwraps"
+			"Handwrap"
 		};
 		char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 		string[] numerals = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX" };
@@ -1900,11 +1900,10 @@ namespace DDOWikiParser
 				// because rune arms don't follow the standard weapon format
 				else if (r.InnerText.StartsWith("Required Trait") && r.InnerText.Contains("Rune Arm"))
 				{
-					data.Slot = SlotType.Weapon;
-					data.Category = (int)WeaponCategory.Exotic;
+					data.Slot = SlotType.Offhand;
+					data.Category = (int)OffhandCategory.RuneArm;
 					data.AddProperty("Weapon Type", "Rune Arm", 0, null);
-					data.AddProperty("Handedness", null, 1, null);
-					tvpath = "Weapon|Exotic|" + data.Name;
+					tvpath = "Offhand|Rune Arm|" + data.Name;
 				}
 				else if (r.InnerText.StartsWith("Enchantments"))
 				{

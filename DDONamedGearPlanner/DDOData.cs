@@ -59,7 +59,7 @@ namespace DDONamedGearPlanner
 		Large = 4,
 		Tower = 8,
 		Orb = 16,
-		Weapon = 32
+		RuneArm = 32
 	}
 
 	[Flags]
@@ -88,6 +88,32 @@ namespace DDONamedGearPlanner
 		public SlotType Slot { get; set; }
 		public int Category;
 		public List<ItemProperty> Properties = new List<ItemProperty>();
+
+		// utility because it gets used so often
+		int _Handedness = -1;
+		public int Handedness
+		{
+			get
+			{
+				if (_Handedness > -1) return _Handedness;
+				if (Slot != SlotType.Weapon) _Handedness = 0;
+				else _Handedness = (int)Properties.Find(p => p.Property == "Handedness").Value;
+				return _Handedness;
+			}
+		}
+
+		// utility because it gets used so often
+		string _WeaponType;
+		public string WeaponType
+		{
+			get
+			{
+				if (_WeaponType != null) return _WeaponType;
+				if (Slot != SlotType.Weapon) return "";
+				else _WeaponType = Properties.Find(p => p.Property == "Weapon Type").Type;
+				return _WeaponType;
+			}
+		}
 
 		public ItemProperty AddProperty(string prop, string type, float value, List<ItemProperty> options)
 		{
@@ -2625,7 +2651,7 @@ namespace DDONamedGearPlanner
 							{
 								Property = "Spell Points",
 								Type = "enhancement",
-								Value = 10
+								Value = 250
 							},
 							new DDOItemSetBonusProperty
 							{

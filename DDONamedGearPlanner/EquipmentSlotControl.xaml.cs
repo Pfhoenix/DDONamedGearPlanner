@@ -67,6 +67,7 @@ namespace DDONamedGearPlanner
 				SlotFillImages["offhand_large"] = new BitmapImage(new Uri("pack://application:,,,/Resources/slot_fill_offhand_large.png"));
 				SlotFillImages["offhand_tower"] = new BitmapImage(new Uri("pack://application:,,,/Resources/slot_fill_offhand_tower.png"));
 				SlotFillImages["offhand_orb"] = new BitmapImage(new Uri("pack://application:,,,/Resources/slot_fill_offhand_orb.png"));
+				SlotFillImages["offhand_runearm"] = new BitmapImage(new Uri("pack://application:,,,/Resources/slot_fill_offhand_runearm.png"));
 				SlotFillImages["trinket"] = new BitmapImage(new Uri("pack://application:,,,/Resources/slot_fill_trinket.png"));
 				SlotFillImages["waist"] = new BitmapImage(new Uri("pack://application:,,,/Resources/slot_fill_waist.png"));
 				SlotFillImages["weapon"] = new BitmapImage(new Uri("pack://application:,,,/Resources/slot_fill_weapon.png"));
@@ -85,12 +86,7 @@ namespace DDONamedGearPlanner
 		public EquipmentSlotType Slot
 		{
 			get { return (EquipmentSlotType)GetValue(EquipmentSlotProperty); }
-			set
-			{
-				SetValue(EquipmentSlotProperty, value);
-				if (value == EquipmentSlotType.Finger1 || value == EquipmentSlotType.Finger2) SlotType = SlotType.Finger;
-				else SlotType = (SlotType)Enum.Parse(typeof(SlotType), value.ToString());
-			}
+			set { SetValue(EquipmentSlotProperty, value); }
 		}
 		public SlotType SlotType;
 
@@ -99,6 +95,9 @@ namespace DDONamedGearPlanner
 
 		public delegate void EquipmentSlotClearedDelegate(EquipmentSlotControl esc);
 		public event EquipmentSlotClearedDelegate EquipmentSlotCleared;
+
+		public delegate void EquipmentSlotLockStatusDelegate(EquipmentSlotControl esc);
+		public event EquipmentSlotLockStatusDelegate EquipmentSlotLockChanged;
 
 		public bool IsSelected;
 		bool MouseLeftClicked;
@@ -151,6 +150,7 @@ namespace DDONamedGearPlanner
 		private void TbLock_Click(object sender, RoutedEventArgs e)
 		{
 			UpdateLockStatus();
+			EquipmentSlotLockChanged(this);
 		}
 
 		public void SetSelectBorder(bool on)
@@ -185,6 +185,7 @@ namespace DDONamedGearPlanner
 						else if (Item.Category == (int)OffhandCategory.Large) imgIcon.Source = SlotFillImages["offhand_large"];
 						else if (Item.Category == (int)OffhandCategory.Tower) imgIcon.Source = SlotFillImages["offhand_tower"];
 						else if (Item.Category == (int)OffhandCategory.Orb) imgIcon.Source = SlotFillImages["offhand_orb"];
+						else if (Item.Category == (int)OffhandCategory.RuneArm) imgIcon.Source = SlotFillImages["offhand_runearm"];
 						break;
 
 					default:

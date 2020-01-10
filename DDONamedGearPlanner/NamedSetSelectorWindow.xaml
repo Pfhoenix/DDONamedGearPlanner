@@ -1,0 +1,50 @@
+﻿<Window x:Class="DDONamedGearPlanner.NamedSetSelectorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DDONamedGearPlanner"
+        mc:Ignorable="d"
+        Title="Named Sets" Height="450" Width="741.146" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False">
+    <DockPanel>
+		<DockPanel DockPanel.Dock="Left" Width="170" HorizontalAlignment="Left">
+			<TextBox DockPanel.Dock="Top" Name="tbSearchName" TextChanged="SearchTextChanged"/>
+			<ListView Name="lvSets" MouseUp="LvSets_MouseUp" MouseLeave="LvSets_MouseLeave" SelectionChanged="LvSets_SelectionChanged">
+				<ListView.View>
+					<GridView>
+						<GridViewColumn Header="Name" Width="118">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Name}" ToolTip="{Binding Name}">
+								</TextBlock>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+						<GridViewColumn Width="26" DisplayMemberBinding="{Binding ML}">
+							<GridViewColumn.Header>
+								<TextBlock Text="ML" ToolTip="Minimum Level"/>
+							</GridViewColumn.Header>
+						</GridViewColumn>
+					</GridView>
+				</ListView.View>
+				<ListView.ItemContainerStyle>
+					<Style TargetType="ListViewItem">
+						<EventSetter Event="PreviewMouseRightButtonDown" Handler="ListViewItem_PreviewMouseRightButtonDown" />
+					</Style>
+				</ListView.ItemContainerStyle>
+			</ListView>			
+		</DockPanel>
+		<ScrollViewer DockPanel.Dock="Left" Width="200" HorizontalAlignment="Left">
+			<StackPanel Name="SlotPanel"/>
+		</ScrollViewer>
+		<Grid DockPanel.Dock="Bottom" Height="30" VerticalAlignment="Bottom">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<Button Name="btnApply" IsEnabled="false" Margin="5,5,5,5" Click="Apply_Clicked">Apply Selected Items</Button>
+			<Button Grid.Column="1" Margin="5,5,5,5" Click="Cancel_Clicked">Cancel</Button>
+		</Grid>
+		<TabControl DockPanel.Dock="Left" Name="tcSetBonuses"></TabControl>
+	</DockPanel>
+</Window>
