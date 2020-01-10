@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DDONamedGearPlanner"
         mc:Ignorable="d"
 		x:Name="ddoplanner"
-        Title="DDO Named Gear Planner" Height="700" Width="800" ResizeMode="CanMinimize">
+        Title="DDO Named Gear Planner v0.2" Height="700" Width="800" ResizeMode="CanMinimize">
 	
 	<Window.Resources>
 		<ResourceDictionary>
@@ -30,9 +30,12 @@
 				<Separator />
 				<MenuItem Header="E_xit" Click="ExitMenuItem_Click" />
 			</MenuItem>
+			<MenuItem Header="_Help">
+				<MenuItem Header="UI Tips" InputGestureText="F1" Click="HelpMenuItem_Click" />
+			</MenuItem>
 		</Menu>
 		<StackPanel DockPanel.Dock="Left" Width="187" HorizontalAlignment="Left">
-			<GroupBox x:Name="groupBox" Header="Filters by slot" Height="194" VerticalAlignment="Top" Width="187" HorizontalAlignment="Left">
+			<GroupBox x:Name="groupBox" Header="Search by slot" Height="194" VerticalAlignment="Top" Width="187" HorizontalAlignment="Left">
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition/>

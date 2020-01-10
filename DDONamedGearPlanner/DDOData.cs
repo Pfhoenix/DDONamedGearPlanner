@@ -78,6 +78,7 @@ namespace DDONamedGearPlanner
 		public string Type { get; set; }
 		public float Value { get; set; }
 		public List<ItemProperty> Options;
+		public DDOItemData Owner;
 	}
 
 	[Serializable]
@@ -117,7 +118,7 @@ namespace DDONamedGearPlanner
 
 		public ItemProperty AddProperty(string prop, string type, float value, List<ItemProperty> options)
 		{
-			ItemProperty ip = new ItemProperty { Property = prop, Type = type, Value = value, Options = options };
+			ItemProperty ip = new ItemProperty { Property = prop, Type = type, Value = value, Options = options, Owner = this };
 			Properties.Add(ip);
 			return ip;
 		}
@@ -7186,6 +7187,26 @@ namespace DDONamedGearPlanner
 			Items.Add(item);
 
 			return null;
+		}
+	}
+
+	public class GearSetProperty
+	{
+		public bool IsGroup;
+		public string Property;
+		public float TotalValue;
+		public List<DDOItemProperty> ItemProperties;
+	}
+
+	public class GearSet
+	{
+		public List<DDOItemData> Items = new List<DDOItemData>();
+		public List<GearSetProperty> Properties = new List<GearSetProperty>();
+
+		public void AddItem(DDOItemData item)
+		{
+			Items.Add(item);
+			//foreach (var p in item.Properties)
 		}
 	}
 }

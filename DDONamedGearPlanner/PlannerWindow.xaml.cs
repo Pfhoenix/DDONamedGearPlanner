@@ -290,6 +290,11 @@ namespace DDONamedGearPlanner
 				cmi.IsChecked = flip;
 		}
 
+		void CalculateGearSet(bool render)
+		{
+
+		}
+
 		bool SlotItem(DDOItemData item, SlotType slot)
 		{
 			EquipmentSlotControl esc = null;
@@ -366,7 +371,7 @@ namespace DDONamedGearPlanner
 			DDOItemData item = lvItemList.SelectedItem as DDOItemData;
 			if (SlotItem(item, SlotType.None))
 			{
-				// update gearset properties
+				CalculateGearSet(true);
 			}
 		}
 
@@ -482,7 +487,7 @@ namespace DDONamedGearPlanner
 				EquipmentSlots[i].SetItem(null);
 			}
 
-			// wipe calculated gear set
+			CalculateGearSet(true);
 		}
 
 		private void ImportNamedSet(object sender, RoutedEventArgs e)
@@ -504,8 +509,19 @@ namespace DDONamedGearPlanner
 					}
 				}
 
-				// update gear set properties
+				CalculateGearSet(true);
 			}
+		}
+
+		private void HelpMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine("Right click any item to open up the wiki page for it (same for named sets).");
+			sb.AppendLine("Double-click an item in the list to assign it to an appropriate slot.");
+			sb.AppendLine("Lock an equipment slot to prevent it from being modified.");
+			sb.AppendLine("Two-handed weapons will lock/unlock the offhand slot.");
+
+			MessageBox.Show(sb.ToString());
 		}
 	}
 }
