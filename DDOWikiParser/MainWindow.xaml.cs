@@ -1807,6 +1807,10 @@ namespace DDOWikiParser
 				{
 					ParseEnhancements(data, r);
 				}
+				else if (r.InnerText.StartsWith("Shield Bonus"))
+				{
+					data.AddProperty("Armor Class", "shield", ParseNumber(r.InnerText), null);
+				}
 				else if (r.InnerText.IndexOf("drops on death", StringComparison.InvariantCultureIgnoreCase) > -1)
 				{
 					return null;
