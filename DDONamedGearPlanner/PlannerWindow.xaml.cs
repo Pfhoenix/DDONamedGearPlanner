@@ -605,8 +605,8 @@ namespace DDONamedGearPlanner
 
 		private void ApplyML_Click(object sender, RoutedEventArgs e)
 		{
-			ItemFilterSettings.MinimumLevel = (int)((rsML.Content as Grid).Children[1] as RangeSliderWpfApp.FormattedSlider).Value;
-			ItemFilterSettings.MaximumLevel = (int)((rsML.Content as Grid).Children[2] as RangeSliderWpfApp.FormattedSlider).Value;
+			ItemFilterSettings.MinimumLevel = (int)rsML.LowerValue;
+			ItemFilterSettings.MaximumLevel = (int)rsML.UpperValue;
 			lblMLRange.Content = "ML Range: " + ItemFilterSettings.MinimumLevel + " to " + ItemFilterSettings.MaximumLevel;
 
 			CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();

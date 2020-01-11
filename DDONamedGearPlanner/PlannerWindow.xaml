@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDONamedGearPlanner"
-		xmlns:rangesliderwpfapp="clr-namespace:RangeSliderWpfApp;assembly=RangeSliderWpfApp"
 		mc:Ignorable="d"
 		x:Name="ddoplanner"
         Title="DDO Named Gear Planner v0.3" Height="700" Width="800" ResizeMode="CanMinimize">
@@ -172,7 +171,7 @@
 				</GroupBox.Header>
 				<DockPanel>
 					<Button DockPanel.Dock="Right" Margin="3,0,0,0" Click="ApplyML_Click">Apply</Button>
-					<rangesliderwpfapp:RangeSlider Name="rsML" Height="14" Minimum="1" Maximum="30" LowerValue="1" UpperValue="30"/>
+					<local:RangeSlider x:Name="rsML" Height="14" Minimum="1" Maximum="30" LowerValue="1" UpperValue="30" />
 				</DockPanel>
 			</GroupBox>
 			<DockPanel Height="24">
