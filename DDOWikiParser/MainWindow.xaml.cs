@@ -208,9 +208,9 @@ namespace DDOWikiParser
 
 		void ParseMinimumLevel(DDOItemData data, XmlElement row)
 		{
-			int ml = 0;
+			int ml = 1;
 			string[] split = row.InnerText.Split('\n');
-			int.TryParse(split[1], out ml);
+			if (!int.TryParse(split[1], out ml)) ml = 1;
 			data.AddProperty("Minimum Level", null, ml, null);
 		}
 
@@ -1733,7 +1733,7 @@ namespace DDOWikiParser
 					data.Category = (int)(ArmorCategory)Enum.Parse(typeof(ArmorCategory), split[0]);
 					tvpath = "Armor|" + split[0] + "|" + data.Name;
 				}
-				else if (r.InnerText.StartsWith("Minimum Level"))
+				else if (r.InnerText.StartsWith("Minimum Level", StringComparison.InvariantCultureIgnoreCase))
 				{
 					ParseMinimumLevel(data, r);
 				}
@@ -1799,7 +1799,7 @@ namespace DDOWikiParser
 					data.Category = (int)(OffhandCategory)Enum.Parse(typeof(OffhandCategory), split[0]);
 					tvpath = "Offhand|" + split[0] + "|" + data.Name;
 				}
-				else if (r.InnerText.StartsWith("Minimum Level"))
+				else if (r.InnerText.StartsWith("Minimum Level", StringComparison.InvariantCultureIgnoreCase))
 				{
 					ParseMinimumLevel(data, r);
 				}
@@ -1860,7 +1860,7 @@ namespace DDOWikiParser
 						LogError("- parse error with weapon type for weapon named " + data.Name);
 					}
 				}
-				else if (r.InnerText.StartsWith("Minimum Level"))
+				else if (r.InnerText.StartsWith("Minimum Level", StringComparison.InvariantCultureIgnoreCase))
 				{
 					ParseMinimumLevel(data, r);
 				}
@@ -1897,7 +1897,7 @@ namespace DDOWikiParser
 						LogError("- parse error with slot for item named " + data.Name);
 					}
 				}
-				else if (r.InnerText.StartsWith("Minimum level"))
+				else if (r.InnerText.StartsWith("Minimum level", StringComparison.InvariantCultureIgnoreCase))
 				{
 					ParseMinimumLevel(data, r);
 				}
