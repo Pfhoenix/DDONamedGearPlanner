@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 
 
 namespace DDONamedGearPlanner
@@ -23,6 +24,8 @@ namespace DDONamedGearPlanner
 		EquipmentSlotControl[] EquipmentSlots = new EquipmentSlotControl[14];
 		EquipmentSlotControl SelectedESC;
 
+		List<DDOItemData> ItemListCopy;
+
 		public PlannerWindow()
 		{
 			InitializeComponent();
@@ -35,7 +38,8 @@ namespace DDONamedGearPlanner
 
 			BtnFilterApply_Click(null, null);
 
-			lvItemList.ItemsSource = dataset.Items;
+			ItemListCopy = new List<DDOItemData>(dataset.Items);
+			lvItemList.ItemsSource = ItemListCopy;
 			SetFilter(CustomFilter);
 		}
 
@@ -102,6 +106,8 @@ namespace DDONamedGearPlanner
 		{
 			DDOItemData item = obj as DDOItemData;
 			if ((ItemFilterSettings.Slots & item.Slot) == 0) return false;
+			if (ItemFilterSettings.MinimumLevel > item.ML) return false;
+			if (ItemFilterSettings.MaximumLevel < item.ML) return false;
 			if (item.Slot == SlotType.Body)
 			{
 				if ((ArmorCategory)item.Category == ArmorCategory.Cloth && !ItemFilterSettings.BodyCloth) return false;
@@ -290,9 +296,70 @@ namespace DDONamedGearPlanner
 				cmi.IsChecked = flip;
 		}
 
-		void CalculateGearSet(bool render)
+		GearSet CalculateGearSet(bool render)
 		{
+			GearSet gs = new GearSet();
+			for (int i = 0; i < EquipmentSlots.Length; i++)
+				if (EquipmentSlots[i].Item != null) gs.AddItem(EquipmentSlots[i].Item, null);
+			gs.ProcessItems(dataset);
 
+			if (!render) return gs;
+
+			TreeView tv = new TreeView();
+			tciGearSet.Content = tv;
+			foreach (var ip in gs.Properties)
+			{
+				TreeViewItem tvi = new TreeViewItem();
+				if (ip.IsGroup)
+				{
+					if (ip.ItemProperties[0].Type == "set")
+					{
+						DDOItemSet set = dataset.Sets[ip.Property];
+						DDOItemSetBonus sb = null;
+						foreach (var sbs in set.SetBonuses)
+						{
+							if (sbs.MinimumItems > ip.ItemProperties.Count) break;
+							sb = sbs;
+						}
+						// no need to see a set listed that we're not getting anything from
+						if (sb == null) tvi.Header = ip.Property + " set (no bonuses)";
+						else tvi.Header = ip.Property + " set (" + sb.MinimumItems + " pieces)";
+					}
+					else tvi.Header = ip.Property;
+				}
+				else tvi.Header = ip.Property + (ip.TotalValue != 0 ? " " + ip.TotalValue : "");
+				tv.Items.Add(tvi);
+				TreeViewItem tvii;
+				string lasttype = null;
+				foreach (var p in ip.ItemProperties)
+				{
+					string source = p.Owner?.Name ?? (p.SetBonusOwner + " set");
+					tvii = new TreeViewItem();
+					string l = null;
+					if (ip.Property == "Damage Reduction") l = ((int)p.Value).ToString() + "/" + p.Type;
+					else if (ip.Property == "Augment Slot") l = p.Type + " (" + source + ")";
+					else if (p.Type == "set") l = p.Owner.Name;
+					else
+					{
+						if (string.IsNullOrWhiteSpace(p.Type) && p.Value == 0) l = source;
+						else
+						{
+							if (!string.IsNullOrWhiteSpace(p.Type)) l += p.Type + " ";
+							l += p.Value + " (" + source + ")";
+						}
+						if (!ip.IsGroup && !string.IsNullOrWhiteSpace(lasttype) && p.Type == lasttype)
+						{
+							tvii.Foreground = Brushes.Red;
+						}
+						lasttype = p.Type;
+					}
+					tvii.Header = l;
+
+					tvi.Items.Add(tvii);
+				}
+			}
+
+			return gs;
 		}
 
 		bool SlotItem(DDOItemData item, SlotType slot)
@@ -466,6 +533,8 @@ namespace DDONamedGearPlanner
 				esc.SetSelectBorder(false);
 				SelectedESC = null;
 			}
+
+			CalculateGearSet(true);
 		}
 
 		private void PropertyTabRightButtonUp(object sender, MouseButtonEventArgs e)
@@ -522,6 +591,25 @@ namespace DDONamedGearPlanner
 			sb.AppendLine("Two-handed weapons will lock/unlock the offhand slot.");
 
 			MessageBox.Show(sb.ToString());
+		}
+
+		private void ItemList_HeaderClick(object sender, RoutedEventArgs e)
+		{
+			string header = (e.OriginalSource as GridViewColumnHeader)?.Content.ToString();
+			if (header == null) return;
+			if (header == "Name") ItemListCopy.Sort((a, b) => string.Compare(a.Name, b.Name));
+			else if (header == "Slot") ItemListCopy.Sort((a, b) => string.Compare(a.Slot.ToString(), b.Slot.ToString()) == 0 ? string.Compare(a.Name, b.Name) : string.Compare(a.Slot.ToString(), b.Slot.ToString()));
+			else if (header == "ML") ItemListCopy.Sort((a, b) => a.ML < b.ML ? -1 : (a.ML > b.ML ? 1 : string.Compare(a.Name, b.Name)));
+			CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
+		}
+
+		private void ApplyML_Click(object sender, RoutedEventArgs e)
+		{
+			ItemFilterSettings.MinimumLevel = (int)((rsML.Content as Grid).Children[1] as RangeSliderWpfApp.FormattedSlider).Value;
+			ItemFilterSettings.MaximumLevel = (int)((rsML.Content as Grid).Children[2] as RangeSliderWpfApp.FormattedSlider).Value;
+			lblMLRange.Content = "ML Range: " + ItemFilterSettings.MinimumLevel + " to " + ItemFilterSettings.MaximumLevel;
+
+			CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
 		}
 	}
 }

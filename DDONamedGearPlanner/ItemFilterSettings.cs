@@ -55,5 +55,7 @@
 		public static bool WeaponThrowingHammer;
 		public static bool WeaponThrowingDart;
 		public static bool WeaponThrowingShuriken;
+		public static int MinimumLevel = 1;
+		public static int MaximumLevel = 30;
 	}
 }

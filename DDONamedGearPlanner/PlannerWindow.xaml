@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDONamedGearPlanner"
-        mc:Ignorable="d"
+		xmlns:rangesliderwpfapp="clr-namespace:RangeSliderWpfApp;assembly=RangeSliderWpfApp"
+		mc:Ignorable="d"
 		x:Name="ddoplanner"
-        Title="DDO Named Gear Planner v0.2" Height="700" Width="800" ResizeMode="CanMinimize">
+        Title="DDO Named Gear Planner v0.3" Height="700" Width="800" ResizeMode="CanMinimize">
 	
 	<Window.Resources>
 		<ResourceDictionary>
@@ -165,8 +166,20 @@
 					<Button Grid.Column="3" Grid.Row="3" Name="btnFilterApply" VerticalAlignment="Center" Width="40" Height="20" Click="BtnFilterApply_Click">Apply</Button>
 				</Grid>
 			</GroupBox>
-			<TextBox Name="txtSearchBox" Margin="0,2,0,0" TextChanged="TxtSearchBox_TextChanged"/>
-			<ListView Name="lvItemList" Height="429" MouseUp="LvItemList_MouseUp" MouseLeave="LvItemList_MouseLeave" MouseDoubleClick="LvItemList_MouseDoubleClick" SelectionChanged="LvItemList_SelectionChanged">
+			<GroupBox>
+				<GroupBox.Header>
+					<Label Name="lblMLRange">ML Range: 1 to 30</Label>
+				</GroupBox.Header>
+				<DockPanel>
+					<Button DockPanel.Dock="Right" Margin="3,0,0,0" Click="ApplyML_Click">Apply</Button>
+					<rangesliderwpfapp:RangeSlider Name="rsML" Height="14" Minimum="1" Maximum="30" LowerValue="1" UpperValue="30"/>
+				</DockPanel>
+			</GroupBox>
+			<DockPanel Height="24">
+				<Label DockPanel.Dock="Left" VerticalAlignment="Top">Search:</Label>
+				<TextBox Name="txtSearchBox" Margin="0,2,0,0" TextChanged="TxtSearchBox_TextChanged"/>
+			</DockPanel>
+			<ListView Name="lvItemList" Height="372" Margin="0,1,0,0" MouseUp="LvItemList_MouseUp" MouseLeave="LvItemList_MouseLeave" MouseDoubleClick="LvItemList_MouseDoubleClick" SelectionChanged="LvItemList_SelectionChanged" GridViewColumnHeader.Click="ItemList_HeaderClick">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn Header="Name" Width="120">
@@ -181,6 +194,7 @@
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
 						<GridViewColumn Header="Slot" Width="61" DisplayMemberBinding="{Binding Slot}"/>
+						<GridViewColumn Header="ML" Width="30" DisplayMemberBinding="{Binding ML}"/>
 					</GridView>
 				</ListView.View>
 				<ListView.ItemContainerStyle>
