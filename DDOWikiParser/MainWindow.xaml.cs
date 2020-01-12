@@ -288,6 +288,11 @@ namespace DDOWikiParser
 				data.AddProperty("Echoes of 2006", null, 0, null);
 				return true;
 			}
+			else if (trimmed.StartsWith("Tet-zik, The Enlightened Change"))
+			{
+				data.AddProperty("Tet-zik, The Enlightened Change", null, 0, null);
+				return true;
+			}
 			else if (trimmed.StartsWith("Shield Bonus"))
 			{
 				string a = trimmed.Substring(12).Replace("+", "").Replace("\n", "");
@@ -503,7 +508,8 @@ namespace DDOWikiParser
 				}
 				else if (p.Contains("Healing Amplification"))
 				{
-					p = "Healing Amplification";
+					if (p.EndsWith("Healing Amplification")) p = "Positive Healing Amplification";
+					else p = "Healing Amplification";
 					vi = ParseNumber(v);
 					c = v.IndexOf('(');
 					v = v.Substring(c + 1, v.IndexOf(' ', c) - c - 1).ToLower();
@@ -1096,8 +1102,11 @@ namespace DDOWikiParser
 						v = v.ToLower();
 
 						// we found a bonus type, let's try to clean up a redundant reference in the property name
-						if (p.IndexOf(v, StringComparison.InvariantCultureIgnoreCase) == 0)
-							p = p.Substring(p.IndexOf(' ') + 1).Trim();
+						if (p != "Armor Class")
+						{
+							if (p.IndexOf(v, StringComparison.InvariantCultureIgnoreCase) == 0)
+								p = p.Substring(p.IndexOf(' ') + 1).Trim();
+						}
 					}
 				}
 
@@ -1106,7 +1115,16 @@ namespace DDOWikiParser
 					// special case check for weapon or armor base enhancement
 					if (v == "enhancement")
 					{
-						if (data.Slot == SlotType.Body || data.Slot == SlotType.Offhand) p = "Armor Class";
+						if (data.Slot == SlotType.Body)
+						{
+							p = "Armor Class";
+							v = "armor enhancement";
+						}
+						else if (data.Slot == SlotType.Offhand)
+						{
+							p = "Armor Class";
+							v = "shield enhancement";
+						}
 						else if (data.Slot == SlotType.Weapon) p = "Attack and Damage";
 					}
 					else if (v != "orb")

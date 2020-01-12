@@ -80,7 +80,7 @@ namespace DDONamedGearPlanner
 
 		static Brush LockBrushOn = new SolidColorBrush(Colors.Red);
 		static Brush LockBrushOff = new SolidColorBrush(SystemColors.ControlDarkColor);
-		static Brush SelectBrushOn = new SolidColorBrush(Colors.CornflowerBlue);
+		static Brush SelectBrushOn = new SolidColorBrush(Colors.Blue);
 		static Brush SelectBrushOff = new SolidColorBrush(SystemColors.ControlDarkColor);
 
 		public EquipmentSlotType Slot

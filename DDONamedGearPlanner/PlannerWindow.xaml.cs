@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -10,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using CoenM.Encoding;
 
 
 namespace DDONamedGearPlanner
@@ -333,7 +335,12 @@ namespace DDONamedGearPlanner
 				string lasttype = null;
 				foreach (var p in ip.ItemProperties)
 				{
-					string source = p.Owner?.Name ?? (p.SetBonusOwner + " set");
+					string source = p.Owner?.Name;
+					if (source == null)
+					{
+						source = p.SetBonusOwner + " set";
+						tvi.Background = Brushes.DeepSkyBlue;
+					}
 					tvii = new TreeViewItem();
 					string l = null;
 					if (ip.Property == "Damage Reduction") l = ((int)p.Value).ToString() + "/" + p.Type;
@@ -350,6 +357,7 @@ namespace DDONamedGearPlanner
 						if (!ip.IsGroup && !string.IsNullOrWhiteSpace(lasttype) && p.Type == lasttype)
 						{
 							tvii.Foreground = Brushes.Red;
+							tvi.Foreground = Brushes.Red;
 						}
 						lasttype = p.Type;
 					}
@@ -610,6 +618,67 @@ namespace DDONamedGearPlanner
 			lblMLRange.Content = "ML Range: " + ItemFilterSettings.MinimumLevel + " to " + ItemFilterSettings.MaximumLevel;
 
 			CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
+		}
+
+		private void EncodeGearsetToClipboard(object sender, RoutedEventArgs e)
+		{
+			string raw = "";
+			foreach (var es in EquipmentSlots)
+			{
+				if (es.Item != null)
+				{
+					if (raw == "") raw = es.Item.Name;
+					else raw += "|" + es.Item.Name;
+				}
+			}
+
+			using (MemoryStream output = new MemoryStream())
+			{
+				using (DeflateStream gzip = new DeflateStream(output, CompressionMode.Compress))
+				{
+					using (StreamWriter writer = new StreamWriter(gzip, Encoding.UTF8))
+					{
+						writer.Write(raw);
+					}
+				}
+				raw = Z85Extended.Encode(output.ToArray());
+			}
+
+			Clipboard.Clear();
+			Clipboard.SetData(DataFormats.Text, raw);
+		}
+
+		private void DecodeGearsetFromClipboard(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				string cdata = Clipboard.GetData(DataFormats.Text).ToString();
+				byte[] input = Z85Extended.Decode(cdata);
+
+				using (MemoryStream inputStream = new MemoryStream(input))
+				{
+					using (DeflateStream gzip = new DeflateStream(inputStream, CompressionMode.Decompress))
+					{
+						using (StreamReader reader = new StreamReader(gzip, Encoding.UTF8))
+						{
+							cdata = reader.ReadToEnd();
+						}
+					}
+				}
+
+				UnlockClearAll(null, null);
+				string[] split = cdata.Split('|');
+				foreach (var s in split)
+				{
+					DDOItemData item = dataset.Items.Find(i => i.Name == s);
+					if (item != null) SlotItem(item, SlotType.None);
+				}
+				CalculateGearSet(true);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("There was an error with the data in the clipboard. Copy the code and try again.");
+			}
 		}
 	}
 }
