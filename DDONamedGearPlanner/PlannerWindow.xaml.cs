@@ -26,7 +26,11 @@ namespace DDONamedGearPlanner
 		EquipmentSlotControl[] EquipmentSlots = new EquipmentSlotControl[14];
 		EquipmentSlotControl SelectedESC;
 
+		// item search stuff
 		List<DDOItemData> ItemListCopy;
+		string LastSortBy;
+		int LastSortDir = 1;
+
 		List<DDOItemProperty> ItemPropertiesCopy;
 
 		public PlannerWindow()
@@ -47,9 +51,11 @@ namespace DDONamedGearPlanner
 
 			ItemPropertiesCopy = new List<DDOItemProperty>();
 			foreach (var ip in dataset.ItemProperties)
-				ItemPropertiesCopy.Add(ip.Value);
+				if (ip.Value.Items.Count > 0) ItemPropertiesCopy.Add(ip.Value);
 			ItemPropertiesCopy.Sort((a, b) => string.Compare(a.Property, b.Property));
+			ItemPropertiesCopy.Insert(0, new DDOItemProperty { Property = "< All >" });
 			cbItemPropertyFilter.ItemsSource = ItemPropertiesCopy;
+			cbItemPropertyFilter.SelectedIndex = 0;
 
 			txtSearchBox.Focus();
 		}
@@ -191,6 +197,8 @@ namespace DDONamedGearPlanner
 					if (item.WeaponType == "Shuriken" && !ItemFilterSettings.WeaponThrowingShuriken) return false;
 				}
 			}
+
+			if (ItemFilterSettings.SearchProperty != null && !item.Properties.Exists(i => i.Property == ItemFilterSettings.SearchProperty)) return false;
 
 			if (string.IsNullOrWhiteSpace(txtSearchBox.Text)) return true;
 			else return item.Name.IndexOf(txtSearchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0;
@@ -614,19 +622,28 @@ namespace DDONamedGearPlanner
 		{
 			string header = (e.OriginalSource as GridViewColumnHeader)?.Content.ToString();
 			if (header == null) return;
-			if (header == "Name") ItemListCopy.Sort((a, b) => string.Compare(a.Name, b.Name));
+			if (header != LastSortBy)
+			{
+				LastSortBy = header;
+				LastSortDir = 1;
+			}
+			else LastSortDir *= -1;
+			if (header == "Name") ItemListCopy.Sort((a, b) => string.Compare(a.Name, b.Name) * LastSortDir);
 			else if (header == "Slot") ItemListCopy.Sort((a, b) => string.Compare(a.Slot.ToString(), b.Slot.ToString()) == 0 ? string.Compare(a.Name, b.Name) : string.Compare(a.Slot.ToString(), b.Slot.ToString()));
-			else if (header == "ML") ItemListCopy.Sort((a, b) => a.ML < b.ML ? -1 : (a.ML > b.ML ? 1 : string.Compare(a.Name, b.Name)));
+			else if (header == "ML") ItemListCopy.Sort((a, b) => a.ML < b.ML ? -1 * LastSortDir : (a.ML > b.ML ? 1 * LastSortDir : string.Compare(a.Name, b.Name)));
+
 			CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
 		}
 
-		private void ApplyML_Click(object sender, RoutedEventArgs e)
+		private void MLRangeChanged(RangeSlider slider, double oldvalue, double newvalue)
 		{
-			ItemFilterSettings.MinimumLevel = (int)rsML.LowerValue;
-			ItemFilterSettings.MaximumLevel = (int)rsML.UpperValue;
-			lblMLRange.Content = "ML Range: " + ItemFilterSettings.MinimumLevel + " to " + ItemFilterSettings.MaximumLevel;
-
-			CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
+			if (slider == rsML)
+			{
+				ItemFilterSettings.MinimumLevel = (int)rsML.LowerValue;
+				ItemFilterSettings.MaximumLevel = (int)rsML.UpperValue;
+				grpML.Header = "ML Range: " + ItemFilterSettings.MinimumLevel + " to " + ItemFilterSettings.MaximumLevel;
+				CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
+			}
 		}
 
 		private void EncodeGearsetToClipboard(object sender, RoutedEventArgs e)
@@ -688,6 +705,21 @@ namespace DDONamedGearPlanner
 			{
 				MessageBox.Show("There was an error with the data in the clipboard. Copy the code and try again.");
 			}
+		}
+
+		private void ItemPropertyFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (cbItemPropertyFilter.SelectedIndex == 0) ItemFilterSettings.SearchProperty = null;
+			else ItemFilterSettings.SearchProperty = (cbItemPropertyFilter.SelectedItem as DDOItemProperty).Property;
+
+			CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
+		}
+
+		private void ViewItemPropertyReport(object sender, RoutedEventArgs e)
+		{
+			// check for item property report window already open
+			//   if so, bring it to foreground/focus
+			//   if not, create it
 		}
 	}
 }

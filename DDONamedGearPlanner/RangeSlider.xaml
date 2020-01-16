@@ -37,12 +37,12 @@
 	<Grid VerticalAlignment="Top">
 		<Border BorderThickness="0,1,0,0" BorderBrush="Black" VerticalAlignment="Center" Height="1" Margin="5,0,5,0"/>
 		<local:FormattedSlider x:Name="LowerSlider" Margin="0,0,10,0" Template="{StaticResource RangeSliderTemplate}"
-                        IsSnapToTickEnabled="true" TickPlacement="TopLeft" AutoToolTipPlacement="TopLeft"
+                        IsSnapToTickEnabled="true" TickPlacement="TopLeft" AutoToolTipPlacement="BottomRight"
                         AutoToolTipPrecision="0" TickFrequency="1" Minimum="{Binding ElementName=root, Path=Minimum}"
                         Maximum="{Binding ElementName=root, Path=Maximum}"
                         Value="{Binding ElementName=root, Path=LowerValue, Mode=TwoWay}"/>
 		<local:FormattedSlider x:Name="UpperSlider" Margin="10,0,0,0" Template="{StaticResource RangeSliderTemplate}"
-                        IsSnapToTickEnabled="true" TickPlacement="TopLeft" AutoToolTipPlacement="TopLeft"
+                        IsSnapToTickEnabled="true" TickPlacement="TopLeft" AutoToolTipPlacement="BottomRight"
                         AutoToolTipPrecision="0" TickFrequency="1" Minimum="{Binding ElementName=root, Path=Minimum}"
                         Maximum="{Binding ElementName=root, Path=Maximum}"
                         Value="{Binding ElementName=root, Path=UpperValue, Mode=TwoWay}"/>

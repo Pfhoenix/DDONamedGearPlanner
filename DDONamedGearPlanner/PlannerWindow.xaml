@@ -30,6 +30,9 @@
 				<Separator />
 				<MenuItem Header="E_xit" Click="ExitMenuItem_Click" />
 			</MenuItem>
+			<MenuItem Header="_View">
+				<MenuItem Header="Item Property Report" Click="ViewItemPropertyReport"/>
+			</MenuItem>
 			<MenuItem Header="_Help">
 				<MenuItem Header="UI Tips" InputGestureText="F1" Click="HelpMenuItem_Click" />
 			</MenuItem>
@@ -165,19 +168,12 @@
 					<Button Grid.Column="3" Grid.Row="3" Name="btnFilterApply" VerticalAlignment="Center" Width="40" Height="20" Click="BtnFilterApply_Click">Apply</Button>
 				</Grid>
 			</GroupBox>
-			<GroupBox DockPanel.Dock="Top">
-				<GroupBox.Header>
-					<Label Name="lblMLRange">ML Range: 1 to 30</Label>
-				</GroupBox.Header>
-				<DockPanel>
-					<Button DockPanel.Dock="Right" Margin="3,0,0,0" Click="ApplyML_Click">Apply</Button>
-					<local:RangeSlider x:Name="rsML" Height="14" Minimum="1" Maximum="30" LowerValue="1" UpperValue="30" />
-				</DockPanel>
+			<GroupBox DockPanel.Dock="Top" Name="grpML" Header="ML Range: 1 to 30">
+				<local:RangeSlider x:Name="rsML" Margin="0,3,0,0" Height="14" Minimum="1" Maximum="30" LowerValue="1" UpperValue="30" LowerValueChanged="MLRangeChanged" UpperValueChanged="MLRangeChanged" TooltipDisplay="None" />
 			</GroupBox>
 			<GroupBox DockPanel.Dock="Top" Header="Item Property">
 				<DockPanel>
-					<Button DockPanel.Dock="Right" Margin="3,3,0,0">Apply</Button>
-					<ComboBox Name="cbItemPropertyFilter" Margin="0,3,0,0" DisplayMemberPath="Property"/>
+					<ComboBox Name="cbItemPropertyFilter" Margin="0,3,0,0" DisplayMemberPath="Property" SelectionChanged="ItemPropertyFilter_SelectionChanged"/>
 				</DockPanel>
 			</GroupBox>
 			<DockPanel DockPanel.Dock="Top" Height="24">

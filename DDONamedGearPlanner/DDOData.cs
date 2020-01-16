@@ -154,6 +154,7 @@ namespace DDONamedGearPlanner
 		public string Property { get; set; }
 		public List<string> Types = new List<string>();
 		public List<DDOItemData> Items = new List<DDOItemData>();
+		public SlotType SlotsFoundOn;
 	}
 
 	[Serializable]
@@ -7286,7 +7287,11 @@ namespace DDONamedGearPlanner
 
 			if (!string.IsNullOrWhiteSpace(type) && !ip.Types.Contains(type)) ip.Types.Add(type);
 
-			if (item != null && ip.Items.Find(i => i.Name == item.Name) == null) ip.Items.Add(item);
+			if (item != null)
+			{
+				if (ip.Items.Find(i => i.Name == item.Name) == null) ip.Items.Add(item);
+				ip.SlotsFoundOn |= item.Slot;
+			}
 		}
 
 		public string AddItem(DDOItemData item)

@@ -57,5 +57,6 @@
 		public static bool WeaponThrowingShuriken;
 		public static int MinimumLevel = 1;
 		public static int MaximumLevel = 30;
+		public static string SearchProperty;
 	}
 }
