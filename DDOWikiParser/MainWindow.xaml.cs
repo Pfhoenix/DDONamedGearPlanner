@@ -509,6 +509,16 @@ namespace DDOWikiParser
 				data.AddProperty("Cold Absorption", "enhancement", 51, null);
 				return true;
 			}
+			else if (trimmed.StartsWith("Thorny Crown of Madness"))
+			{
+				data.AddProperty("Thorny Crown of Madness", null, 0, null);
+				return true;
+			}
+			else if (trimmed.StartsWith("Transmuted Platinum"))
+			{
+				data.AddProperty("Transmuted Platinum", null, 0, null);
+				return true;
+			}
 			else
 			{
 				// check for spell charges first
@@ -663,6 +673,7 @@ namespace DDOWikiParser
 						else if (p.EndsWith("Deadly")) p = "Damage";
 						else if (p.StartsWith("Damage Bonus")) p = "Damage";
 						else if (p == "Shatter") p = "Sunder DC";
+						else if (p.EndsWith("Stunning")) p = "Stunning DC";
 						else if (p.EndsWith("Wizardry")) p = "Spell Points";
 						else if (p.EndsWith("Protection")) p = "Armor Class";
 						else if (p.StartsWith("Natural Armor"))
@@ -817,6 +828,7 @@ namespace DDOWikiParser
 						else if (p.EndsWith("Reflex Save")) p = "Reflex";
 						else if (p.StartsWith("Fortification Penalty")) p = "Fortification";
 						else if (p.StartsWith("Negative Energy Absorption")) p = "Negative Absorption";
+						else if (p.EndsWith("Vertigo")) p = "Trip DC";
 						//else if (NullTypeProperties.Contains(p)) v = null;
 					}
 					#endregion
@@ -1328,6 +1340,12 @@ namespace DDOWikiParser
 							vi = 5;
 						}
 						else if (p == "Silver, Alchemical") p = "Silver";
+						else if (p == "Sundering")
+						{
+							p = "Sunder DC";
+							vi += 5;
+							v = "enhancement";
+						}
 						//else if (NullTypeProperties.Contains(p)) v = null;
 					}
 					#endregion
@@ -1638,7 +1656,7 @@ namespace DDOWikiParser
 				else if (p == "Dazing")
 				{
 					data.AddProperty(p, null, vi, null);
-					data.AddProperty("Stunning", "enhancement", vi * 2, null);
+					data.AddProperty("Stunning DC", "enhancement", vi * 2, null);
 				}
 				else if (p == "Linguistics")
 				{
@@ -1666,7 +1684,7 @@ namespace DDOWikiParser
 				else if (p == "Eternal Faith")
 				{
 					data.AddProperty("Turn Undead Check", null, 2, null);
-					data.AddProperty("Turn Undead Max Hit Dice", null, 2, null);
+					data.AddProperty("Turn Undead Maximum Hit Dice", null, 2, null);
 					data.AddProperty("Turn Undead Total Hit Dice", null, 4, null);
 				}
 				else if (p.EndsWith("Elemental Resistance -"))
@@ -1800,7 +1818,7 @@ namespace DDOWikiParser
 					data.AddProperty("Search", v, vi, null);
 					data.AddProperty("Spellcraft", v, vi, null);
 				}
-				else if (p.EndsWith("Prudent Skills Bonus"))
+				else if (p.EndsWith("Prudent Skills Bonus") || p.StartsWith("Wisdom Skills -"))
 				{
 					data.AddProperty("Heal", v, vi, null);
 					data.AddProperty("Listen", v, vi, null);

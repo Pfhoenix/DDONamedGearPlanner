@@ -1638,7 +1638,7 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Turn Undead Cleric Level",
+								Property = "Turn Undead Effective Level",
 								Type = "exceptional",
 								Value = 1
 							}
@@ -2180,7 +2180,7 @@ namespace DDONamedGearPlanner
 						{
 							new DDOItemSetBonusProperty
 							{
-								Property = "Water Spell Critical Chance",
+								Property = "Cold Spell Critical Chance",
 								Type = "artifact",
 								Value = 2
 							}
