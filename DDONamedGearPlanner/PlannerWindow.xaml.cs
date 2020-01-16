@@ -27,6 +27,7 @@ namespace DDONamedGearPlanner
 		EquipmentSlotControl SelectedESC;
 
 		List<DDOItemData> ItemListCopy;
+		List<DDOItemProperty> ItemPropertiesCopy;
 
 		public PlannerWindow()
 		{
@@ -43,6 +44,14 @@ namespace DDONamedGearPlanner
 			ItemListCopy = new List<DDOItemData>(dataset.Items);
 			lvItemList.ItemsSource = ItemListCopy;
 			SetFilter(CustomFilter);
+
+			ItemPropertiesCopy = new List<DDOItemProperty>();
+			foreach (var ip in dataset.ItemProperties)
+				ItemPropertiesCopy.Add(ip.Value);
+			ItemPropertiesCopy.Sort((a, b) => string.Compare(a.Property, b.Property));
+			cbItemPropertyFilter.ItemsSource = ItemPropertiesCopy;
+
+			txtSearchBox.Focus();
 		}
 
 		bool LoadDDODataset()
@@ -167,7 +176,7 @@ namespace DDONamedGearPlanner
 					if (item.WeaponType == "Bastard Sword" && !ItemFilterSettings.WeaponExoticBastardSword) return false;
 					if (item.WeaponType == "Dwarven War Axe" && !ItemFilterSettings.WeaponExoticDwarvenWarAxe) return false;
 					if (item.WeaponType == "Great Crossbow" && !ItemFilterSettings.WeaponExoticGreatXbow) return false;
-					if (item.WeaponType == "Handwrap" && !ItemFilterSettings.WeaponExoticHandwraps) return false;
+					if (item.WeaponType == "Handwraps" && !ItemFilterSettings.WeaponExoticHandwraps) return false;
 					if (item.WeaponType == "Kama" && !ItemFilterSettings.WeaponExoticKama) return false;
 					if (item.WeaponType == "Khopesh" && !ItemFilterSettings.WeaponExoticKhopesh) return false;
 					if (item.WeaponType == "Repeating Heavy Crossbow" && !ItemFilterSettings.WeaponExoticRepeatHeavyXbow) return false;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows;
@@ -16,6 +17,27 @@ namespace DDOWikiCrawler
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		string[] IgnoredCategories =
+		{
+			"Collars",
+			"Weapons_by_handedness",
+			"Weapons_by_type",
+			"Weapons_by_damage_type",
+			"Item_materials",
+			"Unique_item_enchantments",
+			"Potions",
+			"Wands",
+			"Hair_dyes",
+			"Cosmetic_items",
+			"Quest_items",
+			"DDO_Store_items",
+			"Items_by_update",
+			"Items",
+			"Items_by_effect",
+			"Root",
+			"DDO_library"
+		};
+
 		string HtmlCachePath;
 		CancellationTokenSource cts = new CancellationTokenSource();
 		bool onFirstPage = false;
@@ -188,6 +210,7 @@ namespace DDOWikiCrawler
 			TreeViewItem tvi = new TreeViewItem();
 			tvi.Header = uri.Substring(i + 9);
 			tvi.Tag = uri;
+			if (IgnoredCategories.Contains(tvi.Header.ToString())) return;
 			tvCachedPages.Items.Add(tvi);
 		}
 

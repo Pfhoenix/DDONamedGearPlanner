@@ -36,6 +36,8 @@ namespace DDONamedGearPlanner
 		public NamedSetSelectorWindow()
 		{
 			InitializeComponent();
+
+			tbSearchName.Focus();
 		}
 
 		public void SetFilter(Predicate<object> filter)

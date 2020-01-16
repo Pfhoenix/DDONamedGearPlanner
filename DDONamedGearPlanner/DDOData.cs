@@ -151,7 +151,7 @@ namespace DDONamedGearPlanner
 	[Serializable]
 	public class DDOItemProperty
 	{
-		public string Property;
+		public string Property { get; set; }
 		public List<string> Types = new List<string>();
 		public List<DDOItemData> Items = new List<DDOItemData>();
 	}
@@ -1558,7 +1558,7 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Efficient Metamagic - Extend",
+								Property = "Extend Spell Point Reduction",
 								Value = 2
 							}
 						}
@@ -1584,12 +1584,12 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Efficient Metamagic - Maximize",
+								Property = "Maximize Spell Point Reduction",
 								Value = 4
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Efficient Metamagic - Extend",
+								Property = "Extend Spell Point Reduction",
 								Value = 1
 							}
 						}
@@ -2430,7 +2430,49 @@ namespace DDONamedGearPlanner
 						{
 							new DDOItemSetBonusProperty
 							{
-								Property = "Spell DCs",
+								Property = "Abjuration Spell DC",
+								Type = "equipment",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Conjuration Spell DC",
+								Type = "equipment",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Divination Spell DC",
+								Type = "equipment",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Enchantment Spell DC",
+								Type = "equipment",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Evocation Spell DC",
+								Type = "equipment",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Illusion Spell DC",
+								Type = "equipment",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Necromancy Spell DC",
+								Type = "equipment",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Transmutation Spell DC",
 								Type = "equipment",
 								Value = 1
 							},
@@ -2491,17 +2533,17 @@ namespace DDONamedGearPlanner
 						{
 							new DDOItemSetBonusProperty
 							{
-								Property = "Empower Metamagic Cost Reduction",
+								Property = "Empower Spell Point Reduction",
 								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Empower Heal Metamagic Cost Reduction",
+								Property = "Empower Healing Spell Point Reduction",
 								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Maximize Metamagic Cost Reduction",
+								Property = "Maximize Spell Point Reduction",
 								Value = 2
 							}
 						}
@@ -3449,8 +3491,50 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Spell DCs",
-								Type = "artifact equipment",
+								Property = "Abjuration Spell DC",
+								Type = "artifact",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Conjuration Spell DC",
+								Type = "artifact",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Divination Spell DC",
+								Type = "artifact",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Enchantment Spell DC",
+								Type = "artifact",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Evocation Spell DC",
+								Type = "artifact",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Illusion Spell DC",
+								Type = "artifact",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Necromancy Spell DC",
+								Type = "artifact",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Transmutation Spell DC",
+								Type = "artifact",
 								Value = 1
 							}
 						}
@@ -3546,8 +3630,50 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Spell DCs",
-								Type = "artifact equipment",
+								Property = "Abjuration Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Conjuration Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Divination Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Enchantment Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Evocation Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Illusion Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Necromancy Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Transmutation Spell DC",
+								Type = "artifact",
 								Value = 2
 							}
 						}
@@ -3634,8 +3760,50 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Spell DCs",
-								Type = "artifact equipment",
+								Property = "Abjuration Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Conjuration Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Divination Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Enchantment Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Evocation Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Illusion Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Necromancy Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Transmutation Spell DC",
+								Type = "artifact",
 								Value = 2
 							}
 						}
@@ -3731,8 +3899,50 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Spell DCs",
-								Type = "artifact equipment",
+								Property = "Abjuration Spell DC",
+								Type = "artifact",
+								Value = 4
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Conjuration Spell DC",
+								Type = "artifact",
+								Value = 4
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Divination Spell DC",
+								Type = "artifact",
+								Value = 4
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Enchantment Spell DC",
+								Type = "artifact",
+								Value = 4
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Evocation Spell DC",
+								Type = "artifact",
+								Value = 4
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Illusion Spell DC",
+								Type = "artifact",
+								Value = 4
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Necromancy Spell DC",
+								Type = "artifact",
+								Value = 4
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Transmutation Spell DC",
+								Type = "artifact",
 								Value = 4
 							}
 						}
@@ -3783,7 +3993,7 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Spell Saves",
+								Property = "Spell Save",
 								Type = "artifact",
 								Value = 1
 							}
@@ -4247,13 +4457,13 @@ namespace DDONamedGearPlanner
 						{
 							new DDOItemSetBonusProperty
 							{
-								Property = "Attack Evil",
+								Property = "Attack vs Evil",
 								Type = "artifact",
 								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Damage Evil",
+								Property = "Damage vs Evil",
 								Type = "artifact",
 								Value = 2
 							},
@@ -4299,13 +4509,13 @@ namespace DDONamedGearPlanner
 						{
 							new DDOItemSetBonusProperty
 							{
-								Property = "Attack Evil",
+								Property = "Attack vs Evil",
 								Type = "artifact",
 								Value = 5
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Damage Evil",
+								Property = "Damage vs Evil",
 								Type = "artifact",
 								Value = 5
 							},
@@ -4634,7 +4844,7 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Evocation Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 1
 							}
@@ -4668,7 +4878,7 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Evocation Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 2
 							}
@@ -4696,7 +4906,7 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Rune Arm DCs",
+								Property = "Rune Arm DC",
 								Type = "artifact",
 								Value = 2
 							},
@@ -4730,7 +4940,7 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Rune Arm DCs",
+								Property = "Rune Arm DC",
 								Type = "artifact",
 								Value = 4
 							},
@@ -4977,67 +5187,49 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell DCs",
+								Property = "Abjuration Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell DCs",
+								Property = "Conjuration Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell DCs",
+								Property = "Divination Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell DCs",
+								Property = "Enchantment Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell DCs",
+								Property = "Illusion Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell DCs",
+								Property = "Necromancy Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Positive Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Repair Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Sonic Spell DCs",
+								Property = "Transmutation Spell DC",
 								Type = "artifact",
 								Value = 1
 							}
@@ -5113,67 +5305,49 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell DCs",
+								Property = "Abjuration Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell DCs",
+								Property = "Conjuration Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell DCs",
+								Property = "Divination Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell DCs",
+								Property = "Enchantment Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell DCs",
+								Property = "Illusion Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell DCs",
+								Property = "Necromancy Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Positive Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Repair Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Sonic Spell DCs",
+								Property = "Transmutation Spell DC",
 								Type = "artifact",
 								Value = 3
 							}
@@ -5219,67 +5393,49 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell DCs",
+								Property = "Abjuration Spell DC",
 								Type = "artifact",
 								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell DCs",
+								Property = "Conjuration Spell DC",
 								Type = "artifact",
 								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell DCs",
+								Property = "Divination Spell DC",
 								Type = "artifact",
 								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell DCs",
+								Property = "Enchantment Spell DC",
 								Type = "artifact",
 								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell DCs",
+								Property = "Illusion Spell DC",
 								Type = "artifact",
 								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell DCs",
+								Property = "Necromancy Spell DC",
 								Type = "artifact",
 								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell DCs",
-								Type = "artifact",
-								Value = 2
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Positive Spell DCs",
-								Type = "artifact",
-								Value = 2
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Repair Spell DCs",
-								Type = "artifact",
-								Value = 2
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Sonic Spell DCs",
+								Property = "Transmutation Spell DC",
 								Type = "artifact",
 								Value = 2
 							},
@@ -5330,67 +5486,49 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell DCs",
+								Property = "Abjuration Spell DC",
 								Type = "artifact",
 								Value = 4
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell DCs",
+								Property = "Conjuration Spell DC",
 								Type = "artifact",
 								Value = 4
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell DCs",
+								Property = "Divination Spell DC",
 								Type = "artifact",
 								Value = 4
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell DCs",
+								Property = "Enchantment Spell DC",
 								Type = "artifact",
 								Value = 4
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 4
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell DCs",
+								Property = "Illusion Spell DC",
 								Type = "artifact",
 								Value = 4
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell DCs",
+								Property = "Necromancy Spell DC",
 								Type = "artifact",
 								Value = 4
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell DCs",
-								Type = "artifact",
-								Value = 4
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Positive Spell DCs",
-								Type = "artifact",
-								Value = 4
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Repair Spell DCs",
-								Type = "artifact",
-								Value = 4
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Sonic Spell DCs",
+								Property = "Transmutation Spell DC",
 								Type = "artifact",
 								Value = 4
 							},
@@ -5477,67 +5615,49 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell DCs",
+								Property = "Abjuration Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell DCs",
+								Property = "Conjuration Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell DCs",
+								Property = "Divination Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell DCs",
+								Property = "Enchantment Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell DCs",
+								Property = "Illusion Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell DCs",
+								Property = "Necromancy Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Positive Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Repair Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Sonic Spell DCs",
+								Property = "Transmutation Spell DC",
 								Type = "artifact",
 								Value = 1
 							}
@@ -5619,67 +5739,49 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell DCs",
+								Property = "Abjuration Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell DCs",
+								Property = "Conjuration Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell DCs",
+								Property = "Divination Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell DCs",
+								Property = "Enchantment Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell DCs",
+								Property = "Illusion Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell DCs",
+								Property = "Necromancy Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Positive Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Repair Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Sonic Spell DCs",
+								Property = "Transmutation Spell DC",
 								Type = "artifact",
 								Value = 3
 							}
@@ -5883,67 +5985,49 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell DCs",
+								Property = "Abjuration Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell DCs",
+								Property = "Conjuration Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell DCs",
+								Property = "Divination Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell DCs",
+								Property = "Enchantment Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell DCs",
+								Property = "Illusion Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell DCs",
+								Property = "Necromancy Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Positive Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Repair Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Sonic Spell DCs",
+								Property = "Transmutation Spell DC",
 								Type = "artifact",
 								Value = 1
 							}
@@ -6019,67 +6103,49 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell DCs",
+								Property = "Abjuration Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell DCs",
+								Property = "Conjuration Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell DCs",
+								Property = "Divination Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell DCs",
+								Property = "Enchantment Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell DCs",
+								Property = "Illusion Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell DCs",
+								Property = "Necromancy Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Positive Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Repair Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Sonic Spell DCs",
+								Property = "Transmutation Spell DC",
 								Type = "artifact",
 								Value = 3
 							}
@@ -6349,67 +6415,49 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell DCs",
+								Property = "Abjuration Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell DCs",
+								Property = "Conjuration Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell DCs",
+								Property = "Divination Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell DCs",
+								Property = "Enchantment Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell DCs",
+								Property = "Illusion Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell DCs",
+								Property = "Necromancy Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Positive Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Repair Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Sonic Spell DCs",
+								Property = "Transmutation Spell DC",
 								Type = "artifact",
 								Value = 1
 							}
@@ -6467,67 +6515,49 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell DCs",
+								Property = "Abjuration Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell DCs",
+								Property = "Conjuration Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell DCs",
+								Property = "Divination Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell DCs",
+								Property = "Enchantment Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell DCs",
+								Property = "Illusion Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell DCs",
+								Property = "Necromancy Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Positive Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Repair Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Sonic Spell DCs",
+								Property = "Transmutation Spell DC",
 								Type = "artifact",
 								Value = 3
 							}
@@ -6603,67 +6633,49 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell DCs",
+								Property = "Abjuration Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell DCs",
+								Property = "Conjuration Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell DCs",
+								Property = "Divination Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell DCs",
+								Property = "Enchantment Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell DCs",
+								Property = "Illusion Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell DCs",
+								Property = "Necromancy Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Positive Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Repair Spell DCs",
-								Type = "artifact",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Sonic Spell DCs",
+								Property = "Transmutation Spell DC",
 								Type = "artifact",
 								Value = 1
 							}
@@ -6739,67 +6751,49 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell DCs",
+								Property = "Abjuration Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell DCs",
+								Property = "Conjuration Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell DCs",
+								Property = "Divination Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell DCs",
+								Property = "Enchantment Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell DCs",
+								Property = "Illusion Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell DCs",
+								Property = "Necromancy Spell DC",
 								Type = "artifact",
 								Value = 3
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Positive Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Repair Spell DCs",
-								Type = "artifact",
-								Value = 3
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Sonic Spell DCs",
+								Property = "Transmutation Spell DC",
 								Type = "artifact",
 								Value = 3
 							}
@@ -6933,67 +6927,49 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell DCs",
+								Property = "Abjuration Spell DC",
 								Type = "profane",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell DCs",
+								Property = "Conjuration Spell DC",
 								Type = "profane",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell DCs",
+								Property = "Divination Spell DC",
 								Type = "profane",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell DCs",
+								Property = "Enchantment Spell DC",
 								Type = "profane",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell DCs",
+								Property = "Evocation Spell DC",
 								Type = "profane",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell DCs",
+								Property = "Illusion Spell DC",
 								Type = "profane",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell DCs",
+								Property = "Necromancy Spell DC",
 								Type = "profane",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell DCs",
-								Type = "profane",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Positive Spell DCs",
-								Type = "profane",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Repair Spell DCs",
-								Type = "profane",
-								Value = 1
-							},
-							new DDOItemSetBonusProperty
-							{
-								Property = "Sonic Spell DCs",
+								Property = "Transmutation Spell DC",
 								Type = "profane",
 								Value = 1
 							}
@@ -7021,7 +6997,19 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Tactical DCs",
+								Property = "Trip DC",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sunder DC",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Stunning DC",
 								Type = "profane",
 								Value = 1
 							}
@@ -7127,7 +7115,7 @@ namespace DDONamedGearPlanner
 						{
 							new DDOItemSetBonusProperty
 							{
-								Property = "Repair Amplification",
+								Property = "Repair Healing Amplification",
 								Type = "profane",
 								Value = 10
 							}
@@ -7136,6 +7124,134 @@ namespace DDONamedGearPlanner
 				}
 			});
 			#endregion
+
+			// there are only two items in the game that use this
+			#region Mysterious Effects
+			Sets.Add("Mysterious Effect Option 1", new DDOItemSet
+			{
+				Name = "Mysterious Effect Option 1",
+				WikiURL = null,
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Dexterity",
+								Type = "enhancement",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fortitude",
+								Type = "resistance",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Reflex",
+								Type = "resistance",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Will",
+								Type = "resistance",
+								Value = 3
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Mysterious Effect Option 2", new DDOItemSet
+			{
+				Name = "Mysterious Effect Option 2",
+				WikiURL = null,
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Charisma",
+								Type = "enhancement",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fortification",
+								Type = "enhancement",
+								Value = 75
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Mysterious Effect Option 3", new DDOItemSet
+			{
+				Name = "Mysterious Effect Option 3",
+				WikiURL = null,
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Strength",
+								Type = "enhancement",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Armor Class",
+								Type = "deflection",
+								Value = 3
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Mysterious Effect Option 4", new DDOItemSet
+			{
+				Name = "Mysterious Effect Option 4",
+				WikiURL = null,
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Constitution",
+								Type = "enhancement",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Spell Penetration",
+								Type = "equipment",
+								Value = 1
+							}
+						}
+					}
+				}
+			});
+			#endregion
+
 			/*
 				Sets.Add("", new DDOItemSet
 				{
@@ -7170,7 +7286,7 @@ namespace DDONamedGearPlanner
 
 			if (!string.IsNullOrWhiteSpace(type) && !ip.Types.Contains(type)) ip.Types.Add(type);
 
-			if (item != null) ip.Items.Add(item);
+			if (item != null && ip.Items.Find(i => i.Name == item.Name) == null) ip.Items.Add(item);
 		}
 
 		public string AddItem(DDOItemData item)

@@ -34,8 +34,8 @@
 				<MenuItem Header="UI Tips" InputGestureText="F1" Click="HelpMenuItem_Click" />
 			</MenuItem>
 		</Menu>
-		<StackPanel DockPanel.Dock="Left" Width="187" HorizontalAlignment="Left">
-			<GroupBox x:Name="groupBox" Header="Search by slot" Height="194" VerticalAlignment="Top" Width="187" HorizontalAlignment="Left">
+		<DockPanel DockPanel.Dock="Left" Width="187" HorizontalAlignment="Left">
+			<GroupBox DockPanel.Dock="Top" x:Name="groupBox" Header="Search by slot" Height="194" VerticalAlignment="Top" Width="187" HorizontalAlignment="Left">
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition/>
@@ -132,7 +132,7 @@
 									<MenuItem Name="cmiFilterWeaponExoticDwarvenWarAxe" Header="Dwarven War Axe" IsCheckable="True" IsChecked="True"/>
 									<MenuItem Name="cmiFilterWeaponExoticKama" Header="Kama" IsCheckable="True" IsChecked="True"/>
 									<MenuItem Name="cmiFilterWeaponExoticKhopesh" Header="Khopesh" IsCheckable="True" IsChecked="True"/>
-									<MenuItem Name="cmiFilterWeaponExoticHandwraps" Header="Handwrap" IsCheckable="True" IsChecked="True"/>
+									<MenuItem Name="cmiFilterWeaponExoticHandwraps" Header="Handwraps" IsCheckable="True" IsChecked="True"/>
 									<MenuItem Name="cmiFilterWeaponExoticGreatXbow" Header="Great Crossbow" IsCheckable="True" IsChecked="True"/>
 									<MenuItem Name="cmiFilterWeaponExoticRepeatLightXbow" Header="Repeating Light Crossbow" IsCheckable="True" IsChecked="True"/>
 									<MenuItem Name="cmiFilterWeaponExoticRepeatHeavyXbow" Header="Repeating Heavy Crossbow" IsCheckable="True" IsChecked="True"/>
@@ -165,7 +165,7 @@
 					<Button Grid.Column="3" Grid.Row="3" Name="btnFilterApply" VerticalAlignment="Center" Width="40" Height="20" Click="BtnFilterApply_Click">Apply</Button>
 				</Grid>
 			</GroupBox>
-			<GroupBox>
+			<GroupBox DockPanel.Dock="Top">
 				<GroupBox.Header>
 					<Label Name="lblMLRange">ML Range: 1 to 30</Label>
 				</GroupBox.Header>
@@ -174,11 +174,17 @@
 					<local:RangeSlider x:Name="rsML" Height="14" Minimum="1" Maximum="30" LowerValue="1" UpperValue="30" />
 				</DockPanel>
 			</GroupBox>
-			<DockPanel Height="24">
+			<GroupBox DockPanel.Dock="Top" Header="Item Property">
+				<DockPanel>
+					<Button DockPanel.Dock="Right" Margin="3,3,0,0">Apply</Button>
+					<ComboBox Name="cbItemPropertyFilter" Margin="0,3,0,0" DisplayMemberPath="Property"/>
+				</DockPanel>
+			</GroupBox>
+			<DockPanel DockPanel.Dock="Top" Height="24">
 				<Label DockPanel.Dock="Left" VerticalAlignment="Top">Search:</Label>
 				<TextBox Name="txtSearchBox" Margin="0,2,0,0" TextChanged="TxtSearchBox_TextChanged"/>
 			</DockPanel>
-			<ListView Name="lvItemList" Height="372" Margin="0,1,0,0" MouseUp="LvItemList_MouseUp" MouseLeave="LvItemList_MouseLeave" MouseDoubleClick="LvItemList_MouseDoubleClick" SelectionChanged="LvItemList_SelectionChanged" GridViewColumnHeader.Click="ItemList_HeaderClick">
+			<ListView Name="lvItemList" Margin="0,1,0,0" MouseUp="LvItemList_MouseUp" MouseLeave="LvItemList_MouseLeave" MouseDoubleClick="LvItemList_MouseDoubleClick" SelectionChanged="LvItemList_SelectionChanged" GridViewColumnHeader.Click="ItemList_HeaderClick">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn Header="Name" Width="120">
@@ -202,7 +208,7 @@
 					</Style>
 				</ListView.ItemContainerStyle>
 			</ListView>
-		</StackPanel>
+		</DockPanel>
 		<StackPanel DockPanel.Dock="Left" Width="250" HorizontalAlignment="Left" Margin="3,0,0,0">
 			<Grid VerticalAlignment="Top">
 				<Grid.RowDefinitions>
@@ -226,7 +232,7 @@
 				<StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2">
 					<Button Margin="3">Gear Set Filters</Button>
 					<Button Margin="3">Slot Filters</Button>
-					<Button Margin="3" Click="EncodeGearsetToClipboard">Copy to Clipboard</Button>
+					<Button Margin="3,79,3,3" Click="EncodeGearsetToClipboard">Copy to Clipboard</Button>
 					<Button Margin="3" Click="DecodeGearsetFromClipboard">Paste From Clipboard</Button>
 				</StackPanel>
 				<local:EquipmentSlotControl Grid.Column="3" Grid.Row="1" x:Name="BackSlot" Slot="Back" HorizontalAlignment="Center" VerticalAlignment="Center"/>
