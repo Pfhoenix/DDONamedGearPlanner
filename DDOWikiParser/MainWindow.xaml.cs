@@ -1894,6 +1894,12 @@ namespace DDOWikiParser
 					data.AddProperty("Negative Spell Power", v, vi, null);
 					data.AddProperty("Poison Spell Power", v, vi, null);
 				}
+				else if (p.EndsWith(" Bane"))
+				{
+					if (p.StartsWith("Lesser ")) p = p.Substring(7);
+					else if (p.StartsWith("Greater ")) p = p.Substring(8);
+					data.AddProperty(p, origv == v ? null : v, vi, null);
+				}
 				else data.AddProperty(p, origv == v ? null : v, vi, null);
 
 				return true;
