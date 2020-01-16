@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DDONamedGearPlanner"
 		mc:Ignorable="d"
 		x:Name="ddoplanner"
-        Title="DDO Named Gear Planner v0.3" Height="700" Width="800" ResizeMode="CanMinimize" MinHeight="700" MinWidth="800">
+        Title="DDO Named Gear Planner v0.4" Height="700" Width="800" ResizeMode="CanMinimize" MinHeight="700" MinWidth="800">
 	
 	<Window.Resources>
 		<ResourceDictionary>
@@ -54,7 +54,7 @@
 					</Grid.ColumnDefinitions>
 
 					<ToggleButton Grid.Column="0" Grid.Row="0" Name="tbFilterBack" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" Width="40" Height="40" ToolTip="Back" IsChecked="True">
-						<Image Source="Resources/slot_bg_back.png" Width="32" Height="32"/>
+						<Image Source="../Resources/slot_bg_back.png" Width="32" Height="32"/>
 					</ToggleButton>
 					<ToggleButton Grid.Column="1" Grid.Row="0" Name="tbFilterBody" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Body" MouseDoubleClick="TbFilterBody_MouseDoubleClick" IsChecked="True">
 						<ToggleButton.ContextMenu>
@@ -66,37 +66,37 @@
 								<MenuItem Name="cmiFilterBodyDocent" Header="Docents" IsCheckable="True" IsChecked="True"/>
 							</ContextMenu>
 						</ToggleButton.ContextMenu>
-						<Image Source="Resources/slot_bg_body.png" Width="32" Height="32"/>
+						<Image Source="../Resources/slot_bg_body.png" Width="32" Height="32"/>
 					</ToggleButton>
 					<ToggleButton Grid.Column="2" Grid.Row="0" Name="tbFilterEye" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Eye" IsChecked="True">
-						<Image Source="Resources/slot_bg_Eye.png" Width="32" Height="32"/>
+						<Image Source="../Resources/slot_bg_Eye.png" Width="32" Height="32"/>
 					</ToggleButton>
 					<ToggleButton Grid.Column="3" Grid.Row="0" Name="tbFilterFeet" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Feet" IsChecked="True">
-						<Image Source="Resources/slot_bg_feet.png" Width="32" Height="32"/>
+						<Image Source="../Resources/slot_bg_feet.png" Width="32" Height="32"/>
 					</ToggleButton>
 					<ToggleButton Grid.Column="0" Grid.Row="1" Name="tbFilterFinger" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Finger" IsChecked="True">
-						<Image Source="Resources/slot_bg_finger1.png" Width="32" Height="32"/>
+						<Image Source="../Resources/slot_bg_finger1.png" Width="32" Height="32"/>
 					</ToggleButton>
 					<ToggleButton Grid.Column="1" Grid.Row="1" Name="tbFilterHand" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Hand" IsChecked="True">
-						<Image Source="Resources/slot_bg_hand.png" Width="32" Height="32"/>
+						<Image Source="../Resources/slot_bg_hand.png" Width="32" Height="32"/>
 					</ToggleButton>
 					<ToggleButton Grid.Column="2" Grid.Row="1" Name="tbFilterHead" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Head" IsChecked="True">
-						<Image Source="Resources/slot_bg_head.png" Width="32" Height="32"/>
+						<Image Source="../Resources/slot_bg_head.png" Width="32" Height="32"/>
 					</ToggleButton>
 					<ToggleButton Grid.Column="3" Grid.Row="1" Name="tbFilterNeck" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Neck" IsChecked="True">
-						<Image Source="Resources/slot_bg_neck.png" Width="32" Height="32"/>
+						<Image Source="../Resources/slot_bg_neck.png" Width="32" Height="32"/>
 					</ToggleButton>
 					<ToggleButton Grid.Column="0" Grid.Row="2" Name="tbFilterTrinket" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Trinket" IsChecked="True">
-						<Image Source="Resources/slot_bg_trinket.png" Width="32" Height="32"/>
+						<Image Source="../Resources/slot_bg_trinket.png" Width="32" Height="32"/>
 					</ToggleButton>
 					<ToggleButton Grid.Column="1" Grid.Row="2" Name="tbFilterWaist" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Waist" IsChecked="True">
-						<Image Source="Resources/slot_bg_waist.png" Width="32" Height="32"/>
+						<Image Source="../Resources/slot_bg_waist.png" Width="32" Height="32"/>
 					</ToggleButton>
 					<ToggleButton Grid.Column="2" Grid.Row="2" Name="tbFilterWrist" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Wrist" IsChecked="True">
-						<Image Source="Resources/slot_bg_wrist.png" Width="32" Height="32"/>
+						<Image Source="../Resources/slot_bg_wrist.png" Width="32" Height="32"/>
 					</ToggleButton>
 					<ToggleButton Grid.Column="3" Grid.Row="2" Name="tbFilterWeapon" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Weapon" IsChecked="True">
-						<Image Source="Resources/slot_bg_weapon.png" Width="32" Height="32"/>
+						<Image Source="../Resources/slot_bg_weapon.png" Width="32" Height="32"/>
 						<ToggleButton.ContextMenu>
 							<ContextMenu>
 								<MenuItem Name="cmiFilterWeaponSimple" Header="Simple" IsChecked="True" Mouse.PreviewMouseUp="FilterMenuItem_MouseLeftButtonUp">
@@ -151,7 +151,7 @@
 						</ToggleButton.ContextMenu>
 					</ToggleButton>
 					<ToggleButton Grid.Column="0" Grid.Row="3" Name="tbFilterOffhand" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" ToolTip="Offhand" MouseDoubleClick="TbFilterOffhand_MouseDoubleClick" IsChecked="True">
-						<Image Source="Resources/slot_bg_offhand.png" Width="32" Height="32"/>
+						<Image Source="../Resources/slot_bg_offhand.png" Width="32" Height="32"/>
 						<ToggleButton.ContextMenu>
 							<ContextMenu>
 								<MenuItem Name="cmiFilterOffhandBuckler" Header="Bucklers" IsCheckable="True" IsChecked="True"/>
@@ -241,8 +241,8 @@
 				<local:EquipmentSlotControl Grid.Column="0" Grid.Row="4" x:Name="WeaponSlot" Slot="Weapon" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
 				<local:EquipmentSlotControl Grid.Column="1" Grid.Row="4" x:Name="OffhandSlot" Slot="Offhand" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
 				<StackPanel Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="4">
-					<Button Margin="3,18,3,3" Click="ImportNamedSet">Import Named Set</Button>
-					<Button Margin="3,28,3,3" Click="UnlockClearAll">Unlock and Clear All</Button>
+					<Button Margin="3,18,12,3" Click="ImportNamedSet">Import Named Set</Button>
+					<Button Margin="3,28,12,3" Click="UnlockClearAll">Unlock &amp; Clear All</Button>
 				</StackPanel>
 			</Grid>
 		</StackPanel>

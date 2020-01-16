@@ -19,7 +19,7 @@
 				<Border.BorderBrush>
 					<SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ControlDarkColorKey}}"/>
 				</Border.BorderBrush>
-				<Image Grid.Row="0" Name="imgIcon" Source="/Resources/slot_bg_back.png" Width="32" Height="32">
+				<Image Grid.Row="0" Name="imgIcon" Source="../Resources/slot_bg_back.png" Width="32" Height="32">
 					<Image.ToolTip>
 						<ToolTip Name ="ttTT"/>
 					</Image.ToolTip>

@@ -90,11 +90,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="FormattedSlider.cs" />
-    <Compile Include="RangeSlider.xaml.cs">
+    <Compile Include="Controls\FormattedSlider.cs" />
+    <Compile Include="Controls\RangeSlider.xaml.cs">
       <DependentUpon>RangeSlider.xaml</DependentUpon>
     </Compile>
-    <Page Include="EquipmentSlotControl.xaml">
+    <Page Include="Controls\EquipmentSlotControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -102,11 +102,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NamedSetSelectorWindow.xaml">
+    <Page Include="Windows\NamedSetSelectorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PlannerWindow.xaml">
+    <Page Include="Windows\PlannerWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -115,21 +115,21 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DDOData.cs" />
-    <Compile Include="EquipmentSlotControl.xaml.cs">
+    <Compile Include="Controls\EquipmentSlotControl.xaml.cs">
       <DependentUpon>EquipmentSlotControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ItemFilterSettings.cs" />
     <Compile Include="ListViewItemProperties.xaml.cs">
       <DependentUpon>ListViewItemProperties.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NamedSetSelectorWindow.xaml.cs">
+    <Compile Include="Windows\NamedSetSelectorWindow.xaml.cs">
       <DependentUpon>NamedSetSelectorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PlannerWindow.xaml.cs">
+    <Compile Include="Windows\PlannerWindow.xaml.cs">
       <DependentUpon>PlannerWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="RangeSlider.xaml">
+    <Page Include="Controls\RangeSlider.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
