@@ -133,10 +133,16 @@ namespace DDONamedGearPlanner
 		public ItemProperty AddProperty(string prop, string type, float value, List<ItemProperty> options)
 		{
 			ItemProperty ip = new ItemProperty { Property = prop, Type = type, Value = value, Options = options, Owner = this };
+			if (type == "insightful") ip.Type = "insight";
 			if (options != null)
 				foreach (var i in options) i.Owner = this;
 			Properties.Add(ip);
 			return ip;
+		}
+
+		public override string ToString()
+		{
+			return Name;
 		}
 	}
 
@@ -7286,6 +7292,7 @@ namespace DDONamedGearPlanner
 			}
 
 			if (!string.IsNullOrWhiteSpace(type) && !ip.Types.Contains(type)) ip.Types.Add(type);
+			else if (string.IsNullOrWhiteSpace(type) && !ip.Types.Contains("")) ip.Types.Add("");
 
 			if (item != null)
 			{

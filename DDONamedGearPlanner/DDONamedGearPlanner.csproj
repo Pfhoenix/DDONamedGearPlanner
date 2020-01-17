@@ -102,6 +102,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Windows\ItemPropertyBrowserWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\NamedSetSelectorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -121,6 +125,9 @@
     <Compile Include="ItemFilterSettings.cs" />
     <Compile Include="ListViewItemProperties.xaml.cs">
       <DependentUpon>ListViewItemProperties.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ItemPropertyBrowserWindow.xaml.cs">
+      <DependentUpon>ItemPropertyBrowserWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\NamedSetSelectorWindow.xaml.cs">
       <DependentUpon>NamedSetSelectorWindow.xaml</DependentUpon>

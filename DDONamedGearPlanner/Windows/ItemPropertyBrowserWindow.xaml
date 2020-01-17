@@ -1,0 +1,24 @@
+﻿<Window x:Class="DDONamedGearPlanner.ItemPropertyBrowserWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DDONamedGearPlanner"
+        mc:Ignorable="d"
+        Title="Item Property Browser" Height="600" Width="800">
+    <Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+		<TabControl SelectionChanged="SelectedTabChanged">
+			<TabItem Name="tiByProperty" Header="By Property" IsSelected="True">
+				<TreeView Name="tvByProperty" SelectedItemChanged="ByPropertySelectionChanged"/>
+			</TabItem>
+			<TabItem Name="tiBySlot" Header="By Slot">
+				<TreeView Name="tvBySlot" SelectedItemChanged="BySlotSelectionChanged"/>
+			</TabItem>
+		</TabControl>
+		<ListBox Grid.Column="1" Name="lbItems" MouseRightButtonUp="ItemListMouseRightButtonUp" MouseDoubleClick="ItemListMouseDoubleClick"/>
+	</Grid>
+</Window>

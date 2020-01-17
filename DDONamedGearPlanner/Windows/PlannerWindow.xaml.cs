@@ -467,6 +467,14 @@ namespace DDONamedGearPlanner
 			}
 		}
 
+		void IPBWindow_ItemDoubleClicked(DDOItemData item)
+		{
+			if (SlotItem(item, SlotType.None))
+			{
+				CalculateGearSet(true);
+			}
+		}
+
 		private void EquipmentSlotClicked(EquipmentSlotControl esc, MouseButton button)
 		{
 			if (button == MouseButton.Right)
@@ -715,11 +723,18 @@ namespace DDONamedGearPlanner
 			CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
 		}
 
-		private void ViewItemPropertyReport(object sender, RoutedEventArgs e)
+		ItemPropertyBrowserWindow IPBWindow;
+		private void ViewItemPropertyBrowser(object sender, RoutedEventArgs e)
 		{
-			// check for item property report window already open
-			//   if so, bring it to foreground/focus
-			//   if not, create it
+			if (IPBWindow == null || !IPBWindow.IsActive)
+			{
+				IPBWindow = new ItemPropertyBrowserWindow();
+				IPBWindow.Owner = this;
+				IPBWindow.Initialize(dataset);
+				IPBWindow.ItemDoubleClicked += IPBWindow_ItemDoubleClicked;
+			}
+			
+			IPBWindow.Show();
 		}
 	}
 }

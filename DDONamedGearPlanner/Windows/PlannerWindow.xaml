@@ -31,7 +31,7 @@
 				<MenuItem Header="E_xit" Click="ExitMenuItem_Click" />
 			</MenuItem>
 			<MenuItem Header="_View">
-				<MenuItem Header="Item Property Report" Click="ViewItemPropertyReport"/>
+				<MenuItem Header="Item Property Browser" Click="ViewItemPropertyBrowser"/>
 			</MenuItem>
 			<MenuItem Header="_Help">
 				<MenuItem Header="UI Tips" InputGestureText="F1" Click="HelpMenuItem_Click" />
