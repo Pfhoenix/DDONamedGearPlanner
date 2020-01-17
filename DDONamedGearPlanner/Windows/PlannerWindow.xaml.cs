@@ -736,5 +736,10 @@ namespace DDONamedGearPlanner
 			
 			IPBWindow.Show();
 		}
+
+		private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			MessageBox.Show("DDO Named Gear Planner by Martin \"Pfhoenix\" Actor." + Environment.NewLine + "Feedback welcome @ pfhoenix@gmail.com", "About");
+		}
 	}
 }
