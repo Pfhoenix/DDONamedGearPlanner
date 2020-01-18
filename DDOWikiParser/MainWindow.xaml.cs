@@ -2465,6 +2465,23 @@ namespace DDOWikiParser
 					else tvpath = ParseItem(data, trs);
 
 					if (tvpath != null) Dispatcher.Invoke(new Action(() => { SetTreeViewItemAtPath(tvpath, data); }));
+
+					// special case tests for Slaver's items that can fit into multiple slots, so we create duplicates for the non-listed slot versions
+					SlotType other = SlotType.None;
+					if (data.Name == "Chains" || data.Name == "Legendary Chains") other = SlotType.Waist;
+					else if (data.Name == "Five Rings" || data.Name == "Legendary Five Rings") other = SlotType.Trinket;
+					else if (data.Name == "Shackles" || data.Name == "Legendary Shackles") other = SlotType.Feet;
+					if (other != SlotType.None)
+					{
+						DDOItemData dup = data.Duplicate();
+						dup.Slot = other;
+						if (tvpath != null)
+						{
+							int c = tvpath.IndexOf('|');
+							tvpath = other.ToString() + "|" + tvpath.Substring(c + 1);
+							Dispatcher.Invoke(new Action(() => { SetTreeViewItemAtPath(tvpath, dup); }));
+						}
+					}
 				}
 			}
 		}

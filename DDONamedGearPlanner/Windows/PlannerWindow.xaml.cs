@@ -530,6 +530,8 @@ namespace DDONamedGearPlanner
 		private void ItemPropertyTab_MouseDoubleClicked(object sender, MouseButtonEventArgs e)
 		{
 			ListViewItemProperties lvip = sender as ListViewItemProperties;
+			if (lvip.Item == null) return;
+			if (!lvip.Item.InUse) return;
 			ListViewItem lvi = lvip.lvDetails.SelectedItem as ListViewItem;
 			if (lvi == null) return;
 			ItemProperty ip = lvi.Tag as ItemProperty;
