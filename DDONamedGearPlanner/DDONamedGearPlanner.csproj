@@ -98,7 +98,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ListViewItemProperties.xaml">
+    <Page Include="Controls\ListViewItemProperties.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -122,8 +122,9 @@
     <Compile Include="Controls\EquipmentSlotControl.xaml.cs">
       <DependentUpon>EquipmentSlotControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GearSetBuild.cs" />
     <Compile Include="ItemFilterSettings.cs" />
-    <Compile Include="ListViewItemProperties.xaml.cs">
+    <Compile Include="Controls\ListViewItemProperties.xaml.cs">
       <DependentUpon>ListViewItemProperties.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\ItemPropertyBrowserWindow.xaml.cs">

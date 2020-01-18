@@ -21,7 +21,7 @@ namespace DDONamedGearPlanner
 	public partial class EquipmentSlotControl : UserControl
 	{
 		public bool IsLocked = false;
-		public DDOItemData Item;
+		public BuildItem Item;
 
 		PlannerWindow ParentWindow;
 
@@ -159,8 +159,10 @@ namespace DDONamedGearPlanner
 			else SelectBorder.BorderBrush = SelectBrushOff;
 		}
 
-		public void SetItem(DDOItemData item)
+		public void SetItem(BuildItem item)
 		{
+			if (Item != null) Item.InUse = false;
+
 			Item = item;
 			if (Item == null)
 			{
@@ -169,31 +171,32 @@ namespace DDONamedGearPlanner
 			}
 			else
 			{
-				switch (Item.Slot)
+				Item.InUse = true;
+				switch (Item.Item.Slot)
 				{
 					case SlotType.Body:
-						if (Item.Category == (int)ArmorCategory.Cloth) imgIcon.Source = SlotFillImages["body_cloth"];
-						else if (Item.Category == (int)ArmorCategory.Light) imgIcon.Source = SlotFillImages["body_light"];
-						else if (Item.Category == (int)ArmorCategory.Medium) imgIcon.Source = SlotFillImages["body_medium"];
-						else if (Item.Category == (int)ArmorCategory.Heavy) imgIcon.Source = SlotFillImages["body_heavy"];
-						else if (Item.Category == (int)ArmorCategory.Docent) imgIcon.Source = SlotFillImages["body_docent"];
+						if (Item.Item.Category == (int)ArmorCategory.Cloth) imgIcon.Source = SlotFillImages["body_cloth"];
+						else if (Item.Item.Category == (int)ArmorCategory.Light) imgIcon.Source = SlotFillImages["body_light"];
+						else if (Item.Item.Category == (int)ArmorCategory.Medium) imgIcon.Source = SlotFillImages["body_medium"];
+						else if (Item.Item.Category == (int)ArmorCategory.Heavy) imgIcon.Source = SlotFillImages["body_heavy"];
+						else if (Item.Item.Category == (int)ArmorCategory.Docent) imgIcon.Source = SlotFillImages["body_docent"];
 						break;
 
 					case SlotType.Offhand:
-						if (Item.Category == (int)OffhandCategory.Buckler) imgIcon.Source = SlotFillImages["offhand_buckler"];
-						else if (Item.Category == (int)OffhandCategory.Small) imgIcon.Source = SlotFillImages["offhand_small"];
-						else if (Item.Category == (int)OffhandCategory.Large) imgIcon.Source = SlotFillImages["offhand_large"];
-						else if (Item.Category == (int)OffhandCategory.Tower) imgIcon.Source = SlotFillImages["offhand_tower"];
-						else if (Item.Category == (int)OffhandCategory.Orb) imgIcon.Source = SlotFillImages["offhand_orb"];
-						else if (Item.Category == (int)OffhandCategory.RuneArm) imgIcon.Source = SlotFillImages["offhand_runearm"];
+						if (Item.Item.Category == (int)OffhandCategory.Buckler) imgIcon.Source = SlotFillImages["offhand_buckler"];
+						else if (Item.Item.Category == (int)OffhandCategory.Small) imgIcon.Source = SlotFillImages["offhand_small"];
+						else if (Item.Item.Category == (int)OffhandCategory.Large) imgIcon.Source = SlotFillImages["offhand_large"];
+						else if (Item.Item.Category == (int)OffhandCategory.Tower) imgIcon.Source = SlotFillImages["offhand_tower"];
+						else if (Item.Item.Category == (int)OffhandCategory.Orb) imgIcon.Source = SlotFillImages["offhand_orb"];
+						else if (Item.Item.Category == (int)OffhandCategory.RuneArm) imgIcon.Source = SlotFillImages["offhand_runearm"];
 						break;
 
 					default:
-						imgIcon.Source = SlotFillImages[Item.Slot.ToString().ToLower()];
+						imgIcon.Source = SlotFillImages[Item.Item.Slot.ToString().ToLower()];
 						break;
 				}
 
-				ttTT.Content = Item.Name;
+				ttTT.Content = Item.Item.Name;
 			}
 		}
 

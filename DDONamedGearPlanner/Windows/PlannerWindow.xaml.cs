@@ -96,14 +96,14 @@ namespace DDONamedGearPlanner
 			// if weapon slot and item is two-handed, set the offhand slot lock to the same state
 			if (esc.Item != null && esc.Slot == EquipmentSlotType.Weapon)
 			{
-				if (esc.Item.Handedness == 2)
+				if (esc.Item.Item.Handedness == 2)
 					EquipmentSlots[(int)EquipmentSlotType.Offhand].SetLockStatus(esc.IsLocked);
 			}
 			// if offhand slot and weapon slot has two-handed item in it, reset offhand slot lock to weapon slot lock
 			else if (esc.Slot == EquipmentSlotType.Offhand)
 			{
 				var item = EquipmentSlots[(int)EquipmentSlotType.Weapon].Item;
-				if (item != null && item.Handedness == 2)
+				if (item != null && item.Item.Handedness == 2)
 					esc.SetLockStatus(EquipmentSlots[(int)EquipmentSlotType.Weapon].IsLocked);
 			}
 		}
@@ -315,15 +315,8 @@ namespace DDONamedGearPlanner
 				cmi.IsChecked = flip;
 		}
 
-		GearSet CalculateGearSet(bool render)
+		void RenderGearSet(GearSet gs)
 		{
-			GearSet gs = new GearSet();
-			for (int i = 0; i < EquipmentSlots.Length; i++)
-				if (EquipmentSlots[i].Item != null) gs.AddItem(EquipmentSlots[i].Item, null);
-			gs.ProcessItems(dataset);
-
-			if (!render) return gs;
-
 			TreeView tv = new TreeView();
 			tciGearSet.Content = tv;
 			foreach (var ip in gs.Properties)
@@ -383,18 +376,33 @@ namespace DDONamedGearPlanner
 					tvi.Items.Add(tvii);
 				}
 			}
+		}
+
+		GearSet CalculateGearSet(bool render)
+		{
+			GearSet gs = new GearSet();
+			for (int i = 0; i < EquipmentSlots.Length; i++)
+				if (EquipmentSlots[i].Item != null) gs.AddItem(EquipmentSlots[i].Item);
+			gs.ProcessItems(dataset);
+
+			if (render) RenderGearSet(gs);
 
 			return gs;
 		}
 
 		bool SlotItem(DDOItemData item, SlotType slot)
 		{
+			return SlotItem(new BuildItem(item), slot);
+		}
+
+		bool SlotItem(BuildItem item, SlotType slot)
+		{
 			EquipmentSlotControl esc = null;
 
 			// get the slot the item belongs in
 			//  - special case check for an open finger slot
 			//  - if both finger slots are full, check for one not locked
-			if (item.Slot == SlotType.Finger)
+			if (item.Item.Slot == SlotType.Finger)
 			{
 				if (EquipmentSlots[(int)EquipmentSlotType.Finger1].Item == null) esc = EquipmentSlots[(int)EquipmentSlotType.Finger1];
 				else if (EquipmentSlots[(int)EquipmentSlotType.Finger2].Item == null) esc = EquipmentSlots[(int)EquipmentSlotType.Finger2];
@@ -402,11 +410,11 @@ namespace DDONamedGearPlanner
 				else if (!EquipmentSlots[(int)EquipmentSlotType.Finger2].IsLocked) esc = EquipmentSlots[(int)EquipmentSlotType.Finger2];
 			}
 			// one-handed weapons can be placed in the offhand slot if the weapon slot is locked
-			else if (item.Slot == SlotType.Weapon)
+			else if (item.Item.Slot == SlotType.Weapon)
 			{
 				// this special case bypasses sanity checking
 				// the assumption is that this isn't passed without validation having already been done
-				if (slot == SlotType.Offhand && item.Handedness == 1)
+				if (slot == SlotType.Offhand && item.Item.Handedness == 1)
 				{
 					esc = EquipmentSlots[(int)EquipmentSlotType.Offhand];
 				}
@@ -414,7 +422,7 @@ namespace DDONamedGearPlanner
 				{
 					if (EquipmentSlots[(int)EquipmentSlotType.Weapon].IsLocked)
 					{
-						if (item.Handedness == 1)
+						if (item.Item.Handedness == 1)
 						{
 							if (EquipmentSlots[(int)EquipmentSlotType.Offhand].IsLocked)
 							{
@@ -424,7 +432,7 @@ namespace DDONamedGearPlanner
 							else esc = EquipmentSlots[(int)EquipmentSlotType.Offhand];
 						}
 					}
-					else if (item.Handedness == 2)
+					else if (item.Item.Handedness == 2)
 					{
 						if (EquipmentSlots[(int)EquipmentSlotType.Offhand].IsLocked)
 						{
@@ -438,7 +446,7 @@ namespace DDONamedGearPlanner
 			}
 			else
 			{
-				esc = EquipmentSlots[(int)(EquipmentSlotType)Enum.Parse(typeof(EquipmentSlotType), item.Slot.ToString())];
+				esc = EquipmentSlots[(int)(EquipmentSlotType)Enum.Parse(typeof(EquipmentSlotType), item.Item.Slot.ToString())];
 			}
 
 			if (esc == null || esc.IsLocked)
@@ -450,7 +458,7 @@ namespace DDONamedGearPlanner
 			{
 				esc.SetItem(item);
 				// slotting a two-handed weapon means ensuring the offhand slot is empty
-				if (item.Handedness == 2) EquipmentSlots[(int)EquipmentSlotType.Offhand].SetItem(null);
+				if (item.Item.Handedness == 2) EquipmentSlots[(int)EquipmentSlotType.Offhand].SetItem(null);
 				return true;
 			}
 		}
@@ -479,7 +487,7 @@ namespace DDONamedGearPlanner
 		{
 			if (button == MouseButton.Right)
 			{
-				if (esc.Item != null) System.Diagnostics.Process.Start(esc.Item.WikiURL);
+				if (esc.Item != null) System.Diagnostics.Process.Start(esc.Item.Item.WikiURL);
 				return;
 			}
 
@@ -504,13 +512,74 @@ namespace DDONamedGearPlanner
 			}
 		}
 
-		void OpenPropertiesTab(DDOItemData item)
+		TabItem CreateItemPropertiesTab(BuildItem bi)
 		{
-			if (item == null) return;
+			TabItem nti = new TabItem();
+			nti.MouseRightButtonUp += PropertyTabRightButtonUp;
+			tcPropertyAreas.Items.Add(nti);
+			tcPropertyAreas.SelectedItem = nti;
+
+			ListViewItemProperties lvip = new ListViewItemProperties();
+			nti.Content = lvip;
+			lvip.SetItem(bi);
+			lvip.MouseDoubleClick += ItemPropertyTab_MouseDoubleClicked;
+
+			return nti;
+		}
+
+		private void ItemPropertyTab_MouseDoubleClicked(object sender, MouseButtonEventArgs e)
+		{
+			ListViewItemProperties lvip = sender as ListViewItemProperties;
+			ListViewItem lvi = lvip.lvDetails.SelectedItem as ListViewItem;
+			if (lvi == null) return;
+			ItemProperty ip = lvi.Tag as ItemProperty;
+			if (ip == null) return;
+
+			// this is an optional property that the user wants to unset
+			if (lvip.Item.OptionProperties.Contains(ip))
+			{
+				lvip.Item.OptionProperties.Remove(ip);
+			}
+			// this is an optional property that the user wants to set
+			else
+			{
+				lvip.Item.OptionProperties.Add(ip);
+			}
+
+			lvip.SetItem(lvip.Item);
+			if (lvip.Item.InUse) CalculateGearSet(true);
+		}
+
+		void OpenPropertiesTab(BuildItem bi)
+		{
+			if (bi == null) return;
+
+			bool optionals = bi.OptionProperties.Count > 0 || bi.Item.Properties.Exists(p => p.Options != null);
 
 			// first search for an existing tab for the item
 			foreach (TabItem ti in tcPropertyAreas.Items)
 			{
+				if (optionals && ti.Tag == bi || (!optionals && ti.Header.ToString() == bi.Item.Name))
+				{
+					tcPropertyAreas.SelectedItem = ti;
+					return;
+				}
+			}
+
+			TabItem nti = CreateItemPropertiesTab(bi);
+			nti.Tag = bi;
+			nti.Header = bi.Item.Name + (optionals ? " *" : "");
+		}
+
+		void OpenPropertiesTab(DDOItemData item)
+		{
+			if (item == null) return;
+
+			bool optionals = item.Properties.Exists(p => p.Options != null);
+
+			foreach (TabItem ti in tcPropertyAreas.Items)
+			{
+				if (optionals && ti.Tag != null) continue;
 				if (ti.Header.ToString() == item.Name)
 				{
 					tcPropertyAreas.SelectedItem = ti;
@@ -518,16 +587,8 @@ namespace DDONamedGearPlanner
 				}
 			}
 
-			TabItem nti = new TabItem();
+			TabItem nti = CreateItemPropertiesTab(new BuildItem(item));
 			nti.Header = item.Name;
-			nti.MouseRightButtonUp += PropertyTabRightButtonUp;
-
-			tcPropertyAreas.Items.Add(nti);
-			tcPropertyAreas.SelectedItem = nti;
-
-			ListViewItemProperties lvip = new ListViewItemProperties();
-			nti.Content = lvip;
-			lvip.SetItem(item);
 		}
 
 		bool ItemRightClicked;
@@ -661,8 +722,15 @@ namespace DDONamedGearPlanner
 			{
 				if (es.Item != null)
 				{
-					if (raw == "") raw = es.Item.Name;
-					else raw += "|" + es.Item.Name;
+					StringBuilder sb = new StringBuilder();
+					sb.Append(es.Item.Item.Name);
+					foreach (var op in es.Item.OptionProperties)
+					{
+						sb.Append("{");
+						sb.Append(op.Property + ";" + (string.IsNullOrWhiteSpace(op.Type) ? "untyped" : op.Type) + ";" + op.Value);
+					}
+					if (raw == "") raw = sb.ToString();
+					else raw += "|" + sb.ToString();
 				}
 			}
 
@@ -704,8 +772,27 @@ namespace DDONamedGearPlanner
 				string[] split = cdata.Split('|');
 				foreach (var s in split)
 				{
-					DDOItemData item = dataset.Items.Find(i => i.Name == s);
-					if (item != null) SlotItem(item, SlotType.None);
+					string[] itemsplit = s.Split('{');
+					DDOItemData item = dataset.Items.Find(i => i.Name == itemsplit[0]);
+					if (item != null)
+					{
+						BuildItem bi = new BuildItem(item);
+						for (int i = 1; i < itemsplit.Length; i++)
+						{
+							string[] ps = itemsplit[i].Split(';');
+							var optionals = item.Properties.Where(p => p.Options != null).ToList();
+							foreach (var op in optionals)
+							{
+								ItemProperty ot = op.Options.Find(o => o.Property == ps[0] && (o.Type == ps[1] || (string.IsNullOrWhiteSpace(o.Type) && ps[1] == "untyped")));
+								if (ot != null)
+								{
+									bi.OptionProperties.Add(ot);
+									break;
+								}
+							}
+						}
+						SlotItem(bi, SlotType.None);
+					}
 				}
 				CalculateGearSet(true);
 			}

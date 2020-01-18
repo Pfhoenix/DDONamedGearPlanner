@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DDONamedGearPlanner"
 		mc:Ignorable="d"
 		x:Name="ddoplanner"
-        Title="DDO Named Gear Planner v0.4" Height="700" Width="800" ResizeMode="CanMinimize" MinHeight="700" MinWidth="800">
+        Title="DDO Named Gear Planner v0.5" Height="700" Width="800" ResizeMode="CanMinimize" MinHeight="700" MinWidth="800">
 	
 	<Window.Resources>
 		<ResourceDictionary>
@@ -23,10 +23,10 @@
 	<DockPanel Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="_File">
-				<MenuItem Header="_New Gear Set" Command="New" />
-				<MenuItem Header="_Load Gear Set" Command="Open" />
-				<MenuItem Header="_Save Gear Set" Command="Save" />
-				<MenuItem Header="Save Gear Set _As" Command="SaveAs" />
+				<MenuItem Header="_New Gear Set Build" Command="New" />
+				<MenuItem Header="_Load Gear Set Build" Command="Open" />
+				<MenuItem Header="_Save Gear Set Build" Command="Save" />
+				<MenuItem Header="Save Gear Set Build _As" Command="SaveAs" />
 				<Separator />
 				<MenuItem Header="E_xit" Click="ExitMenuItem_Click" />
 			</MenuItem>
@@ -227,12 +227,23 @@
 				<local:EquipmentSlotControl Grid.Column="2" Grid.Row="0" x:Name="NeckSlot" Slot="Neck" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 				<local:EquipmentSlotControl Grid.Column="3" Grid.Row="0" x:Name="TrinketSlot" Slot="Trinket" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
 				<local:EquipmentSlotControl Grid.Column="0" Grid.Row="1" x:Name="BodySlot" Slot="Body" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-				<StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2">
-					<Button Margin="3">Gear Set Filters</Button>
-					<Button Margin="3">Slot Filters</Button>
-					<Button Margin="3,79,3,3" Click="EncodeGearsetToClipboard">Copy to Clipboard</Button>
-					<Button Margin="3" Click="DecodeGearsetFromClipboard">Paste From Clipboard</Button>
-				</StackPanel>
+				<DockPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2">
+					<Button DockPanel.Dock="Top" Margin="3">Gear Set Filters</Button>
+					<Button DockPanel.Dock="Top" Margin="3">Slot Filters</Button>
+					<Button DockPanel.Dock="Top" Margin="3" IsEnabled="False">Build Gear Sets</Button>
+					<GroupBox Header="Build Statistics">
+						<StackPanel>
+							<TextBlock Name="tbTotalGearSets">Gear Sets: 0</TextBlock>
+							<DockPanel Margin="0,3,0,0">
+								<Button DockPanel.Dock="Left" Name="btnPreviousGS" IsEnabled="False">&lt;-</Button>
+								<Button DockPanel.Dock="Right" Name="btnNextGS" IsEnabled="False">-&gt;</Button>
+								<TextBlock Name="tbCurrentGS" TextAlignment="Center"/>
+							</DockPanel>
+							<TextBlock Name="tbCurrentGSRating">Rating:</TextBlock>
+							<TextBlock Name="tbCurrentGSDownside">Penalty:</TextBlock>
+						</StackPanel>
+					</GroupBox>
+				</DockPanel>
 				<local:EquipmentSlotControl Grid.Column="3" Grid.Row="1" x:Name="BackSlot" Slot="Back" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 				<local:EquipmentSlotControl Grid.Column="0" Grid.Row="2" x:Name="WristSlot" Slot="Wrist" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 				<local:EquipmentSlotControl Grid.Column="3" Grid.Row="2" x:Name="WaistSlot" Slot="Waist" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -247,6 +258,8 @@
 					<Button Margin="3,28,12,3" Click="UnlockClearAll">Unlock &amp; Clear All</Button>
 				</StackPanel>
 			</Grid>
+			<Button Margin="11,11,11,3" Click="EncodeGearsetToClipboard">Copy to Clipboard</Button>
+			<Button Margin="11,0,11,3" Click="DecodeGearsetFromClipboard">Paste from Clipboard</Button>
 		</StackPanel>
 		<TabControl Name="tcPropertyAreas">
 			<TabItem Name="tciGearSet" Header="Gear Set"/>
