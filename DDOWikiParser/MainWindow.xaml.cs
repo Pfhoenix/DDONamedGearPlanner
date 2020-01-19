@@ -272,10 +272,7 @@ namespace DDOWikiParser
 
 		bool ParseEnhancement(DDOItemData data, XmlNode enh)
 		{
-			string trimmed = enh.InnerText.Trim();
-			//string xml = enh.InnerXml.Trim();
-
-			//if (ParseText(data, trimmed)) return true;
+			string trimmed = enh.InnerText.Replace((char)160, ' ').Replace("  ", " ").Trim();
 
 			if (trimmed.StartsWith("If at least ", StringComparison.InvariantCultureIgnoreCase)) return false;
 			else if (trimmed.StartsWith("Bound to Character", StringComparison.InvariantCultureIgnoreCase) || trimmed.StartsWith("Bound to Account", StringComparison.InvariantCultureIgnoreCase)) return false;
@@ -1623,8 +1620,8 @@ namespace DDOWikiParser
 				}
 				else if (p == "Sneak Attack Bonus")
 				{
-					data.AddProperty("Sneak Attack Attack", "enhancement", vi, null);
-					data.AddProperty("Sneak Attack Damage", "enhancement", (int)Math.Round(vi * 1.5, MidpointRounding.AwayFromZero), null);
+					data.AddProperty("Sneak Attack Attack", origv == v ? "enhancement" : v, vi, null);
+					data.AddProperty("Sneak Attack Damage", origv == v ? "enhancement" : v, (int)Math.Round(vi * 1.5, MidpointRounding.AwayFromZero), null);
 				}
 				else if (p == "Improved Bashing")
 				{
