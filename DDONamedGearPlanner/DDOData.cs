@@ -239,6 +239,7 @@ namespace DDONamedGearPlanner
 		public Dictionary<string, DDOItemProperty> ItemProperties = new Dictionary<string, DDOItemProperty>();
 		public List<DDOItemData> Items = new List<DDOItemData>();
 		public Dictionary<string, DDOItemSet> Sets = new Dictionary<string, DDOItemSet>();
+		public Dictionary<SlotType, List<DDOItemProperty>> SlotExclusiveItemProperties = new Dictionary<SlotType, List<DDOItemProperty>>();
 
 		public void Initialize()
 		{
@@ -7342,7 +7343,27 @@ namespace DDONamedGearPlanner
 			if (item != null)
 			{
 				if (ip.Items.Find(i => i.Name == item.Name) == null) ip.Items.Add(item);
-				ip.SlotsFoundOn |= item.Slot;
+
+				// property hasn't seen this slot yet
+				if ((ip.SlotsFoundOn & item.Slot) == 0)
+				{
+					// property has seen one slot
+					if (Enum.IsDefined(typeof(SlotType), ip.SlotsFoundOn) && ip.SlotsFoundOn != SlotType.None)
+					{
+						// remove from the seen property
+						SlotExclusiveItemProperties[ip.SlotsFoundOn].Remove(ip);
+
+						if (SlotExclusiveItemProperties.ContainsKey(SlotType.None)) SlotExclusiveItemProperties[SlotType.None].Add(ip);
+						else SlotExclusiveItemProperties[SlotType.None] = new List<DDOItemProperty> { ip };
+					}
+					else if (ip.SlotsFoundOn == SlotType.None)
+					{
+						if (SlotExclusiveItemProperties.ContainsKey(item.Slot)) SlotExclusiveItemProperties[item.Slot].Add(ip);
+						else SlotExclusiveItemProperties[item.Slot] = new List<DDOItemProperty> { ip };
+					}
+
+					ip.SlotsFoundOn |= item.Slot;
+				}
 			}
 		}
 

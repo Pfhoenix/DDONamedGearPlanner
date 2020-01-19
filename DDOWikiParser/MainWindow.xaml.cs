@@ -2595,17 +2595,25 @@ namespace DDOWikiParser
 
 		private void ProcessItemsProgress(object sender, ProgressChangedEventArgs e)
 		{
-			tbProgressText.Text = (e.ProgressPercentage + 1).ToString() + " of " + AllItems.Count;
-			tbStatusBarText.Text = "Processing item : " + AllItems[e.ProgressPercentage].Name;
+			if (e.UserState.ToString() == "items")
+			{
+				tbProgressText.Text = (e.ProgressPercentage + 1).ToString() + " of " + AllItems.Count;
+				tbStatusBarText.Text = "Processing item : " + AllItems[e.ProgressPercentage].Name;
+			}
 		}
 
 		private void ProcessItems(object sender, DoWorkEventArgs e)
 		{
 			for (int i = 0; i < AllItems.Count; i++)
 			{
-				(sender as BackgroundWorker).ReportProgress(i);
+				(sender as BackgroundWorker).ReportProgress(i, "items");
 				string result = dataset.AddItem(AllItems[i]);
 				if (result != null) LogError(result);
+			}
+
+			foreach (var sp in dataset.SlotExclusiveItemProperties)
+			{
+				sp.Value.Sort((a, b) => string.Compare(a.Property, b.Property));
 			}
 		}
 
