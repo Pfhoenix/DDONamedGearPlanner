@@ -145,7 +145,7 @@ namespace DDONamedGearPlanner
 			if (bfid != null)
 			{
 				SetAvailableTypes(bfid);
-				bfid.Type = ALL_TYPES;
+				if (!bfid.AvailableTypes.Contains(bfid.Type)) bfid.Type = ALL_TYPES;
 			}
 		}
 
@@ -241,7 +241,11 @@ namespace DDONamedGearPlanner
 			{
 				GroupBox gb = new GroupBox();
 				gb.Header = filter.Slot.ToString();
-				if (IsSlotLocked(filter.Slot)) gb.Foreground = Brushes.Red;
+				if (IsSlotLocked(filter.Slot))
+				{
+					gb.Foreground = Brushes.Red;
+					gb.BorderBrush = Brushes.Red;
+				}
 				lb = new ListBox();
 				lb.BorderThickness = new Thickness(0);
 				lb.ItemTemplate = SlotListBoxDT;

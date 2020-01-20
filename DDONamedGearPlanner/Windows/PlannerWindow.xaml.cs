@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.Win32;
 using CoenM.Encoding;
 
 
@@ -94,18 +95,26 @@ namespace DDONamedGearPlanner
 
 		private void EquipmentSlotLockChanged(EquipmentSlotControl esc)
 		{
+			CurrentBuild.SetLockStatus(esc.Slot, esc.IsLocked);
+
 			// if weapon slot and item is two-handed, set the offhand slot lock to the same state
 			if (esc.Item != null && esc.Slot == EquipmentSlotType.Weapon)
 			{
 				if (esc.Item.Item.Handedness == 2)
+				{
 					EquipmentSlots[(int)EquipmentSlotType.Offhand].SetLockStatus(esc.IsLocked);
+					CurrentBuild.SetLockStatus(EquipmentSlotType.Offhand, esc.IsLocked);
+				}
 			}
 			// if offhand slot and weapon slot has two-handed item in it, reset offhand slot lock to weapon slot lock
 			else if (esc.Slot == EquipmentSlotType.Offhand)
 			{
 				var item = EquipmentSlots[(int)EquipmentSlotType.Weapon].Item;
 				if (item != null && item.Item.Handedness == 2)
+				{
 					esc.SetLockStatus(EquipmentSlots[(int)EquipmentSlotType.Weapon].IsLocked);
+					CurrentBuild.SetLockStatus(EquipmentSlotType.Offhand, esc.IsLocked);
+				}
 			}
 		}
 
@@ -653,6 +662,8 @@ namespace DDONamedGearPlanner
 				EquipmentSlots[i].SetItem(null);
 			}
 
+			CurrentBuild.LockedSlots.Clear();
+
 			CalculateGearSet(true);
 		}
 
@@ -718,7 +729,7 @@ namespace DDONamedGearPlanner
 			}
 		}
 
-		private void EncodeGearsetToClipboard(object sender, RoutedEventArgs e)
+		string EncodeGearset()
 		{
 			string raw = "";
 			foreach (var es in EquipmentSlots)
@@ -746,18 +757,20 @@ namespace DDONamedGearPlanner
 						writer.Write(raw);
 					}
 				}
-				raw = Z85Extended.Encode(output.ToArray());
+				return Z85Extended.Encode(output.ToArray());
 			}
-
-			Clipboard.Clear();
-			Clipboard.SetData(DataFormats.Text, raw);
 		}
 
-		private void DecodeGearsetFromClipboard(object sender, RoutedEventArgs e)
+		private void EncodeGearsetToClipboard(object sender, RoutedEventArgs e)
+		{
+			Clipboard.Clear();
+			Clipboard.SetData(DataFormats.Text, EncodeGearset());
+		}
+
+		void DecodeGearset(string cdata)
 		{
 			try
 			{
-				string cdata = Clipboard.GetData(DataFormats.Text).ToString();
 				byte[] input = Z85Extended.Decode(cdata);
 
 				using (MemoryStream inputStream = new MemoryStream(input))
@@ -801,8 +814,13 @@ namespace DDONamedGearPlanner
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("There was an error with the data in the clipboard. Copy the code and try again.");
+				MessageBox.Show("There was an error decoding the data. Check the source and try again.");
 			}
+		}
+
+		private void DecodeGearsetFromClipboard(object sender, RoutedEventArgs e)
+		{
+			DecodeGearset(Clipboard.GetData(DataFormats.Text).ToString());
 		}
 
 		private void ItemPropertyFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -837,11 +855,9 @@ namespace DDONamedGearPlanner
 			BuildFiltersWindow bfw = new BuildFiltersWindow();
 			bfw.Initialize(CurrentBuild, dataset);
 			bfw.ShowDialog();
-			if (bfw.FiltersChanged)
-			{
-				// need to indicate that the current build results aren't reflected by the current filters
-				// maybe some kind of warning when trying to save the build, warning that since the build wasn't run with the current filters, to either not save or save with no build results?
-			}
+
+			// need to indicate that the current build results aren't reflected by the current filters
+			// maybe some kind of warning when trying to save the build, warning that since the build wasn't run with the current filters, to either not save or save with no build results?
 		}
 
 		private void PreviousGearSet_Click(object sender, RoutedEventArgs e)
@@ -852,6 +868,33 @@ namespace DDONamedGearPlanner
 		private void NextGearSet_Click(object sender, RoutedEventArgs e)
 		{
 			// need to remember to reset the equipment slot locks based on the current build
+		}
+
+		private void BuildMLRangeChanged(RangeSlider slider, double oldvalue, double newvalue)
+		{
+			CurrentBuild.MinimumLevel = (int)slider.LowerValue;
+			CurrentBuild.MaximumLevel = (int)slider.UpperValue;
+		}
+
+		private void ExportGearsetToFile(object sender, RoutedEventArgs e)
+		{
+			// bring up a save file dialog
+			SaveFileDialog sfd = new SaveFileDialog();
+			sfd.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+			if (sfd.ShowDialog() == true)
+			{
+				File.WriteAllText(sfd.FileName, EncodeGearset());
+			}
+		}
+
+		private void ImportGearsetFromFile(object sender, RoutedEventArgs e)
+		{
+			OpenFileDialog ofd = new OpenFileDialog();
+			ofd.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+			if (ofd.ShowDialog() == true)
+			{
+				DecodeGearset(File.ReadAllText(ofd.FileName));
+			}
 		}
 	}
 }

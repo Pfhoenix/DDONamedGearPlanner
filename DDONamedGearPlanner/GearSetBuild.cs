@@ -170,6 +170,8 @@ namespace DDONamedGearPlanner
     public class GearSetBuild
     {
 		//TODO: need to add minimum level range restrictions
+		public int MinimumLevel = 1;
+		public int MaximumLevel = 30;
 
 		public Dictionary<SlotType, List<BuildFilter>> Filters = new Dictionary<SlotType, List<BuildFilter>>()
 		{
@@ -190,5 +192,11 @@ namespace DDONamedGearPlanner
 		};
 		// so we can remember the lock state of the slots
 		public List<EquipmentSlotType> LockedSlots = new List<EquipmentSlotType>();
+
+		public void SetLockStatus(EquipmentSlotType est, bool locked)
+		{
+			if (locked && !LockedSlots.Contains(est)) LockedSlots.Add(est);
+			else if (!locked && LockedSlots.Contains(est)) LockedSlots.Remove(est);
+		}
     }
 }
