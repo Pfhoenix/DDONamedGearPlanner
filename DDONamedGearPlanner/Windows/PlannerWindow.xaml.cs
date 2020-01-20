@@ -21,7 +21,8 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public static DDODataset dataset;
+		public DDODataset dataset;
+		public GearSetBuild CurrentBuild = new GearSetBuild();
 
 		EquipmentSlotControl[] EquipmentSlots = new EquipmentSlotControl[14];
 		EquipmentSlotControl SelectedESC;
@@ -829,6 +830,28 @@ namespace DDONamedGearPlanner
 		private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			MessageBox.Show("DDO Named Gear Planner by Martin \"Pfhoenix\" Actor." + Environment.NewLine + "Feedback welcome @ pfhoenix@gmail.com", "About");
+		}
+
+		private void BuildFilters_Click(object sender, RoutedEventArgs e)
+		{
+			BuildFiltersWindow bfw = new BuildFiltersWindow();
+			bfw.Initialize(CurrentBuild, dataset);
+			bfw.ShowDialog();
+			if (bfw.FiltersChanged)
+			{
+				// need to indicate that the current build results aren't reflected by the current filters
+				// maybe some kind of warning when trying to save the build, warning that since the build wasn't run with the current filters, to either not save or save with no build results?
+			}
+		}
+
+		private void PreviousGearSet_Click(object sender, RoutedEventArgs e)
+		{
+			// need to remember to reset the equipment slot locks based on the current build
+		}
+
+		private void NextGearSet_Click(object sender, RoutedEventArgs e)
+		{
+			// need to remember to reset the equipment slot locks based on the current build
 		}
 	}
 }

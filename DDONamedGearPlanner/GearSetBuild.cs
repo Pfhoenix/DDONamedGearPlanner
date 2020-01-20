@@ -8,9 +8,9 @@ namespace DDONamedGearPlanner
 	{
 		// this will be SlotType.None for gear set filters
 		public SlotType Slot;
-		public string Property;
-		public string Type;
-		public bool Include;
+		public string Property { get; set; }
+		public string Type { get; set; }
+		public bool Include { get; set; }
 	}
 
 	public class BuildItem
@@ -169,7 +169,25 @@ namespace DDONamedGearPlanner
 
     public class GearSetBuild
     {
-		public Dictionary<SlotType, List<BuildFilter>> Filters = new Dictionary<SlotType, List<BuildFilter>>();
+		//TODO: need to add minimum level range restrictions
+
+		public Dictionary<SlotType, List<BuildFilter>> Filters = new Dictionary<SlotType, List<BuildFilter>>()
+		{
+			{ SlotType.None, new List<BuildFilter>() },
+			{ SlotType.Back, new List<BuildFilter>() },
+			{ SlotType.Body, new List<BuildFilter>() },
+			{ SlotType.Eye, new List<BuildFilter>() },
+			{ SlotType.Feet, new List<BuildFilter>() },
+			{ SlotType.Finger, new List<BuildFilter>() },
+			{ SlotType.Hand, new List<BuildFilter>() },
+			{ SlotType.Head, new List<BuildFilter>() },
+			{ SlotType.Neck, new List<BuildFilter>() },
+			{ SlotType.Offhand, new List<BuildFilter>() },
+			{ SlotType.Trinket, new List<BuildFilter>() },
+			{ SlotType.Waist, new List<BuildFilter>() },
+			{ SlotType.Weapon, new List<BuildFilter>() },
+			{ SlotType.Wrist, new List<BuildFilter>() }
+		};
 		// so we can remember the lock state of the slots
 		public List<EquipmentSlotType> LockedSlots = new List<EquipmentSlotType>();
     }

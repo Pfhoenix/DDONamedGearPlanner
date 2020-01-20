@@ -90,6 +90,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\FixedComboBox.cs" />
     <Compile Include="Controls\FormattedSlider.cs" />
     <Compile Include="Controls\RangeSlider.xaml.cs">
       <DependentUpon>RangeSlider.xaml</DependentUpon>
@@ -99,6 +100,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ListViewItemProperties.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\BuildFiltersWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -126,6 +131,9 @@
     <Compile Include="ItemFilterSettings.cs" />
     <Compile Include="Controls\ListViewItemProperties.xaml.cs">
       <DependentUpon>ListViewItemProperties.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\BuildFiltersWindow.xaml.cs">
+      <DependentUpon>BuildFiltersWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\ItemPropertyBrowserWindow.xaml.cs">
       <DependentUpon>ItemPropertyBrowserWindow.xaml</DependentUpon>

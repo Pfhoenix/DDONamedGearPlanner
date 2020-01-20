@@ -228,19 +228,18 @@
 				<local:EquipmentSlotControl Grid.Column="3" Grid.Row="0" x:Name="TrinketSlot" Slot="Trinket" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
 				<local:EquipmentSlotControl Grid.Column="0" Grid.Row="1" x:Name="BodySlot" Slot="Body" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 				<DockPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2">
-					<Button DockPanel.Dock="Top" Margin="3">Gear Set Filters</Button>
-					<Button DockPanel.Dock="Top" Margin="3">Slot Filters</Button>
-					<Button DockPanel.Dock="Top" Margin="3" IsEnabled="False">Build Gear Sets</Button>
+					<Button DockPanel.Dock="Top" Margin="3" Click="BuildFilters_Click">Build Filters</Button>
+					<Button DockPanel.Dock="Top" Margin="3" IsEnabled="False">Start Build</Button>
 					<GroupBox Header="Build Statistics">
 						<StackPanel>
-							<TextBlock Name="tbTotalGearSets">Gear Sets: 0</TextBlock>
-							<DockPanel Margin="0,3,0,0">
-								<Button DockPanel.Dock="Left" Name="btnPreviousGS" IsEnabled="False">&lt;-</Button>
-								<Button DockPanel.Dock="Right" Name="btnNextGS" IsEnabled="False">-&gt;</Button>
+							<TextBlock Name="tbTotalGearSets" Margin="0,3,0,0">Gear Sets: 0</TextBlock>
+							<DockPanel Margin="0,5,0,0">
+								<Button DockPanel.Dock="Left" Name="btnPreviousGS" IsEnabled="False" Click="PreviousGearSet_Click">&lt;-</Button>
+								<Button DockPanel.Dock="Right" Name="btnNextGS" IsEnabled="False" Click="NextGearSet_Click">-&gt;</Button>
 								<TextBlock Name="tbCurrentGS" TextAlignment="Center"/>
 							</DockPanel>
-							<TextBlock Name="tbCurrentGSRating">Rating:</TextBlock>
-							<TextBlock Name="tbCurrentGSDownside">Penalty:</TextBlock>
+							<TextBlock Name="tbCurrentGSRating" Margin="0,3,0,0">Rating:</TextBlock>
+							<TextBlock Name="tbCurrentGSDownside" Margin="0,3,0,0">Penalty:</TextBlock>
 						</StackPanel>
 					</GroupBox>
 				</DockPanel>
