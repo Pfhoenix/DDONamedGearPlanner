@@ -942,8 +942,7 @@ namespace DDONamedGearPlanner
 		private void ExportGearsetToFile(object sender, RoutedEventArgs e)
 		{
 			// bring up a save file dialog
-			SaveFileDialog sfd = new SaveFileDialog();
-			sfd.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+			SaveFileDialog sfd = new SaveFileDialog { InitialDirectory = AppDomain.CurrentDomain.BaseDirectory };
 			if (sfd.ShowDialog() == true)
 			{
 				if (string.IsNullOrWhiteSpace(Path.GetExtension(sfd.FileName))) sfd.FileName += ".txt";
@@ -953,8 +952,7 @@ namespace DDONamedGearPlanner
 
 		private void ImportGearsetFromFile(object sender, RoutedEventArgs e)
 		{
-			OpenFileDialog ofd = new OpenFileDialog();
-			ofd.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+			OpenFileDialog ofd = new OpenFileDialog { InitialDirectory = AppDomain.CurrentDomain.BaseDirectory };
 			if (ofd.ShowDialog() == true)
 			{
 				DecodeGearset(File.ReadAllText(ofd.FileName));
@@ -965,6 +963,20 @@ namespace DDONamedGearPlanner
 		{
 			SetBuildResult(-1);
 			CurrentBuild.Clear();
+		}
+
+		private void StartBuild_Click(object sender, RoutedEventArgs e)
+		{
+			if (CurrentBuild.BuildResults.Count > 0 && MessageBox.Show("This will overwrite the current build results. Are you sure?", "Overwrite Results", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+			{
+				return;
+			}
+
+			CurrentBuild.FiltersResultsMismatch = false;
+
+			BuildProcessWindow bpw = new BuildProcessWindow();
+			bpw.Initialize(dataset, CurrentBuild);
+			bpw.ShowDialog();
 		}
 	}
 }

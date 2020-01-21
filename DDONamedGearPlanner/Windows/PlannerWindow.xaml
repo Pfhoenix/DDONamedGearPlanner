@@ -231,7 +231,7 @@
 					<Button DockPanel.Dock="Top" Margin="3" Click="BuildFilters_Click">Build Filters</Button>
 					<TextBlock DockPanel.Dock="Top" Margin="3,0,3,0" TextAlignment="Center">Build ML Range</TextBlock>
 					<local:RangeSlider DockPanel.Dock="Top" x:Name="rsBuildML" Minimum="1" Maximum="30" LowerValue="1" UpperValue="30" LowerValueChanged="BuildMLRangeChanged" UpperValueChanged="BuildMLRangeChanged"/>
-					<Button DockPanel.Dock="Top" Name="btnStartBuild" Margin="3" IsEnabled="False">Start Build</Button>
+					<Button DockPanel.Dock="Top" Name="btnStartBuild" Margin="3" IsEnabled="False" Click="StartBuild_Click">Start Build</Button>
 					<GroupBox Header="Build Results">
 						<StackPanel>
 							<TextBlock Name="tbTotalGearSets" Margin="0,2,0,0">Gear Sets: 0</TextBlock>

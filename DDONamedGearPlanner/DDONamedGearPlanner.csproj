@@ -107,6 +107,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Windows\BuildProcessWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\ItemPropertyBrowserWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -134,6 +138,9 @@
     </Compile>
     <Compile Include="Windows\BuildFiltersWindow.xaml.cs">
       <DependentUpon>BuildFiltersWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\BuildProcessWindow.xaml.cs">
+      <DependentUpon>BuildProcessWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\ItemPropertyBrowserWindow.xaml.cs">
       <DependentUpon>ItemPropertyBrowserWindow.xaml</DependentUpon>

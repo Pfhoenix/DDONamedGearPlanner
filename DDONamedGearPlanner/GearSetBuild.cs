@@ -236,5 +236,17 @@ namespace DDONamedGearPlanner
 
 			AppVersion = PlannerWindow.VERSION;
 		}
-    }
+
+		#region Build process support
+		public Dictionary<EquipmentSlotType, List<BuildItem>> DiscoveredItems;
+
+		public void SetupBuildProcess()
+		{
+			DiscoveredItems = new Dictionary<EquipmentSlotType, List<BuildItem>>();
+			EquipmentSlotType[] ests = (EquipmentSlotType[])Enum.GetValues(typeof(EquipmentSlotType));
+			foreach (var est in ests)
+				if (!LockedSlots.Contains(est)) DiscoveredItems[est] = new List<BuildItem>();
+		}
+		#endregion
+	}
 }
