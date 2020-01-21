@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DDONamedGearPlanner"
 		mc:Ignorable="d"
 		x:Name="ddoplanner"
-        Title="DDO Named Gear Planner v0.5" Height="700" Width="800" ResizeMode="CanMinimize" MinHeight="700" MinWidth="800">
+        Title="DDO Named Gear Planner v" Height="700" Width="800" ResizeMode="CanMinimize" MinHeight="700" MinWidth="800">
 	
 	<Window.Resources>
 		<ResourceDictionary>
@@ -23,10 +23,10 @@
 	<DockPanel Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="_File">
-				<MenuItem Header="_New Gear Set Build" Command="New" />
-				<MenuItem Header="_Load Gear Set Build" Command="Open" />
-				<MenuItem Header="_Save Gear Set Build" Command="Save" />
-				<MenuItem Header="Save Gear Set Build _As" Command="SaveAs" />
+				<MenuItem Header="_New Gear Set Build" Click="NewGearSetBuild_Click" />
+				<MenuItem Header="_Load Gear Set Build" />
+				<MenuItem Header="_Save Gear Set Build" />
+				<MenuItem Header="Save Gear Set Build _As" />
 				<Separator />
 				<MenuItem Header="E_xit" Click="ExitMenuItem_Click" />
 			</MenuItem>
@@ -231,7 +231,7 @@
 					<Button DockPanel.Dock="Top" Margin="3" Click="BuildFilters_Click">Build Filters</Button>
 					<TextBlock DockPanel.Dock="Top" Margin="3,0,3,0" TextAlignment="Center">Build ML Range</TextBlock>
 					<local:RangeSlider DockPanel.Dock="Top" x:Name="rsBuildML" Minimum="1" Maximum="30" LowerValue="1" UpperValue="30" LowerValueChanged="BuildMLRangeChanged" UpperValueChanged="BuildMLRangeChanged"/>
-					<Button DockPanel.Dock="Top" Margin="3" IsEnabled="False">Start Build</Button>
+					<Button DockPanel.Dock="Top" Name="btnStartBuild" Margin="3" IsEnabled="False">Start Build</Button>
 					<GroupBox Header="Build Results">
 						<StackPanel>
 							<TextBlock Name="tbTotalGearSets" Margin="0,2,0,0">Gear Sets: 0</TextBlock>
@@ -241,7 +241,7 @@
 								<TextBlock Name="tbCurrentGS" TextAlignment="Center"/>
 							</DockPanel>
 							<TextBlock Name="tbCurrentGSRating" Margin="0,2,0,0">Rating:</TextBlock>
-							<TextBlock Name="tbCurrentGSDownside" Margin="0,2,0,0">Penalty:</TextBlock>
+							<TextBlock Name="tbCurrentGSPenalty" Margin="0,2,0,0">Penalty:</TextBlock>
 						</StackPanel>
 					</GroupBox>
 				</DockPanel>

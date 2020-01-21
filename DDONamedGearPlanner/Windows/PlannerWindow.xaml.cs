@@ -22,6 +22,8 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
+		public const string VERSION = "0.5";
+
 		public DDODataset dataset;
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
@@ -38,6 +40,9 @@ namespace DDONamedGearPlanner
 		public PlannerWindow()
 		{
 			InitializeComponent();
+
+			Title += VERSION;
+			CurrentBuild.AppVersion = VERSION;
 
 			if (!LoadDDODataset())
 			{
@@ -402,7 +407,7 @@ namespace DDONamedGearPlanner
 
 		bool SlotItem(DDOItemData item, SlotType slot)
 		{
-			return SlotItem(new BuildItem(item), slot);
+			return SlotItem(new BuildItem(item, slot), slot);
 		}
 
 		bool SlotItem(BuildItem item, SlotType slot)
@@ -599,7 +604,7 @@ namespace DDONamedGearPlanner
 				}
 			}
 
-			TabItem nti = CreateItemPropertiesTab(new BuildItem(item));
+			TabItem nti = CreateItemPropertiesTab(new BuildItem(item, item.Slot));
 			nti.Header = item.Name;
 		}
 
@@ -792,7 +797,7 @@ namespace DDONamedGearPlanner
 					DDOItemData item = dataset.Items.Find(i => i.Name == itemsplit[0]);
 					if (item != null)
 					{
-						BuildItem bi = new BuildItem(item);
+						BuildItem bi = new BuildItem(item, item.Slot);
 						for (int i = 1; i < itemsplit.Length; i++)
 						{
 							string[] ps = itemsplit[i].Split(';');
@@ -856,18 +861,76 @@ namespace DDONamedGearPlanner
 			bfw.Initialize(CurrentBuild, dataset);
 			bfw.ShowDialog();
 
-			// need to indicate that the current build results aren't reflected by the current filters
-			// maybe some kind of warning when trying to save the build, warning that since the build wasn't run with the current filters, to either not save or save with no build results?
+			if (bfw.FiltersChanged)
+			{
+				if (CurrentBuild.BuildResults.Count != 0)
+				{
+					CurrentBuild.FiltersResultsMismatch = true;
+					MessageBox.Show("By changing the build filters, the current build results will not match the new filter settings. If you run another build, you will overwrite the current build results. If you save this build, the current build results will not be included in the save.", "Filters and results mismatch", MessageBoxButton.OK, MessageBoxImage.Warning);
+				}
+			}
+
+			// evaluate the filters to ensure validity
+			// doesn't take much, just ensure we have an include somewhere
+			foreach (var fg in CurrentBuild.Filters)
+				foreach (var f in fg.Value)
+				{
+					if (f.Include)
+					{
+						btnStartBuild.IsEnabled = true;
+						return;
+					}
+				}
+
+			btnStartBuild.IsEnabled = false;
+			MessageBox.Show("A build cannot be started without a gear set or slot filter that includes an item property.", "Missing include filter", MessageBoxButton.OK, MessageBoxImage.Warning);
+		}
+
+		void SetBuildResult(int cbr)
+		{
+			UnlockClearAll(null, null);
+
+			if (cbr < 0 || cbr >= CurrentBuild.BuildResults.Count)
+			{
+				rsBuildML.LowerValue = 1;
+				rsBuildML.UpperValue = 30;
+				btnStartBuild.IsEnabled = false;
+				tbTotalGearSets.Text = "0";
+				btnPreviousGS.IsEnabled = false;
+				tbCurrentGS.Text = null;
+				btnNextGS.IsEnabled = false;
+				tbCurrentGSRating.Text = "Rating:";
+				tbCurrentGSPenalty.Text = "Penalty:";
+				return;
+			}
+
+			GearSetEvaluation br = CurrentBuild.BuildResults[cbr];
+			tbTotalGearSets.Text = CurrentBuild.BuildResults.Count.ToString();
+			btnPreviousGS.IsEnabled = cbr > 0;
+			tbCurrentGS.Text = cbr.ToString();
+			btnNextGS.IsEnabled = cbr < (CurrentBuild.BuildResults.Count - 1);
+			tbCurrentGSRating.Text = "Rating: " + ((int)br.Rating).ToString();
+			tbCurrentGSPenalty.Text = "Penalty: " + ((int)br.Penalty).ToString();
+
+			foreach (BuildItem bi in br.GearSet.Items)
+				SlotItem(bi, bi.Item.Slot);
+
+			foreach (var esc in br.LockedSlots)
+				EquipmentSlots[(int)esc].SetLockStatus(true);
+
+			RenderGearSet(br.GearSet);
 		}
 
 		private void PreviousGearSet_Click(object sender, RoutedEventArgs e)
 		{
-			// need to remember to reset the equipment slot locks based on the current build
+			if (CurrentBuild.BuildResults.Count == 0 || CurrentBuild.CurrentBuildResult < 1) (sender as Button).IsEnabled = false;
+			SetBuildResult(--CurrentBuild.CurrentBuildResult);
 		}
 
 		private void NextGearSet_Click(object sender, RoutedEventArgs e)
 		{
-			// need to remember to reset the equipment slot locks based on the current build
+			if (CurrentBuild.BuildResults.Count == 0 || CurrentBuild.CurrentBuildResult >= CurrentBuild.BuildResults.Count) (sender as Button).IsEnabled = false;
+			SetBuildResult(++CurrentBuild.CurrentBuildResult);
 		}
 
 		private void BuildMLRangeChanged(RangeSlider slider, double oldvalue, double newvalue)
@@ -883,6 +946,7 @@ namespace DDONamedGearPlanner
 			sfd.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
 			if (sfd.ShowDialog() == true)
 			{
+				if (string.IsNullOrWhiteSpace(Path.GetExtension(sfd.FileName))) sfd.FileName += ".txt";
 				File.WriteAllText(sfd.FileName, EncodeGearset());
 			}
 		}
@@ -895,6 +959,12 @@ namespace DDONamedGearPlanner
 			{
 				DecodeGearset(File.ReadAllText(ofd.FileName));
 			}
+		}
+
+		private void NewGearSetBuild_Click(object sender, RoutedEventArgs e)
+		{
+			SetBuildResult(-1);
+			CurrentBuild.Clear();
 		}
 	}
 }

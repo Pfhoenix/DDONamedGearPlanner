@@ -18,12 +18,15 @@ namespace DDONamedGearPlanner
 		// this is for UI bookkeeping
 		public bool InUse;
 		public DDOItemData Item;
+		// to support builds using two weapons
+		public SlotType Slot;
 		// this is how we simulate property options being set
 		public List<ItemProperty> OptionProperties = new List<ItemProperty>();
 
-		public BuildItem(DDOItemData item)
+		public BuildItem(DDOItemData item, SlotType slot)
 		{
 			Item = item;
+			Slot = slot;
 		}
 	}
 
@@ -81,8 +84,6 @@ namespace DDONamedGearPlanner
 	{
 		public List<BuildItem> Items = new List<BuildItem>();
 		public List<GearSetProperty> Properties = new List<GearSetProperty>();
-		public float Rating;
-		public float Penalty;
 
 		void AddProperties(List<ItemProperty> properties)
 		{
@@ -167,11 +168,31 @@ namespace DDONamedGearPlanner
 		}
 	}
 
+	public class GearSetEvaluation
+	{
+		public GearSet GearSet;
+		public List<EquipmentSlotType> LockedSlots = new List<EquipmentSlotType>();
+		public float Rating;
+		public float Penalty;
+
+		public GearSetEvaluation(GearSet gs, List<EquipmentSlotType> ls)
+		{
+			GearSet = gs;
+			LockedSlots.AddRange(ls);
+		}
+	}
+
     public class GearSetBuild
     {
-		//TODO: need to add minimum level range restrictions
 		public int MinimumLevel = 1;
 		public int MaximumLevel = 30;
+
+		public int CurrentBuildResult;
+
+		[NonSerialized]
+		public bool FiltersResultsMismatch;
+
+		public string AppVersion;
 
 		public Dictionary<SlotType, List<BuildFilter>> Filters = new Dictionary<SlotType, List<BuildFilter>>()
 		{
@@ -192,11 +213,28 @@ namespace DDONamedGearPlanner
 		};
 		// so we can remember the lock state of the slots
 		public List<EquipmentSlotType> LockedSlots = new List<EquipmentSlotType>();
+		public List<GearSetEvaluation> BuildResults = new List<GearSetEvaluation>();
 
 		public void SetLockStatus(EquipmentSlotType est, bool locked)
 		{
 			if (locked && !LockedSlots.Contains(est)) LockedSlots.Add(est);
 			else if (!locked && LockedSlots.Contains(est)) LockedSlots.Remove(est);
+		}
+
+		public void Clear()
+		{
+			MinimumLevel = 1;
+			MaximumLevel = 30;
+			CurrentBuildResult = -1;
+			FiltersResultsMismatch = false;
+
+			foreach (var kv in Filters)
+				kv.Value.Clear();
+
+			LockedSlots.Clear();
+			BuildResults.Clear();
+
+			AppVersion = PlannerWindow.VERSION;
 		}
     }
 }

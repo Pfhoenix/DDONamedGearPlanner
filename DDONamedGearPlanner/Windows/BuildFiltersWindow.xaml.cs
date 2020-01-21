@@ -164,6 +164,7 @@ namespace DDONamedGearPlanner
 		private void FiltersGSApply_Clicked(object sender, RoutedEventArgs e)
 		{
 			SaveFiltersToBuild(SlotType.None, lbFiltersGS);
+			FiltersChanged = true;
 		}
 
 		private void FiltersGSReset_Clicked(object sender, RoutedEventArgs e)
@@ -301,6 +302,8 @@ namespace DDONamedGearPlanner
 			{
 				if (slb.Value != null) SaveFiltersToBuild(slb.Key, slb.Value);
 			}
+
+			FiltersChanged = true;
 		}
 
 		private void FiltersSlotReset_Clicked(object sender, RoutedEventArgs e)
