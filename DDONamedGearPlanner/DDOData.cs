@@ -6,6 +6,7 @@ namespace DDONamedGearPlanner
 {
 	public enum EquipmentSlotType
 	{
+		None,
 		Back,
 		Body,
 		Eye,
@@ -39,6 +40,15 @@ namespace DDONamedGearPlanner
 		Waist = 1024,
 		Weapon = 2048,
 		Wrist = 4096
+	}
+
+	static class EquipmentSlotTypeConversionExtensions
+	{
+		public static SlotType ToSlotType(this EquipmentSlotType est)
+		{
+			if (est == EquipmentSlotType.Finger1 || est == EquipmentSlotType.Finger2) return SlotType.Finger;
+			else return (SlotType)Enum.Parse(typeof(SlotType), est.ToString());
+		}
 	}
 
 	[Flags]

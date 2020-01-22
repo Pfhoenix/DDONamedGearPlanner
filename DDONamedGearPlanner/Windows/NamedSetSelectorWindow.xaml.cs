@@ -27,7 +27,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class NamedSetSelectorWindow : Window
 	{
-		EquipmentSlotControl[] EquipmentSlots;
+		Dictionary<EquipmentSlotType, EquipmentSlotControl> EquipmentSlots;
 		int FingerLimit = 2;
 		int HandLimit = 2;
 		List<NamedSetInfo> Sets = new List<NamedSetInfo>();
@@ -52,17 +52,17 @@ namespace DDONamedGearPlanner
 		}
 
 
-		public void Initialize(DDODataset dataset, EquipmentSlotControl[] es)
+		public void Initialize(DDODataset dataset, Dictionary<EquipmentSlotType, EquipmentSlotControl> es)
 		{
 			FingerLimit = 2;
 			HandLimit = 2;
 			EquipmentSlots = es;
 			foreach (var eq in EquipmentSlots)
 			{
-				if (eq.IsLocked)
+				if (eq.Value.IsLocked)
 				{
-					if (eq.SlotType == SlotType.Finger) FingerLimit--;
-					else if (eq.SlotType == SlotType.Weapon || eq.SlotType == SlotType.Offhand) HandLimit--;
+					if (eq.Value.SlotType == SlotType.Finger) FingerLimit--;
+					else if (eq.Value.SlotType == SlotType.Weapon || eq.Value.SlotType == SlotType.Offhand) HandLimit--;
 				}
 			}
 
@@ -145,9 +145,9 @@ namespace DDONamedGearPlanner
 					SlotPanel.Children.Add(gb);
 					foreach (var eq in EquipmentSlots)
 					{
-						if (item.Slot == eq.SlotType)
+						if (item.Slot == eq.Value.SlotType)
 						{
-							if (eq.SlotType != SlotType.Finger && eq.SlotType != SlotType.Weapon && eq.IsLocked)
+							if (eq.Value.SlotType != SlotType.Finger && eq.Value.SlotType != SlotType.Weapon && eq.Value.IsLocked)
 							{
 								ro = true;
 								break;

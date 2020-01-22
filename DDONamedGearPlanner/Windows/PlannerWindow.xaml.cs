@@ -27,7 +27,7 @@ namespace DDONamedGearPlanner
 		public DDODataset dataset;
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
-		EquipmentSlotControl[] EquipmentSlots = new EquipmentSlotControl[14];
+		Dictionary<EquipmentSlotType, EquipmentSlotControl> EquipmentSlots = new Dictionary<EquipmentSlotType, EquipmentSlotControl>();
 		EquipmentSlotControl SelectedESC;
 
 		// item search stuff
@@ -90,7 +90,7 @@ namespace DDONamedGearPlanner
 
 		public void RegisterEquipmentSlot(EquipmentSlotControl esc)
 		{
-			EquipmentSlots[(int)esc.Slot] = esc;
+			EquipmentSlots[esc.Slot] = esc;
 			esc.EquipmentSlotClicked += EquipmentSlotClicked;
 			esc.EquipmentSlotCleared += EquipmentSlotCleared;
 			esc.EquipmentSlotLockChanged += EquipmentSlotLockChanged;
@@ -107,17 +107,17 @@ namespace DDONamedGearPlanner
 			{
 				if (esc.Item.Item.Handedness == 2)
 				{
-					EquipmentSlots[(int)EquipmentSlotType.Offhand].SetLockStatus(esc.IsLocked);
+					EquipmentSlots[EquipmentSlotType.Offhand].SetLockStatus(esc.IsLocked);
 					CurrentBuild.SetLockStatus(EquipmentSlotType.Offhand, esc.IsLocked);
 				}
 			}
 			// if offhand slot and weapon slot has two-handed item in it, reset offhand slot lock to weapon slot lock
 			else if (esc.Slot == EquipmentSlotType.Offhand)
 			{
-				var item = EquipmentSlots[(int)EquipmentSlotType.Weapon].Item;
+				var item = EquipmentSlots[EquipmentSlotType.Weapon].Item;
 				if (item != null && item.Item.Handedness == 2)
 				{
-					esc.SetLockStatus(EquipmentSlots[(int)EquipmentSlotType.Weapon].IsLocked);
+					esc.SetLockStatus(EquipmentSlots[EquipmentSlotType.Weapon].IsLocked);
 					CurrentBuild.SetLockStatus(EquipmentSlotType.Offhand, esc.IsLocked);
 				}
 			}
@@ -396,8 +396,8 @@ namespace DDONamedGearPlanner
 		GearSet CalculateGearSet(bool render)
 		{
 			GearSet gs = new GearSet();
-			for (int i = 0; i < EquipmentSlots.Length; i++)
-				if (EquipmentSlots[i].Item != null) gs.AddItem(EquipmentSlots[i].Item);
+			foreach (var kv in EquipmentSlots)
+				if (kv.Value.Item != null) gs.AddItem(kv.Value.Item);
 			gs.ProcessItems(dataset);
 
 			if (render) RenderGearSet(gs);
@@ -407,7 +407,7 @@ namespace DDONamedGearPlanner
 
 		bool SlotItem(DDOItemData item, SlotType slot)
 		{
-			return SlotItem(new BuildItem(item, slot), slot);
+			return SlotItem(new BuildItem(item, EquipmentSlotType.None), slot);
 		}
 
 		bool SlotItem(BuildItem item, SlotType slot)
@@ -419,10 +419,10 @@ namespace DDONamedGearPlanner
 			//  - if both finger slots are full, check for one not locked
 			if (item.Item.Slot == SlotType.Finger)
 			{
-				if (EquipmentSlots[(int)EquipmentSlotType.Finger1].Item == null) esc = EquipmentSlots[(int)EquipmentSlotType.Finger1];
-				else if (EquipmentSlots[(int)EquipmentSlotType.Finger2].Item == null) esc = EquipmentSlots[(int)EquipmentSlotType.Finger2];
-				else if (!EquipmentSlots[(int)EquipmentSlotType.Finger1].IsLocked) esc = EquipmentSlots[(int)EquipmentSlotType.Finger1];
-				else if (!EquipmentSlots[(int)EquipmentSlotType.Finger2].IsLocked) esc = EquipmentSlots[(int)EquipmentSlotType.Finger2];
+				if (EquipmentSlots[EquipmentSlotType.Finger1].Item == null) esc = EquipmentSlots[EquipmentSlotType.Finger1];
+				else if (EquipmentSlots[EquipmentSlotType.Finger2].Item == null) esc = EquipmentSlots[EquipmentSlotType.Finger2];
+				else if (!EquipmentSlots[EquipmentSlotType.Finger1].IsLocked) esc = EquipmentSlots[EquipmentSlotType.Finger1];
+				else if (!EquipmentSlots[EquipmentSlotType.Finger2].IsLocked) esc = EquipmentSlots[EquipmentSlotType.Finger2];
 			}
 			// one-handed weapons can be placed in the offhand slot if the weapon slot is locked
 			else if (item.Item.Slot == SlotType.Weapon)
@@ -431,37 +431,37 @@ namespace DDONamedGearPlanner
 				// the assumption is that this isn't passed without validation having already been done
 				if (slot == SlotType.Offhand && item.Item.Handedness == 1)
 				{
-					esc = EquipmentSlots[(int)EquipmentSlotType.Offhand];
+					esc = EquipmentSlots[EquipmentSlotType.Offhand];
 				}
 				else
 				{
-					if (EquipmentSlots[(int)EquipmentSlotType.Weapon].IsLocked)
+					if (EquipmentSlots[EquipmentSlotType.Weapon].IsLocked)
 					{
 						if (item.Item.Handedness == 1)
 						{
-							if (EquipmentSlots[(int)EquipmentSlotType.Offhand].IsLocked)
+							if (EquipmentSlots[EquipmentSlotType.Offhand].IsLocked)
 							{
 								MessageBox.Show("Can't load a weapon into a locked weapon nor offhand slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
 								return false;
 							}
-							else esc = EquipmentSlots[(int)EquipmentSlotType.Offhand];
+							else esc = EquipmentSlots[EquipmentSlotType.Offhand];
 						}
 					}
 					else if (item.Item.Handedness == 2)
 					{
-						if (EquipmentSlots[(int)EquipmentSlotType.Offhand].IsLocked)
+						if (EquipmentSlots[EquipmentSlotType.Offhand].IsLocked)
 						{
 							MessageBox.Show("Can't load a two-handed weapon with a locked offhand slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
 							return false;
 						}
-						else esc = EquipmentSlots[(int)EquipmentSlotType.Weapon];
+						else esc = EquipmentSlots[EquipmentSlotType.Weapon];
 					}
-					else esc = EquipmentSlots[(int)EquipmentSlotType.Weapon];
+					else esc = EquipmentSlots[EquipmentSlotType.Weapon];
 				}
 			}
 			else
 			{
-				esc = EquipmentSlots[(int)(EquipmentSlotType)Enum.Parse(typeof(EquipmentSlotType), item.Item.Slot.ToString())];
+				esc = EquipmentSlots[(EquipmentSlotType)Enum.Parse(typeof(EquipmentSlotType), item.Item.Slot.ToString())];
 			}
 
 			if (esc == null || esc.IsLocked)
@@ -473,7 +473,7 @@ namespace DDONamedGearPlanner
 			{
 				esc.SetItem(item);
 				// slotting a two-handed weapon means ensuring the offhand slot is empty
-				if (item.Item.Handedness == 2) EquipmentSlots[(int)EquipmentSlotType.Offhand].SetItem(null);
+				if (item.Item.Handedness == 2) EquipmentSlots[EquipmentSlotType.Offhand].SetItem(null);
 				return true;
 			}
 		}
@@ -604,7 +604,7 @@ namespace DDONamedGearPlanner
 				}
 			}
 
-			TabItem nti = CreateItemPropertiesTab(new BuildItem(item, item.Slot));
+			TabItem nti = CreateItemPropertiesTab(new BuildItem(item, EquipmentSlotType.None));
 			nti.Header = item.Name;
 		}
 
@@ -661,10 +661,10 @@ namespace DDONamedGearPlanner
 
 		private void UnlockClearAll(object sender, RoutedEventArgs e)
 		{
-			for (int i = 0; i < EquipmentSlots.Length; i++)
+			foreach (var kv in EquipmentSlots)
 			{
-				EquipmentSlots[i].SetLockStatus(false);
-				EquipmentSlots[i].SetItem(null);
+				kv.Value.SetLockStatus(false);
+				kv.Value.SetItem(null);
 			}
 
 			CurrentBuild.LockedSlots.Clear();
@@ -739,11 +739,11 @@ namespace DDONamedGearPlanner
 			string raw = "";
 			foreach (var es in EquipmentSlots)
 			{
-				if (es.Item != null)
+				if (es.Value.Item != null)
 				{
 					StringBuilder sb = new StringBuilder();
-					sb.Append(es.Item.Item.Name);
-					foreach (var op in es.Item.OptionProperties)
+					sb.Append(es.Value.Item.Item.Name);
+					foreach (var op in es.Value.Item.OptionProperties)
 					{
 						sb.Append("{");
 						sb.Append(op.Property + ";" + (string.IsNullOrWhiteSpace(op.Type) ? "untyped" : op.Type) + ";" + op.Value);
@@ -797,7 +797,7 @@ namespace DDONamedGearPlanner
 					DDOItemData item = dataset.Items.Find(i => i.Name == itemsplit[0]);
 					if (item != null)
 					{
-						BuildItem bi = new BuildItem(item, item.Slot);
+						BuildItem bi = new BuildItem(item, EquipmentSlotType.None);
 						for (int i = 1; i < itemsplit.Length; i++)
 						{
 							string[] ps = itemsplit[i].Split(';');
@@ -916,7 +916,7 @@ namespace DDONamedGearPlanner
 				SlotItem(bi, bi.Item.Slot);
 
 			foreach (var esc in br.LockedSlots)
-				EquipmentSlots[(int)esc].SetLockStatus(true);
+				EquipmentSlots[esc].SetLockStatus(true);
 
 			RenderGearSet(br.GearSet);
 		}
@@ -972,11 +972,24 @@ namespace DDONamedGearPlanner
 				return;
 			}
 
+			/*SaveFileDialog sfd = new SaveFileDialog();
+			sfd.Filter = "Build file (*.build)|*.build";
+			sfd.AddExtension = true;
+			if (sfd.ShowDialog() == false) return;*/
+
 			CurrentBuild.FiltersResultsMismatch = false;
+			CurrentBuild.SetupBuildProcess(EquipmentSlots);
 
 			BuildProcessWindow bpw = new BuildProcessWindow();
 			bpw.Initialize(dataset, CurrentBuild);
-			bpw.ShowDialog();
+			bpw.Owner = this;
+			if (bpw.ShowDialog() == true)
+			{
+				// save the build and build results
+
+				CurrentBuild.CurrentBuildResult = 0;
+				SetBuildResult(0);
+			}
 		}
 	}
 }

@@ -43,7 +43,8 @@ namespace DDONamedGearPlanner
 			{
 				string[] names = Enum.GetNames(typeof(EquipmentSlotType));
 				SlotBGImages = new BitmapImage[names.Length];
-				for (int i = 0; i < names.Length; i++)
+				// this skips EquipmentSlotType.None;
+				for (int i = 1; i < names.Length; i++)
 					SlotBGImages[i] = new BitmapImage(new Uri("pack://application:,,,/Resources/slot_bg_" + names[i].ToLower() + ".png"));
 			}
 
@@ -171,6 +172,7 @@ namespace DDONamedGearPlanner
 			}
 			else
 			{
+				Item.Slot = Slot;
 				Item.InUse = true;
 				switch (Item.Item.Slot)
 				{

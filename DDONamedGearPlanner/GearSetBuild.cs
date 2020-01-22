@@ -19,11 +19,11 @@ namespace DDONamedGearPlanner
 		public bool InUse;
 		public DDOItemData Item;
 		// to support builds using two weapons
-		public SlotType Slot;
+		public EquipmentSlotType Slot;
 		// this is how we simulate property options being set
 		public List<ItemProperty> OptionProperties = new List<ItemProperty>();
 
-		public BuildItem(DDOItemData item, SlotType slot)
+		public BuildItem(DDOItemData item, EquipmentSlotType slot)
 		{
 			Item = item;
 			Slot = slot;
@@ -238,14 +238,22 @@ namespace DDONamedGearPlanner
 		}
 
 		#region Build process support
-		public Dictionary<EquipmentSlotType, List<BuildItem>> DiscoveredItems;
+		public Dictionary<EquipmentSlotType, List<DDOItemData>> DiscoveredItems;
+		public List<BuildItem> LockedSlotItems = new List<BuildItem>();
 
-		public void SetupBuildProcess()
+		public void SetupBuildProcess(Dictionary<EquipmentSlotType, EquipmentSlotControl> EquipmentSlots)
 		{
-			DiscoveredItems = new Dictionary<EquipmentSlotType, List<BuildItem>>();
-			EquipmentSlotType[] ests = (EquipmentSlotType[])Enum.GetValues(typeof(EquipmentSlotType));
-			foreach (var est in ests)
-				if (!LockedSlots.Contains(est)) DiscoveredItems[est] = new List<BuildItem>();
+			BuildResults.Clear();
+			DiscoveredItems = new Dictionary<EquipmentSlotType, List<DDOItemData>>();
+			LockedSlotItems.Clear();
+			foreach (var ls in LockedSlots)
+				LockedSlotItems.Add(EquipmentSlots[ls].Item);
+		}
+
+		public void AddBuildGearSet(GearSet gs)
+		{
+			foreach (var ls in LockedSlotItems) gs.AddItem(ls);
+			BuildResults.Add(new GearSetEvaluation(gs, new List<EquipmentSlotType>(LockedSlots)));
 		}
 		#endregion
 	}

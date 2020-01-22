@@ -27,7 +27,20 @@ namespace DDOWikiParser
 			"Great Club",
 			"Maul",
 			"Great Sword",
-			"Handwrap"
+			"Handwraps",
+			"Heavy Crossbow",
+			"Light Crossbow",
+			"Long Bow",
+			"Short Bow",
+			"Repeating Heavy Crossbow",
+			"Repeating Light Crossbow",
+		};
+		string[] RuneArmCompatibleTwoHandedWeaponTypes =
+		{
+			"Heavy Crossbow",
+			"Light Crossbow",
+			"Repeating Heavy Crossbow",
+			"Repeating Light Crossbow"
 		};
 		char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 		string[] numerals = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX" };

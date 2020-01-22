@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDONamedGearPlanner"
         mc:Ignorable="d"
-        Title="Build Process" Height="213.682" Width="400" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="CanMinimize">
+        Title="Build Process" Height="246.278" Width="400" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="CanMinimize" SizeToContent="Height">
 	<StackPanel Name="spContent">
 		<Border BorderThickness="1" BorderBrush="Black">
 			<Grid Margin="2,2,2,2">
@@ -14,11 +14,12 @@
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 				<TextBlock Grid.Row="0">Phase 1: Item discovery</TextBlock>
-				<ProgressBar Grid.Row="1" Name="pbPhase1" Margin="0,2,0,0" Height="15"/>
+				<ProgressBar Grid.Row="1" Name="pbPhase1" Margin="0,2,0,0" SnapsToDevicePixels="True"/>
+				<TextBlock Grid.Row="1" Name="tbPhase1" Margin="0,2,0,0" TextAlignment="Center"/>
 			</Grid>
 		</Border>
 		<Border Name="bdrPhase1Results" BorderThickness="1" BorderBrush="Black">
-			<TextBlock Margin="2,2,2,2">1234 items across 10 slots, 1234567 combinations</TextBlock>
+			<TextBlock Name="tbPhase1Results" Margin="2,2,2,2">1234 items across 10 slots, 1234567 combinations</TextBlock>
 		</Border>
 		<Border Name="bdrPhase2" BorderThickness="1" BorderBrush="Black">
 			<Grid Margin="2,2,2,2">
@@ -27,7 +28,7 @@
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 				<TextBlock Grid.Row="0">Phase 2: Generating gear sets</TextBlock>
-				<ProgressBar Grid.Row="1" Name="pbPhase2" Margin="0,2,0,0"/>
+				<ProgressBar Grid.Row="1" Name="pbPhase2" Margin="0,2,0,0" SnapsToDevicePixels="True"/>
 				<TextBlock Grid.Row="1" Name="tbPhase2" Margin="0,2,0,0" TextAlignment="Center">1234567890 generated</TextBlock>
 			</Grid>
 		</Border>
@@ -38,7 +39,7 @@
 					<RowDefinition/>
 				</Grid.RowDefinitions>
 				<TextBlock Grid.Row="0">Phase 3: Rating gear sets</TextBlock>
-				<ProgressBar Grid.Row="1" Name="pbPhase3" Margin="0,2,0,0"/>
+				<ProgressBar Grid.Row="1" Name="pbPhase3" Margin="0,2,0,0" SnapsToDevicePixels="True"/>
 				<TextBlock Grid.Row="1" Name="tbPhase3" Margin="0,2,0,0" TextAlignment="Center">12345 of 1234567890</TextBlock>
 			</Grid>
 		</Border>
