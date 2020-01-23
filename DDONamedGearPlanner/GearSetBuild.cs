@@ -172,8 +172,8 @@ namespace DDONamedGearPlanner
 	{
 		public GearSet GearSet;
 		public List<EquipmentSlotType> LockedSlots = new List<EquipmentSlotType>();
-		public float Rating;
-		public float Penalty;
+		public int Rating;
+		public int Penalty;
 
 		public GearSetEvaluation(GearSet gs, List<EquipmentSlotType> ls)
 		{
@@ -245,9 +245,14 @@ namespace DDONamedGearPlanner
 		{
 			BuildResults.Clear();
 			DiscoveredItems = new Dictionary<EquipmentSlotType, List<DDOItemData>>();
+			LockedSlots.Clear();
 			LockedSlotItems.Clear();
-			foreach (var ls in LockedSlots)
-				LockedSlotItems.Add(EquipmentSlots[ls].Item);
+			foreach (var kv in EquipmentSlots)
+				if (kv.Value.IsLocked)
+				{
+					LockedSlots.Add(kv.Key);
+					if (kv.Value.Item != null) LockedSlotItems.Add(kv.Value.Item);
+				}
 		}
 
 		public void AddBuildGearSet(GearSet gs)

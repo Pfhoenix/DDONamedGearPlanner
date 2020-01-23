@@ -191,7 +191,7 @@ namespace DDONamedGearPlanner
 				// go through slot filters first
 				int include1 = ProcessSlotFilter(item, slot1);
 				// item has a definitive filter ruling for slot1 and no slot2, means we're done with the item
-				if (include1 != 0 && slot2 == EquipmentSlotType.None) continue;
+				if (include1 < 0 && slot2 == EquipmentSlotType.None) continue;
 				int include2 = 0;
 				if (slot2 != EquipmentSlotType.None)
 				{
@@ -201,10 +201,9 @@ namespace DDONamedGearPlanner
 				}
 
 				// go through gear set filters
-				include1 = ProcessBuildFilters(item, Build.Filters[SlotType.None]);
-				if (include1 == 1)
+				int ginclude = ProcessBuildFilters(item, Build.Filters[SlotType.None]);
+				if (ginclude == 1)
 				{
-					// passing gear set filters means both slot1 and slot2 are good to go
 					if (!Build.DiscoveredItems.ContainsKey(slot1)) Build.DiscoveredItems[slot1] = new List<DDOItemData>();
 					Build.DiscoveredItems[slot1].Add(item);
 					if (slot2 != EquipmentSlotType.None)
@@ -266,9 +265,11 @@ namespace DDONamedGearPlanner
 					if (kv.Key == EquipmentSlotType.Weapon || (kv.Key == EquipmentSlotType.Offhand && flagweapon)) weaponcounted = true;
 					numslots++;
 				}
+
+				combos *= (ulong)(kv.Value.Count + 1);
 			}
 
-			combos = (ulong)(Math.Pow(2, numitems) - 1);
+			combos -= 1;
 			tbPhase1Results.Text = string.Format("{0} items across {1} slot{2}, {3} minimum combinations", numitems, numslots, numslots > 1 ? "s" : "", combos);
 
 			bdrPhase1Results.Visibility = Visibility.Visible;
@@ -338,6 +339,14 @@ namespace DDONamedGearPlanner
 			SlotType filterslot = list[0].Key.ToSlotType();
 			List<List<BuildItem>> result = new List<List<BuildItem>>();
 
+			// this only needs to be called once per list entry
+			List<List<BuildItem>> tailCombos = null;
+			if (list.Count > 1)
+			{
+				tailCombos = BuildGearSets(bw, list.Skip(1).ToList());
+				if (CancelBuild) return null;
+			}
+
 			// iterate over all items in the head list
 			foreach (var item in list[0].Value)
 			{
@@ -365,48 +374,66 @@ namespace DDONamedGearPlanner
 					}
 				}
 
+				List<List<BuildItem>> added = new List<List<BuildItem>>();
+
 				if (stock)
 				{
 					// head
 					result.Add(new List<BuildItem>());
 					result.Last().Add(new BuildItem(item, list[0].Key));
+					// make a copy and buffer it
+					added.Add(new List<BuildItem>(result.Last()));
 					BuildGearSet(bw, result.Last());
 					if (list.Count > 1)
 					{
-						// tail
-						List<List<BuildItem>> tailCombos = BuildGearSets(bw, list.Skip(1).ToList());
-						if (CancelBuild) return null;
 						foreach (var combo in tailCombos)
 						{
 							if (CancelBuild) return null;
-							result.Add(new List<BuildItem>(combo));
-							BuildGearSet(bw, result.Last());
-							combo.Add(new BuildItem(item, list[0].Key));
-							result.Add(new List<BuildItem>(combo));
+							List<BuildItem> nc = new List<BuildItem>(combo);
+							nc.Add(new BuildItem(item, list[0].Key));
+							result.Add(nc);
+							// make a copy and buffer it
+							added.Add(new List<BuildItem>(nc));
 							BuildGearSet(bw, result.Last());
 						}
 					}
 				}
+
 				foreach (var os in optionsets)
 				{
-					// head
-					result.Add(new List<BuildItem>());
-					result.Last().Add(new BuildItem(item, list[0].Key));
-					result.Last().Last().OptionProperties = os;
-					BuildGearSet(bw, result.Last());
-					if (list.Count > 1)
+					if (!stock)
 					{
-						// tail
-						List<List<BuildItem>> tailCombos = BuildGearSets(bw, list.Skip(1).ToList());
-						if (CancelBuild) return null;
-						foreach (var combo in tailCombos)
+						// head
+						result.Add(new List<BuildItem>());
+						result.Last().Add(new BuildItem(item, list[0].Key));
+						// make a copy and buffer it
+						added.Add(new List<BuildItem>(result.Last()));
+						BuildGearSet(bw, result.Last());
+						if (list.Count > 1)
 						{
-							if (CancelBuild) return null;
-							result.Add(new List<BuildItem>(combo));
-							BuildGearSet(bw, result.Last());
-							combo.Add(new BuildItem(item, list[0].Key));
-							combo.Last().OptionProperties = os;
-							result.Add(new List<BuildItem>(combo));
+							foreach (var combo in tailCombos)
+							{
+								if (CancelBuild) return null;
+								List<BuildItem> nc = new List<BuildItem>(combo);
+								nc.Add(new BuildItem(item, list[0].Key) { OptionProperties = os });
+								result.Add(nc);
+								// make a copy and buffer it
+								added.Add(new List<BuildItem>(nc));
+								BuildGearSet(bw, nc);
+							}
+						}
+						stock = true;
+					}
+					else
+					{
+						// update each added with the optionset
+						foreach (var a in added)
+						{
+							// each list in added has this calls' item at the end
+							// create a new item so we aren't modifying an existing, used build item
+							a[a.Count - 1] = new BuildItem(item, list[0].Key);
+							a.Last().OptionProperties = os;
+							result.Add(new List<BuildItem>(a));
 							BuildGearSet(bw, result.Last());
 						}
 					}
@@ -437,6 +464,9 @@ namespace DDONamedGearPlanner
 				return;
 			}
 
+			pbPhase2.Value = pbPhase2.Maximum;
+			tbPhase2.Text = Build.BuildResults.Count + " generated";
+
 			// start phase 3
 			pbPhase3.Minimum = 0;
 			pbPhase3.Maximum = Build.BuildResults.Count;
@@ -454,10 +484,51 @@ namespace DDONamedGearPlanner
 		#endregion
 
 		#region Phase 3
+		bool IsPropertyFiltered(string property)
+		{
+			foreach (var kv in Build.Filters)
+			{
+				foreach (var bf in kv.Value)
+				{
+					if (bf.Include && bf.Property == property) return true;
+				}
+			}
+
+			return false;
+		}
+
 		// Phase 3 rates all gear sets
 		void Phase3_DoWork(object sender, DoWorkEventArgs e)
 		{
+			for (int i = 0; i <Build.BuildResults.Count; i++)
+			{
+				if (CancelBuild) return;
 
+				if (i % 250 == 0) (sender as BackgroundWorker).ReportProgress(i);
+				Build.BuildResults[i].GearSet.ProcessItems(Dataset);
+
+				foreach (var gsp in Build.BuildResults[i].GearSet.Properties)
+				{
+					if (!IsPropertyFiltered(gsp.Property)) continue;
+
+					if (gsp.IsGroup)
+					{
+						Build.BuildResults[i].Rating += 5;
+						continue;
+					}
+
+					string lasttype = null;
+					foreach (var ip in gsp.ItemProperties)
+					{
+						if (string.IsNullOrWhiteSpace(lasttype) || lasttype != ip.Type)
+						{
+							Build.BuildResults[i].Rating += (int)Math.Max(1, Math.Abs((ip.Value > 0 && ip.Value < 1) ? ip.Value * 10 : ip.Value));
+							lasttype = ip.Type;
+						}
+						else Build.BuildResults[i].Penalty += (int)Math.Max(1, Math.Abs((ip.Value > 0 && ip.Value < 1) ? ip.Value * 10 : ip.Value));
+					}
+				}
+			}
 		}
 
 		void Phase3_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -475,6 +546,9 @@ namespace DDONamedGearPlanner
 				CancelAndClose();
 				return;
 			}
+
+			pbPhase3.Value = pbPhase3.Maximum;
+			tbPhase3.Text = "Done";
 
 			// start phase 4
 			bdrPhase4.Visibility = Visibility.Visible;
@@ -516,7 +590,7 @@ namespace DDONamedGearPlanner
 			BuildSW.Stop();
 			DotTimer.Stop();
 
-			tbPhase4.Text = "Sorting results by gear set ratings took " + (Phase4SW.ElapsedMilliseconds / 1000) + " seconds";
+			tbPhase4.Text = string.Format("Sorting results by gear set ratings took {0:F3} seconds", Phase4SW.ElapsedMilliseconds / 1000.0);
 
 			tbFinalResults.Text = string.Format("Build completed in {0}:{1:D2}:{2:D2}", BuildSW.Elapsed.Hours, BuildSW.Elapsed.Minutes, BuildSW.Elapsed.Seconds);
 			bdrFinalResults.Visibility = Visibility.Visible;

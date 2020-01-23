@@ -410,6 +410,7 @@ namespace DDONamedGearPlanner
 			return SlotItem(new BuildItem(item, EquipmentSlotType.None), slot);
 		}
 
+		// this finds a slot to put the item into
 		bool SlotItem(BuildItem item, SlotType slot)
 		{
 			EquipmentSlotControl esc = null;
@@ -476,6 +477,47 @@ namespace DDONamedGearPlanner
 				if (item.Item.Handedness == 2) EquipmentSlots[EquipmentSlotType.Offhand].SetItem(null);
 				return true;
 			}
+		}
+
+		// this is for slotting a build item into a particular (set) slot
+		bool SlotItem(BuildItem item)
+		{
+			if (item.Slot == EquipmentSlotType.None || EquipmentSlots[item.Slot].IsLocked)
+			{
+				MessageBox.Show("Can't load an item into a locked slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
+				return false;
+			}
+
+			if (item.Slot == EquipmentSlotType.Weapon)
+			{
+				if (item.Item.Handedness == 2)
+				{
+					if (EquipmentSlots[EquipmentSlotType.Offhand].IsLocked)
+					{
+						MessageBox.Show("Can't load a two-handed weapon with a locked offhand slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
+						return false;
+					}
+					else EquipmentSlots[EquipmentSlotType.Offhand].SetItem(null);
+				}
+			}
+			else if (item.Slot == EquipmentSlotType.Offhand)
+			{
+				if (EquipmentSlots[EquipmentSlotType.Weapon].Item != null)
+				{
+					if (EquipmentSlots[EquipmentSlotType.Weapon].Item.Item.Handedness == 2)
+					{
+						if (EquipmentSlots[EquipmentSlotType.Weapon].IsLocked)
+						{
+							MessageBox.Show("Can't load an offhand item with a locked two-handed weapon locked.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
+							return false;
+						}
+						else EquipmentSlots[EquipmentSlotType.Weapon].SetItem(null);
+					}
+				}
+			}
+
+			EquipmentSlots[item.Slot].SetItem(item);
+			return true;
 		}
 
 		private void LvItemList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -895,7 +937,7 @@ namespace DDONamedGearPlanner
 				rsBuildML.LowerValue = 1;
 				rsBuildML.UpperValue = 30;
 				btnStartBuild.IsEnabled = false;
-				tbTotalGearSets.Text = "0";
+				tbTotalGearSets.Text = "Gear Sets: 0";
 				btnPreviousGS.IsEnabled = false;
 				tbCurrentGS.Text = null;
 				btnNextGS.IsEnabled = false;
@@ -905,15 +947,15 @@ namespace DDONamedGearPlanner
 			}
 
 			GearSetEvaluation br = CurrentBuild.BuildResults[cbr];
-			tbTotalGearSets.Text = CurrentBuild.BuildResults.Count.ToString();
+			tbTotalGearSets.Text = "Gear Sets: " + CurrentBuild.BuildResults.Count;
 			btnPreviousGS.IsEnabled = cbr > 0;
-			tbCurrentGS.Text = cbr.ToString();
+			tbCurrentGS.Text = (cbr + 1).ToString();
 			btnNextGS.IsEnabled = cbr < (CurrentBuild.BuildResults.Count - 1);
-			tbCurrentGSRating.Text = "Rating: " + ((int)br.Rating).ToString();
-			tbCurrentGSPenalty.Text = "Penalty: " + ((int)br.Penalty).ToString();
+			tbCurrentGSRating.Text = "Rating: " + (int)br.Rating;
+			tbCurrentGSPenalty.Text = "Penalty: " + (int)br.Penalty;
 
 			foreach (BuildItem bi in br.GearSet.Items)
-				SlotItem(bi, bi.Item.Slot);
+				SlotItem(bi);
 
 			foreach (var esc in br.LockedSlots)
 				EquipmentSlots[esc].SetLockStatus(true);
