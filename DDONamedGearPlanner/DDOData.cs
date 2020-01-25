@@ -7360,17 +7360,12 @@ namespace DDONamedGearPlanner
 					// property has seen one slot
 					if (Enum.IsDefined(typeof(SlotType), ip.SlotsFoundOn) && ip.SlotsFoundOn != SlotType.None)
 					{
-						// remove from the seen property
-						//SlotExclusiveItemProperties[ip.SlotsFoundOn].Remove(ip);
-
 						if (SlotExclusiveItemProperties.ContainsKey(SlotType.None)) SlotExclusiveItemProperties[SlotType.None].Add(ip);
 						else SlotExclusiveItemProperties[SlotType.None] = new List<DDOItemProperty> { ip };
 					}
-					//else if (ip.SlotsFoundOn == SlotType.None)
-					//{
-						if (SlotExclusiveItemProperties.ContainsKey(item.Slot)) SlotExclusiveItemProperties[item.Slot].Add(ip);
-						else SlotExclusiveItemProperties[item.Slot] = new List<DDOItemProperty> { ip };
-					//}
+
+					if (SlotExclusiveItemProperties.ContainsKey(item.Slot)) SlotExclusiveItemProperties[item.Slot].Add(ip);
+					else SlotExclusiveItemProperties[item.Slot] = new List<DDOItemProperty> { ip };
 
 					ip.SlotsFoundOn |= item.Slot;
 				}

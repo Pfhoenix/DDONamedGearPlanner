@@ -23,10 +23,15 @@
 	<DockPanel Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="_File">
-				<MenuItem Header="_New Gear Set Build" Click="NewGearSetBuild_Click" />
-				<MenuItem Header="_Load Gear Set Build" />
-				<MenuItem Header="_Save Gear Set Build" />
-				<MenuItem Header="Save Gear Set Build _As" />
+				<MenuItem Header="_New Build" Click="NewBuild_Click" ToolTip="Builds include both filters and results" />
+				<MenuItem Header="_Load Build" Click="LoadBuild_Click" ToolTip="Builds include both filters and results" />
+				<MenuItem Header="_Save Build" Click="SaveBuild_Click" ToolTip="Builds include both filters and results" />
+				<Separator />
+				<MenuItem Header="Load Build Filters" Name="miLoadBuildFilters" Click="LoadBuildFilters_Click" />
+				<MenuItem Header="Save Build Filters" Name="miSaveBuildFilters" Click="SaveBuildFilters_Click" />
+				<Separator />
+				<MenuItem Header="Load Build Results" Name="miLoadBuildResults" Click="LoadBuildResults_Click" />
+				<MenuItem Header="Save Build Results" Name="miSaveBuildResults" Click="SaveBuildResults_Click" />
 				<Separator />
 				<MenuItem Header="E_xit" Click="ExitMenuItem_Click" />
 			</MenuItem>

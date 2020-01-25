@@ -18,6 +18,7 @@ namespace DDONamedGearPlanner
 		{
 			Item = item;
 			lvDetails.Items.Clear();
+			if (item == null) return;
 			foreach (var p in item.Item.Properties)
 			{
 				if (p.Options != null)

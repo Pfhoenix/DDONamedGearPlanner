@@ -18,6 +18,7 @@ namespace DDONamedGearPlanner
 		const string ALL_TYPES = "< All >";
 		GearSetBuild CurrentBuild;
 		DDODataset Dataset;
+		Dictionary<EquipmentSlotType, EquipmentSlotControl> EquipmentSlots;
 
 		Dictionary<SlotType, ListBox> SlotListBoxes = new Dictionary<SlotType, ListBox>();
 		DataTemplate SlotListBoxDT;
@@ -87,18 +88,18 @@ namespace DDONamedGearPlanner
 			SlotListBoxDT.VisualTree = dp;
 		}
 
-		public void Initialize(GearSetBuild build, DDODataset dataset)
+		public void Initialize(GearSetBuild build, DDODataset dataset, Dictionary<EquipmentSlotType, EquipmentSlotControl> equipslots)
 		{
 			CurrentBuild = build;
 			Dataset = dataset;
+			EquipmentSlots = equipslots;
 
 			foreach (var cb in CurrentBuild.Filters)
 			{
 				if (cb.Key != SlotType.None) cbFiltersSlotAdd.Items.Add(cb.Key);
 			}
 
-			FiltersGSReset_Clicked(null, null);
-			FiltersSlotReset_Clicked(null, null);
+			FiltersReset_Clicked(null, null);
 		}
 
 		void SetAvailableTypes(BuildFilterItemData bfid)
@@ -149,9 +150,9 @@ namespace DDONamedGearPlanner
 			}
 		}
 
-		void SaveFiltersToBuild(SlotType slot, ListBox lb)
+		void SaveFiltersToBuild(SlotType slot, ListBox lb, bool test)
 		{
-			List<BuildFilter> bfs = CurrentBuild.Filters[slot];
+			List<BuildFilter> bfs = test ? CurrentBuild.TestFilters[slot] : CurrentBuild.Filters[slot];
 			bfs.Clear();
 			if (lb == null) return;
 			foreach (BuildFilterItemData bfid in lb.Items)
@@ -161,28 +162,63 @@ namespace DDONamedGearPlanner
 			}
 		}
 
-		private void FiltersGSApply_Clicked(object sender, RoutedEventArgs e)
+		private void FiltersApply_Clicked(object sender, RoutedEventArgs e)
 		{
-			SaveFiltersToBuild(SlotType.None, lbFiltersGS);
-			FiltersChanged = true;
+			SlotType[] slotvalues = (SlotType[])Enum.GetValues(typeof(SlotType));
+			foreach (var st in slotvalues)
+				SaveFiltersToBuild(st, null, sender == null);
+
+			SaveFiltersToBuild(SlotType.None, lbFiltersGS, sender == null);
+
+			foreach (var slb in SlotListBoxes)
+			{
+				if (slb.Value != null) SaveFiltersToBuild(slb.Key, slb.Value, sender == null);
+			}
+
+			if (sender != null) FiltersChanged = true;
 		}
 
-		private void FiltersGSReset_Clicked(object sender, RoutedEventArgs e)
+		private void FiltersReset_Clicked(object sender, RoutedEventArgs e)
 		{
-			lbFiltersGS.Items.Clear();
+			FiltersClear_Clicked(null, null);
 
-			var bfs = CurrentBuild.Filters[SlotType.None];
-			for (int i = 0; i < bfs.Count; i++)
+			foreach (var lbf in CurrentBuild.Filters)
 			{
-				var filter = new BuildFilterItemData { Priority = i + 1, ItemProperty = Dataset.ItemProperties[bfs[i].Property], AvailableProperties = new List<DDOItemProperty>(Dataset.SlotExclusiveItemProperties[SlotType.None]), Type = string.IsNullOrWhiteSpace(bfs[i].Type) ? ALL_TYPES : bfs[i].Type, Include = bfs[i].Include ? "Include" : "Exclude" };
-				SetAvailableTypes(filter);
-				lbFiltersGS.Items.Add(filter);
+				for (int i = 0; i < lbf.Value.Count; i++)
+				{
+					var filter = new BuildFilterItemData { Slot = lbf.Key, Priority = i + 1, ItemProperty = Dataset.ItemProperties[lbf.Value[i].Property], AvailableProperties = new List<DDOItemProperty>(Dataset.SlotExclusiveItemProperties[lbf.Key]), Type = string.IsNullOrWhiteSpace(lbf.Value[i].Type) ? ALL_TYPES : lbf.Value[i].Type, Include = lbf.Value[i].Include ? "Include" : "Exclude" };
+					SetAvailableTypes(filter);
+					if (lbf.Key == SlotType.None) lbFiltersGS.Items.Add(filter);
+					else AddFilterToSlotListBox(filter);
+				}
 			}
 		}
 
-		private void FiltersGSClear_Clicked(object sender, RoutedEventArgs e)
+		private void FiltersClear_Clicked(object sender, RoutedEventArgs e)
 		{
 			lbFiltersGS.Items.Clear();
+			spFiltersSlots.Children.Clear();
+			SlotListBoxes.Clear();
+		}
+
+		private void FiltersTest_Clicked(object sender, RoutedEventArgs e)
+		{
+			CurrentBuild.SetupFilterTest(EquipmentSlots);
+			FiltersApply_Clicked(null, null);
+			if (!CurrentBuild.ValidateFilters(true)) MessageBox.Show("There must be at least one inclusion filter", "Missing include filter", MessageBoxButton.OK, MessageBoxImage.Stop);
+			else
+			{
+				BuildProcessWindow bpw = new BuildProcessWindow();
+				bpw.Initialize(Dataset, CurrentBuild, true);
+				bpw.Owner = this;
+				if (bpw.ShowDialog() == true)
+				{
+					FilterTestResultsWindow ftrw = new FilterTestResultsWindow();
+					ftrw.Initialize(Dataset, CurrentBuild);
+					ftrw.Owner = this;
+					ftrw.ShowDialog();
+				}
+			}
 		}
 
 		private void FiltersGSDelete_Clicked(object sender, RoutedEventArgs e)
@@ -290,43 +326,6 @@ namespace DDONamedGearPlanner
 				for (int i = bfid.Priority - 1; i < lb.Items.Count; i++)
 					(lb.Items[i] as BuildFilterItemData).Priority = i + 1;
 			}
-		}
-
-		private void FiltersSlotApply_Clicked(object sender, RoutedEventArgs e)
-		{
-			SlotType[] slotvalues = (SlotType[])Enum.GetValues(typeof(SlotType));
-			foreach (var st in slotvalues)
-				SaveFiltersToBuild(st, null);
-
-			foreach (var slb in SlotListBoxes)
-			{
-				if (slb.Value != null) SaveFiltersToBuild(slb.Key, slb.Value);
-			}
-
-			FiltersChanged = true;
-		}
-
-		private void FiltersSlotReset_Clicked(object sender, RoutedEventArgs e)
-		{
-			FiltersSlotClear_Clicked(null, null);
-
-			foreach (var lbf in CurrentBuild.Filters)
-			{
-				if (lbf.Key == SlotType.None) continue;
-
-				for (int i = 0; i < lbf.Value.Count; i++)
-				{
-					var filter = new BuildFilterItemData { Slot = lbf.Key, Priority = i + 1, ItemProperty = Dataset.ItemProperties[lbf.Value[i].Property], AvailableProperties = new List<DDOItemProperty>(Dataset.SlotExclusiveItemProperties[lbf.Key]), Type = string.IsNullOrWhiteSpace(lbf.Value[i].Type) ? ALL_TYPES : lbf.Value[i].Type, Include = lbf.Value[i].Include ? "Include" : "Exclude" };
-					SetAvailableTypes(filter);
-					AddFilterToSlotListBox(filter);
-				}
-			}
-		}
-
-		private void FiltersSlotClear_Clicked(object sender, RoutedEventArgs e)
-		{
-			spFiltersSlots.Children.Clear();
-			SlotListBoxes.Clear();
 		}
 	}
 

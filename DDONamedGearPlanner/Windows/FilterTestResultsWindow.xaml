@@ -1,0 +1,21 @@
+﻿<Window x:Class="DDONamedGearPlanner.FilterTestResultsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DDONamedGearPlanner"
+        mc:Ignorable="d"
+        Title="Filter Test Results" Height="450" Width="750" ShowInTaskbar="False">
+    <Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition Width="348"/>
+		</Grid.ColumnDefinitions>
+		<Border BorderThickness="1" BorderBrush="Black">
+			<TreeView Name="tvSlots" SelectedItemChanged="Item_SelectedItemChanged" MouseDoubleClick="Item_MouseDoubleClick" PreviewMouseRightButtonDown="Item_PreviewMouseRightButtonDown" MouseRightButtonUp="Item_MouseRightButtonUp"/>
+		</Border>
+		<Border Grid.Column="1" BorderThickness="1" BorderBrush="Black">
+			<local:ListViewItemProperties x:Name="lvItem"/>
+		</Border>
+    </Grid>
+</Window>

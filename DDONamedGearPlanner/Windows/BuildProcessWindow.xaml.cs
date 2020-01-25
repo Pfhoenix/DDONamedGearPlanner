@@ -20,6 +20,7 @@ namespace DDONamedGearPlanner
 
 		DDODataset Dataset;
 		GearSetBuild Build;
+		bool FilterTest;
 		bool DoneProcessing;
 
 		public BuildProcessWindow()
@@ -33,10 +34,11 @@ namespace DDONamedGearPlanner
 			bdrFinalResults.Visibility = Visibility.Hidden;
 		}
 
-		public void Initialize(DDODataset ds, GearSetBuild b)
+		public void Initialize(DDODataset ds, GearSetBuild b, bool filtertest)
 		{
 			Dataset = ds;
 			Build = b;
+			FilterTest = filtertest;
 		}
 
 		bool Shown;
@@ -129,11 +131,13 @@ namespace DDONamedGearPlanner
 		int ProcessSlotFilter(DDOItemData item, EquipmentSlotType slot)
 		{
 			SlotType filterslot = slot.ToSlotType();
-			int include = ProcessBuildFilters(item, Build.Filters[filterslot]);
+			int include = ProcessBuildFilters(item, FilterTest ? Build.TestFilters[filterslot] : Build.Filters[filterslot]);
 			if (include == 1)
 			{
-				if (!Build.DiscoveredItems.ContainsKey(slot)) Build.DiscoveredItems[slot] = new List<DDOItemData>();
-				Build.DiscoveredItems[slot].Add(item);
+				var items = FilterTest ? Build.FilterTestItems : Build.DiscoveredItems;
+
+				if (!items.ContainsKey(slot)) items[slot] = new List<DDOItemData>();
+				if (!items[slot].Contains(item)) items[slot].Add(item);
 			}
 
 			return include;
@@ -201,15 +205,17 @@ namespace DDONamedGearPlanner
 				}
 
 				// go through gear set filters
-				int ginclude = ProcessBuildFilters(item, Build.Filters[SlotType.None]);
+				int ginclude = ProcessBuildFilters(item, FilterTest ? Build.TestFilters[SlotType.None] : Build.Filters[SlotType.None]);
 				if (ginclude == 1)
 				{
-					if (!Build.DiscoveredItems.ContainsKey(slot1)) Build.DiscoveredItems[slot1] = new List<DDOItemData>();
-					Build.DiscoveredItems[slot1].Add(item);
+					var items = FilterTest ? Build.FilterTestItems : Build.DiscoveredItems;
+
+					if (!items.ContainsKey(slot1)) items[slot1] = new List<DDOItemData>();
+					if (!items[slot1].Contains(item)) items[slot1].Add(item);
 					if (slot2 != EquipmentSlotType.None)
 					{
-						if (!Build.DiscoveredItems.ContainsKey(slot2)) Build.DiscoveredItems[slot2] = new List<DDOItemData>();
-						Build.DiscoveredItems[slot2].Add(item);
+						if (!items.ContainsKey(slot2)) items[slot2] = new List<DDOItemData>();
+						if (!items[slot2].Contains(item)) items[slot2].Add(item);
 					}
 				}
 			}
@@ -231,6 +237,13 @@ namespace DDONamedGearPlanner
 			}
 
 			tbPhase1.Text = "Done";
+
+			if (FilterTest)
+			{
+				DoneProcessing = true;
+				Close();
+				return;
+			}
 
 			bool fingercounted = false;
 			bool weaponcounted = false;
@@ -389,6 +402,9 @@ namespace DDONamedGearPlanner
 						foreach (var combo in tailCombos)
 						{
 							if (CancelBuild) return null;
+							// this ensures the previous results propagate into the new result set
+							result.Add(new List<BuildItem>(combo));
+							// we create another copy of the previous results in order to add our items to them
 							List<BuildItem> nc = new List<BuildItem>(combo);
 							nc.Add(new BuildItem(item, list[0].Key));
 							result.Add(nc);
@@ -405,7 +421,7 @@ namespace DDONamedGearPlanner
 					{
 						// head
 						result.Add(new List<BuildItem>());
-						result.Last().Add(new BuildItem(item, list[0].Key));
+						result.Last().Add(new BuildItem(item, list[0].Key) { OptionProperties = os });
 						// make a copy and buffer it
 						added.Add(new List<BuildItem>(result.Last()));
 						BuildGearSet(bw, result.Last());
@@ -414,6 +430,9 @@ namespace DDONamedGearPlanner
 							foreach (var combo in tailCombos)
 							{
 								if (CancelBuild) return null;
+								// this ensures the previous results propagate into the new result set
+								result.Add(new List<BuildItem>(combo));
+								// we create another copy of the previous results in order to add our items to them
 								List<BuildItem> nc = new List<BuildItem>(combo);
 								nc.Add(new BuildItem(item, list[0].Key) { OptionProperties = os });
 								result.Add(nc);
@@ -573,24 +592,115 @@ namespace DDONamedGearPlanner
 		#endregion
 
 		#region Phase 4
+		bool GearSetHasRedundantRings(GearSet gs)
+		{
+			List<BuildItem> rings = gs.Items.Where(i => i.Slot == EquipmentSlotType.Finger1 || i.Slot == EquipmentSlotType.Finger2).ToList();
+			if (rings.Count < 2) return false;
+			if (rings[0].Item != rings[1].Item) return false;
+			if (rings[0].OptionProperties.Count != rings[1].OptionProperties.Count) return false;
+			bool diff = false;
+			for (int p = 0; p < rings[0].OptionProperties.Count; p++)
+			{
+				if (!rings[1].OptionProperties.Contains(rings[0].OptionProperties[p]))
+				{
+					diff = true;
+					break;
+				}
+			}
+
+			return !diff;
+		}
+
 		void Phase4_DoWork(object sender, DoWorkEventArgs e)
 		{
-			Build.BuildResults.Sort((a, b) => a.Rating > b.Rating ? -1 : (a.Rating < b.Rating ? 1 : (a.Penalty < b.Penalty ? -1 : (a.Penalty > b.Penalty ? 1 : 0))));
+			// sort buildresults by rating and penalty
+			Build.BuildResults.Sort((a, b) => a.Penalty == 0 && b.Penalty == 0 ? (a.Rating > b.Rating ? -1 : (a.Rating < b.Rating ? 1 : 0)) : 
+				(a.Penalty == 0 ? -1 : 
+					(b.Penalty == 0 ? 1 : 
+						(a.Rating > b.Rating ? -1 : 
+							(a.Rating < b.Rating ? 1 : 
+								(a.Penalty < b.Penalty ? -1 : 
+									(a.Penalty > b.Penalty ? 1 : 0)
+								)
+							)
+						)
+					)
+				)
+			);
+			// sort all item lists in each buildresult
+			for (int i = 0; i < Build.BuildResults.Count; i++)
+			{
+				if (CancelBuild) return;
+				Build.BuildResults[i].GearSet.Items.Sort((a, b) => string.Compare(a.Item.Name, b.Item.Name));
+			}
+			// do a pass to remove redundant gear sets
+			for (int i = 0; i < Build.BuildResults.Count; i++)
+			{
+				// check for gear sets that have two of the same rings on with no differences between the two rings
+				if (GearSetHasRedundantRings(Build.BuildResults[i].GearSet))
+				{
+					Build.BuildResults.RemoveAt(i--);
+					continue;
+				}
+
+				if (i == Build.BuildResults.Count - 1) break;
+
+				// dupe check
+				if (Build.BuildResults[i].Rating != Build.BuildResults[i + 1].Rating) continue;
+				if (Build.BuildResults[i].Penalty != Build.BuildResults[i + 1].Penalty) continue;
+				if (Build.BuildResults[i].GearSet.Items.Count != Build.BuildResults[i + 1].GearSet.Items.Count) continue;
+				bool dupe = false;
+				for (int j = 0; j < Build.BuildResults[i].GearSet.Items.Count; j++)
+				{
+					if (Build.BuildResults[i].GearSet.Items[j].Item != Build.BuildResults[i + 1].GearSet.Items[j].Item) break;
+					if (Build.BuildResults[i].GearSet.Items[j].OptionProperties.Count != Build.BuildResults[i + 1].GearSet.Items[j].OptionProperties.Count) continue;
+					if (Build.BuildResults[i].GearSet.Items[j].OptionProperties.Count == 0)
+					{
+						dupe = true;
+						break;
+					}
+					else
+					{
+						bool diff = false;
+						for (int p = 0; p < Build.BuildResults[i].GearSet.Items[j].OptionProperties.Count; p++)
+						{
+							if (!Build.BuildResults[i + 1].GearSet.Items[j].OptionProperties.Contains(Build.BuildResults[i].GearSet.Items[j].OptionProperties[p]))
+							{
+								diff = true;
+								break;
+							}
+						}
+
+						if (!diff)
+						{
+							dupe = true;
+							break;
+						}
+					}
+				}
+
+				if (dupe) Build.BuildResults.RemoveAt(i--);
+			}
 		}
 
 		void Phase4ProgressUpdate()
 		{
-			if (tbPhase4.Text.Length > 40) tbPhase4.Text = "Sorting results by gear set ratings";
+			if (tbPhase4.Text.Length > 45) tbPhase4.Text = "Sorting and removing duplicate gear sets";
 			else tbPhase4.Text += ".";
 		}
 
 		void Phase4_Completed(object sender, RunWorkerCompletedEventArgs e)
 		{
+			if (CancelBuild)
+			{
+				CancelAndClose();
+				return;
+			}
 			Phase4SW.Stop();
 			BuildSW.Stop();
 			DotTimer.Stop();
 
-			tbPhase4.Text = string.Format("Sorting results by gear set ratings took {0:F3} seconds", Phase4SW.ElapsedMilliseconds / 1000.0);
+			tbPhase4.Text = string.Format("Sorting and removing duplicate gear sets took {0:F3} seconds", Phase4SW.ElapsedMilliseconds / 500.0);
 
 			tbFinalResults.Text = string.Format("Build completed in {0}:{1:D2}:{2:D2}", BuildSW.Elapsed.Hours, BuildSW.Elapsed.Minutes, BuildSW.Elapsed.Seconds);
 			bdrFinalResults.Visibility = Visibility.Visible;

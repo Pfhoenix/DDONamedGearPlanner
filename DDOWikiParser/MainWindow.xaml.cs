@@ -758,7 +758,6 @@ namespace DDOWikiParser
 							v = "greater elemental spell power";
 							vi = 100;
 						}
-						else if (p.EndsWith("Deception")) v = "enhancement";
 						else if (p.StartsWith("Shield Bashing "))
 						{
 							p = "Automatic Secondary Shield Bash";
@@ -1573,6 +1572,7 @@ namespace DDOWikiParser
 					}
 					else
 					{
+						if (origv == v) v = "enhancement";
 						data.AddProperty("Sneak Attack Attack", v, vi, null);
 						data.AddProperty("Sneak Attack Damage", v, (int)Math.Round(vi * 1.5f), null);
 					}
@@ -2223,6 +2223,7 @@ namespace DDOWikiParser
 					string[] split = r.ChildNodes[1].InnerText.Split(' ');
 					split[0] = split[0].Replace("\n", "");
 					data.Category = (int)(ArmorCategory)Enum.Parse(typeof(ArmorCategory), split[0]);
+					data.AddProperty("Armor Category", split[0], 0, null);
 					tvpath = "Armor|" + split[0] + "|" + data.Name;
 				}
 				else if (r.InnerText.StartsWith("Minimum Level", StringComparison.InvariantCultureIgnoreCase))
@@ -2289,6 +2290,7 @@ namespace DDOWikiParser
 					string[] split = r.ChildNodes[1].InnerText.Split(' ');
 					split[0] = split[0].Replace("\n", "");
 					data.Category = (int)(OffhandCategory)Enum.Parse(typeof(OffhandCategory), split[0]);
+					data.AddProperty("Offhand Category", split[0], 0, null);
 					tvpath = "Offhand|" + split[0] + "|" + data.Name;
 				}
 				else if (r.InnerText.StartsWith("Minimum Level", StringComparison.InvariantCultureIgnoreCase))
@@ -2327,6 +2329,7 @@ namespace DDOWikiParser
 						string[] split = r.InnerText.Split('\n');
 						split = split[1].Split(' ');
 						data.Category = (int)(WeaponCategory)Enum.Parse(typeof(WeaponCategory), split[0]);
+						data.AddProperty("Weapon Category", split[0], 0, null);
 					}
 					catch
 					{
@@ -2349,6 +2352,7 @@ namespace DDOWikiParser
 						if (split[1].IndexOf("throw", StringComparison.OrdinalIgnoreCase) > -1)
 						{
 							data.Category = (int)WeaponCategory.Throwing;
+							data.AddProperty("Weapon Category", "Throwing", 0, null);
 						}
 						tvpath = "Weapon|" + (WeaponCategory)data.Category + "|" + data.Name;
 					}
@@ -2404,6 +2408,7 @@ namespace DDOWikiParser
 					data.Slot = SlotType.Offhand;
 					data.Category = (int)OffhandCategory.RuneArm;
 					data.AddProperty("Weapon Type", "Rune Arm", 0, null);
+					data.AddProperty("Offhand Category", OffhandCategory.RuneArm.ToString(), 0, null);
 					tvpath = "Offhand|Rune Arm|" + data.Name;
 				}
 				else if (r.InnerText.StartsWith("Enchantments"))

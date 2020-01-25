@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 
 namespace DDONamedGearPlanner
 {
@@ -11,6 +12,39 @@ namespace DDONamedGearPlanner
 		public string Property { get; set; }
 		public string Type { get; set; }
 		public bool Include { get; set; }
+
+		public XmlElement ToXml(XmlDocument doc)
+		{
+			XmlElement xe = doc.CreateElement("Filter");
+			XmlAttribute xa = doc.CreateAttribute("slot");
+			xa.InnerText = Slot.ToString();
+			xe.Attributes.Append(xa);
+			if (Type != null)
+			{
+				xa = doc.CreateAttribute("type");
+				xa.InnerText = Type;
+				xe.Attributes.Append(xa);
+			}
+			xa = doc.CreateAttribute("include");
+			xa.InnerText = Include.ToString();
+			xe.Attributes.Append(xa);
+			xe.InnerText = Property;
+
+			return xe;
+		}
+
+		public static BuildFilter FromXml(XmlElement xe)
+		{
+			BuildFilter bf = new BuildFilter();
+
+			bf.Property = xe.InnerText;
+			bf.Slot = (SlotType)Enum.Parse(typeof(SlotType), xe.GetAttribute("slot"));
+			bf.Type = xe.GetAttribute("type");
+			if (string.IsNullOrWhiteSpace(bf.Type)) bf.Type = null;
+			bf.Include = bool.Parse(xe.GetAttribute("include"));
+
+			return bf;
+		}
 	}
 
 	public class BuildItem
@@ -27,6 +61,69 @@ namespace DDONamedGearPlanner
 		{
 			Item = item;
 			Slot = slot;
+		}
+
+		public XmlElement ToXml(XmlDocument doc)
+		{
+			XmlElement xb = doc.CreateElement("BuildItem");
+			XmlAttribute xa = doc.CreateAttribute("item");
+			xa.InnerText = Item.Name;
+			xb.Attributes.Append(xa);
+			xa = doc.CreateAttribute("slot");
+			xa.InnerText = Slot.ToString();
+			xb.Attributes.Append(xa);
+
+			foreach (var o in OptionProperties)
+			{
+				XmlElement xp = doc.CreateElement("OptionProperty");
+				xb.AppendChild(xp);
+				xa = doc.CreateAttribute("type");
+				xa.InnerText = string.IsNullOrWhiteSpace(o.Type) ? null : o.Type;
+				xp.Attributes.Append(xa);
+				xp.InnerText = o.Property;
+			}
+
+			return xb;
+		}
+
+		public static BuildItem FromXml(XmlElement xe, DDODataset ds)
+		{
+			try
+			{
+				DDOItemData item = ds.Items.Find(i => i.Name == xe.GetAttribute("item"));
+				if (item == null) return null;
+				EquipmentSlotType est = (EquipmentSlotType)Enum.Parse(typeof(EquipmentSlotType), xe.GetAttribute("slot"));
+				if (est == EquipmentSlotType.None) return null;
+				BuildItem bi = new BuildItem(item, est);
+				if (!xe.HasChildNodes) return bi;
+				List<ItemProperty> found = new List<ItemProperty>();
+				foreach (XmlElement xc in xe.ChildNodes)
+				{
+					string property = xc.InnerText;
+					string type = xc.GetAttribute("type");
+					foreach (var ip in item.Properties)
+					{
+						if (ip.Options != null && !found.Contains(ip))
+						{
+							foreach (var op in ip.Options)
+							{
+								if (op.Property == property && ((string.IsNullOrWhiteSpace(op.Type) && type == "untyped") || op.Type == type))
+								{
+									bi.OptionProperties.Add(op);
+									found.Add(ip);
+									break;
+								}
+							}
+						}
+					}
+				}
+
+				return bi;
+			}
+			catch
+			{
+				return null;
+			}
 		}
 	}
 
@@ -166,6 +263,33 @@ namespace DDONamedGearPlanner
 
 			CalculatePropertyGroups();
 		}
+
+		public XmlElement ToXml(XmlDocument doc)
+		{
+			XmlElement xg = doc.CreateElement("GearSet");
+
+			foreach (var item in Items)
+				xg.AppendChild(item.ToXml(doc));
+
+			return xg;
+		}
+
+		public static GearSet FromXml(XmlElement xe, DDODataset ds)
+		{
+			try
+			{
+				GearSet gs = new GearSet();
+				foreach (XmlElement xb in xe.ChildNodes)
+				{
+					BuildItem bi = BuildItem.FromXml(xb, ds);
+					if (bi != null) gs.AddItem(bi);
+				}
+				gs.ProcessItems(ds);
+
+				return gs;
+			}
+			catch { return null; }
+		}
 	}
 
 	public class GearSetEvaluation
@@ -180,6 +304,51 @@ namespace DDONamedGearPlanner
 			GearSet = gs;
 			LockedSlots.AddRange(ls);
 		}
+
+		public XmlElement ToXml(XmlDocument doc)
+		{
+			XmlElement xg = doc.CreateElement("GearSetEvaluation");
+			XmlAttribute xa = doc.CreateAttribute("rating");
+			xa.InnerText = Rating.ToString();
+			xg.Attributes.Append(xa);
+			xa = doc.CreateAttribute("penalty");
+			xa.InnerText = Penalty.ToString();
+			xg.Attributes.Append(xa);
+
+			XmlElement xe = GearSet.ToXml(doc);
+			xg.AppendChild(xe);
+
+			xe = doc.CreateElement("LockedSlots");
+			xg.AppendChild(xe);
+			foreach (var est in LockedSlots)
+			{
+				XmlElement ls = doc.CreateElement("EquipmentSlot");
+				ls.InnerText = est.ToString();
+				xe.AppendChild(ls);
+			}
+
+			return xg;
+		}
+
+		public static GearSetEvaluation FromXml(XmlElement xe, DDODataset ds)
+		{
+			try
+			{
+				GearSet gs = GearSet.FromXml(xe.GetElementsByTagName("GearSet")[0] as XmlElement, ds);
+				XmlElement xls = xe.GetElementsByTagName("LockedSlots")[0] as XmlElement;
+				List<EquipmentSlotType> ls = new List<EquipmentSlotType>();
+				foreach (XmlElement xc in xls.ChildNodes)
+				{
+					ls.Add((EquipmentSlotType)Enum.Parse(typeof(EquipmentSlotType), xc.InnerText));
+				}
+				GearSetEvaluation gse = new GearSetEvaluation(gs, ls);
+				gse.Rating = int.Parse(xe.GetAttribute("rating"));
+				gse.Penalty = int.Parse(xe.GetAttribute("penalty"));
+
+				return gse;
+			}
+			catch { return null; }
+		}
 	}
 
     public class GearSetBuild
@@ -189,7 +358,6 @@ namespace DDONamedGearPlanner
 
 		public int CurrentBuildResult;
 
-		[NonSerialized]
 		public bool FiltersResultsMismatch;
 
 		public string AppVersion;
@@ -213,6 +381,7 @@ namespace DDONamedGearPlanner
 		};
 		// so we can remember the lock state of the slots
 		public List<EquipmentSlotType> LockedSlots = new List<EquipmentSlotType>();
+		public List<BuildItem> LockedSlotItems = new List<BuildItem>();
 		public List<GearSetEvaluation> BuildResults = new List<GearSetEvaluation>();
 
 		public void SetLockStatus(EquipmentSlotType est, bool locked)
@@ -237,14 +406,41 @@ namespace DDONamedGearPlanner
 			AppVersion = PlannerWindow.VERSION;
 		}
 
-		#region Build process support
-		public Dictionary<EquipmentSlotType, List<DDOItemData>> DiscoveredItems;
-		public List<BuildItem> LockedSlotItems = new List<BuildItem>();
-
-		public void SetupBuildProcess(Dictionary<EquipmentSlotType, EquipmentSlotControl> EquipmentSlots)
+		public bool ValidateFilters(bool test)
 		{
-			BuildResults.Clear();
-			DiscoveredItems = new Dictionary<EquipmentSlotType, List<DDOItemData>>();
+			var filters = test ? TestFilters : Filters;
+
+			foreach (var fg in filters)
+				foreach (var f in fg.Value)
+				{
+					if (f.Include) return true;
+				}
+
+			return false;
+		}
+
+		#region Build process support
+		public Dictionary<EquipmentSlotType, List<DDOItemData>> DiscoveredItems, FilterTestItems;
+		public Dictionary<SlotType, List<BuildFilter>> TestFilters = new Dictionary<SlotType, List<BuildFilter>>()
+		{
+			{ SlotType.None, new List<BuildFilter>() },
+			{ SlotType.Back, new List<BuildFilter>() },
+			{ SlotType.Body, new List<BuildFilter>() },
+			{ SlotType.Eye, new List<BuildFilter>() },
+			{ SlotType.Feet, new List<BuildFilter>() },
+			{ SlotType.Finger, new List<BuildFilter>() },
+			{ SlotType.Hand, new List<BuildFilter>() },
+			{ SlotType.Head, new List<BuildFilter>() },
+			{ SlotType.Neck, new List<BuildFilter>() },
+			{ SlotType.Offhand, new List<BuildFilter>() },
+			{ SlotType.Trinket, new List<BuildFilter>() },
+			{ SlotType.Waist, new List<BuildFilter>() },
+			{ SlotType.Weapon, new List<BuildFilter>() },
+			{ SlotType.Wrist, new List<BuildFilter>() }
+		};
+
+		public void SetupLockedSlots(Dictionary<EquipmentSlotType, EquipmentSlotControl> EquipmentSlots)
+		{
 			LockedSlots.Clear();
 			LockedSlotItems.Clear();
 			foreach (var kv in EquipmentSlots)
@@ -255,11 +451,110 @@ namespace DDONamedGearPlanner
 				}
 		}
 
+		public void SetupFilterTest(Dictionary<EquipmentSlotType, EquipmentSlotControl> EquipmentSlots)
+		{
+			foreach (var kvp in TestFilters)
+				kvp.Value.Clear();
+
+			FilterTestItems = new Dictionary<EquipmentSlotType, List<DDOItemData>>();
+			SetupLockedSlots(EquipmentSlots);
+		}
+
+		public void SetupBuildProcess(Dictionary<EquipmentSlotType, EquipmentSlotControl> EquipmentSlots)
+		{
+			BuildResults.Clear();
+			DiscoveredItems = new Dictionary<EquipmentSlotType, List<DDOItemData>>();
+			FilterTestItems = null;
+			SetupLockedSlots(EquipmentSlots);
+		}
+
 		public void AddBuildGearSet(GearSet gs)
 		{
 			foreach (var ls in LockedSlotItems) gs.AddItem(ls);
 			BuildResults.Add(new GearSetEvaluation(gs, new List<EquipmentSlotType>(LockedSlots)));
 		}
 		#endregion
+
+		public XmlDocument ToXml(bool filters, bool results)
+		{
+			XmlDocument doc = new XmlDocument();
+			XmlElement xe = doc.CreateElement("Build");
+			XmlAttribute xa = doc.CreateAttribute("version");
+			xa.InnerText = AppVersion;
+			xe.Attributes.Append(xa);
+			doc.AppendChild(xe);
+			xe = doc.CreateElement("MinimumLevel");
+			xe.InnerText = MinimumLevel.ToString();
+			doc.DocumentElement.AppendChild(xe);
+			xe = doc.CreateElement("MaximumLevel");
+			xe.InnerText = MaximumLevel.ToString();
+			doc.DocumentElement.AppendChild(xe);
+
+			if (filters)
+			{
+				xe = doc.CreateElement("Filters");
+				doc.DocumentElement.AppendChild(xe);
+				foreach (var kv in Filters)
+				{
+					if (kv.Value.Count == 0) continue;
+					foreach (var f in kv.Value)
+					{
+						XmlElement xf = f.ToXml(doc);
+						xe.AppendChild(xf);
+					}
+				}
+			}
+
+			if (results)
+			{
+				xe = doc.CreateElement("BuildResults");
+				doc.DocumentElement.AppendChild(xe);
+				foreach (var gse in BuildResults)
+				{
+					XmlElement xg = gse.ToXml(doc);
+					xe.AppendChild(xg);
+				}
+			}
+
+			return doc;
+		}
+
+		public static GearSetBuild FromXml(DDODataset dataset, XmlDocument doc, bool filters, bool results)
+		{
+			GearSetBuild build = new GearSetBuild();
+
+			try
+			{
+				build.AppVersion = doc.DocumentElement.GetAttribute("version");
+				build.MinimumLevel = int.Parse(doc.GetElementsByTagName("MinimumLevel")[0].InnerText);
+				build.MaximumLevel = int.Parse(doc.GetElementsByTagName("MaximumLevel")[0].InnerText);
+
+				if (filters)
+				{
+					XmlElement xe = doc.GetElementsByTagName("Filters")[0] as XmlElement;
+					foreach (XmlElement xf in xe.ChildNodes)
+					{
+						BuildFilter bf = BuildFilter.FromXml(xf);
+						build.Filters[bf.Slot].Add(bf);
+					}
+				}
+
+				if (results)
+				{
+					XmlElement xe = doc.GetElementsByTagName("BuildResults")[0] as XmlElement;
+					foreach (XmlElement xb in xe.ChildNodes)
+					{
+						GearSetEvaluation gse = GearSetEvaluation.FromXml(xb, dataset);
+						build.BuildResults.Add(gse);
+					}
+				}
+
+				return build;
+			}
+			catch
+			{
+				return null;
+			}
+		}
 	}
 }

@@ -11,6 +11,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml;
+using System.Xml.Linq;
 using Microsoft.Win32;
 using CoenM.Encoding;
 
@@ -58,7 +60,8 @@ namespace DDONamedGearPlanner
 
 			ItemPropertiesCopy = new List<DDOItemProperty>();
 			foreach (var ip in dataset.ItemProperties)
-				if (ip.Value.Items.Count > 0) ItemPropertiesCopy.Add(ip.Value);
+				if (ip.Key == "Armor Category" || ip.Key == "Weapon Category" || ip.Key == "Offhand Category") continue;
+				else if (ip.Value.Items.Count > 0) ItemPropertiesCopy.Add(ip.Value);
 			ItemPropertiesCopy.Sort((a, b) => string.Compare(a.Property, b.Property));
 			ItemPropertiesCopy.Insert(0, new DDOItemProperty { Property = "< All >" });
 			cbItemPropertyFilter.ItemsSource = ItemPropertiesCopy;
@@ -393,7 +396,7 @@ namespace DDONamedGearPlanner
 			}
 		}
 
-		GearSet CalculateGearSet(bool render)
+		public GearSet CalculateGearSet(bool render)
 		{
 			GearSet gs = new GearSet();
 			foreach (var kv in EquipmentSlots)
@@ -480,7 +483,7 @@ namespace DDONamedGearPlanner
 		}
 
 		// this is for slotting a build item into a particular (set) slot
-		bool SlotItem(BuildItem item)
+		public bool SlotItem(BuildItem item)
 		{
 			if (item.Slot == EquipmentSlotType.None || EquipmentSlots[item.Slot].IsLocked)
 			{
@@ -776,6 +779,37 @@ namespace DDONamedGearPlanner
 			}
 		}
 
+		string EncodeString(string raw)
+		{
+			using (MemoryStream output = new MemoryStream())
+			{
+				using (DeflateStream gzip = new DeflateStream(output, CompressionMode.Compress))
+				{
+					using (StreamWriter writer = new StreamWriter(gzip, Encoding.UTF8))
+					{
+						writer.Write(raw);
+					}
+				}
+				return Z85Extended.Encode(output.ToArray());
+			}
+		}
+
+		string DecodeString(string cdata)
+		{
+			byte[] input = Z85Extended.Decode(cdata);
+
+			using (MemoryStream inputStream = new MemoryStream(input))
+			{
+				using (DeflateStream gzip = new DeflateStream(inputStream, CompressionMode.Decompress))
+				{
+					using (StreamReader reader = new StreamReader(gzip, Encoding.UTF8))
+					{
+						return reader.ReadToEnd();
+					}
+				}
+			}
+		}
+
 		string EncodeGearset()
 		{
 			string raw = "";
@@ -795,17 +829,7 @@ namespace DDONamedGearPlanner
 				}
 			}
 
-			using (MemoryStream output = new MemoryStream())
-			{
-				using (DeflateStream gzip = new DeflateStream(output, CompressionMode.Compress))
-				{
-					using (StreamWriter writer = new StreamWriter(gzip, Encoding.UTF8))
-					{
-						writer.Write(raw);
-					}
-				}
-				return Z85Extended.Encode(output.ToArray());
-			}
+			return EncodeString(raw);
 		}
 
 		private void EncodeGearsetToClipboard(object sender, RoutedEventArgs e)
@@ -818,18 +842,7 @@ namespace DDONamedGearPlanner
 		{
 			try
 			{
-				byte[] input = Z85Extended.Decode(cdata);
-
-				using (MemoryStream inputStream = new MemoryStream(input))
-				{
-					using (DeflateStream gzip = new DeflateStream(inputStream, CompressionMode.Decompress))
-					{
-						using (StreamReader reader = new StreamReader(gzip, Encoding.UTF8))
-						{
-							cdata = reader.ReadToEnd();
-						}
-					}
-				}
+				cdata = DecodeString(cdata);
 
 				UnlockClearAll(null, null);
 				string[] split = cdata.Split('|');
@@ -899,8 +912,10 @@ namespace DDONamedGearPlanner
 
 		private void BuildFilters_Click(object sender, RoutedEventArgs e)
 		{
+			CurrentBuild.SetupLockedSlots(EquipmentSlots);
 			BuildFiltersWindow bfw = new BuildFiltersWindow();
-			bfw.Initialize(CurrentBuild, dataset);
+			bfw.Owner = this;
+			bfw.Initialize(CurrentBuild, dataset, EquipmentSlots);
 			bfw.ShowDialog();
 
 			if (bfw.FiltersChanged)
@@ -908,24 +923,12 @@ namespace DDONamedGearPlanner
 				if (CurrentBuild.BuildResults.Count != 0)
 				{
 					CurrentBuild.FiltersResultsMismatch = true;
-					MessageBox.Show("By changing the build filters, the current build results will not match the new filter settings. If you run another build, you will overwrite the current build results. If you save this build, the current build results will not be included in the save.", "Filters and results mismatch", MessageBoxButton.OK, MessageBoxImage.Warning);
+					MessageBox.Show("By changing the build filters, the current build results will not match the new filter settings. If you save this build, the current build results will not be included in the save.", "Filters and results mismatch", MessageBoxButton.OK, MessageBoxImage.Warning);
 				}
 			}
 
-			// evaluate the filters to ensure validity
-			// doesn't take much, just ensure we have an include somewhere
-			foreach (var fg in CurrentBuild.Filters)
-				foreach (var f in fg.Value)
-				{
-					if (f.Include)
-					{
-						btnStartBuild.IsEnabled = true;
-						return;
-					}
-				}
-
-			btnStartBuild.IsEnabled = false;
-			MessageBox.Show("A build cannot be started without a gear set or slot filter that includes an item property.", "Missing include filter", MessageBoxButton.OK, MessageBoxImage.Warning);
+			btnStartBuild.IsEnabled = miSaveBuildFilters.IsEnabled = CurrentBuild.ValidateFilters(false);
+			if (!btnStartBuild.IsEnabled) MessageBox.Show("A build cannot be started without a gear set or slot filter that includes an item property.", "Missing include filter", MessageBoxButton.OK, MessageBoxImage.Warning);
 		}
 
 		void SetBuildResult(int cbr)
@@ -984,27 +987,23 @@ namespace DDONamedGearPlanner
 		private void ExportGearsetToFile(object sender, RoutedEventArgs e)
 		{
 			// bring up a save file dialog
-			SaveFileDialog sfd = new SaveFileDialog { InitialDirectory = AppDomain.CurrentDomain.BaseDirectory };
+			SaveFileDialog sfd = new SaveFileDialog();// { InitialDirectory = AppDomain.CurrentDomain.BaseDirectory };
+			sfd.Filter = "Gear Set file (*.gearset)|*.gearset";
+			sfd.AddExtension = true;
 			if (sfd.ShowDialog() == true)
 			{
-				if (string.IsNullOrWhiteSpace(Path.GetExtension(sfd.FileName))) sfd.FileName += ".txt";
 				File.WriteAllText(sfd.FileName, EncodeGearset());
 			}
 		}
 
 		private void ImportGearsetFromFile(object sender, RoutedEventArgs e)
 		{
-			OpenFileDialog ofd = new OpenFileDialog { InitialDirectory = AppDomain.CurrentDomain.BaseDirectory };
+			OpenFileDialog ofd = new OpenFileDialog();// { InitialDirectory = AppDomain.CurrentDomain.BaseDirectory };
+			ofd.Filter = "Gear Set file (*.gearset)|*.gearset";
 			if (ofd.ShowDialog() == true)
 			{
 				DecodeGearset(File.ReadAllText(ofd.FileName));
 			}
-		}
-
-		private void NewGearSetBuild_Click(object sender, RoutedEventArgs e)
-		{
-			SetBuildResult(-1);
-			CurrentBuild.Clear();
 		}
 
 		private void StartBuild_Click(object sender, RoutedEventArgs e)
@@ -1014,24 +1013,115 @@ namespace DDONamedGearPlanner
 				return;
 			}
 
-			/*SaveFileDialog sfd = new SaveFileDialog();
-			sfd.Filter = "Build file (*.build)|*.build";
-			sfd.AddExtension = true;
-			if (sfd.ShowDialog() == false) return;*/
-
 			CurrentBuild.FiltersResultsMismatch = false;
 			CurrentBuild.SetupBuildProcess(EquipmentSlots);
 
+			miSaveBuildResults.IsEnabled = false;
+
 			BuildProcessWindow bpw = new BuildProcessWindow();
-			bpw.Initialize(dataset, CurrentBuild);
+			bpw.Initialize(dataset, CurrentBuild, false);
 			bpw.Owner = this;
 			if (bpw.ShowDialog() == true)
 			{
-				// save the build and build results
+				miSaveBuildResults.IsEnabled = true;
 
 				CurrentBuild.CurrentBuildResult = 0;
 				SetBuildResult(0);
 			}
+		}
+
+		string WriteXmlToString(XmlDocument doc)
+		{
+			using (var stringWriter = new StringWriter())
+			using (var xmlTextWriter = XmlWriter.Create(stringWriter))
+			{
+				doc.WriteTo(xmlTextWriter);
+				xmlTextWriter.Flush();
+				return stringWriter.GetStringBuilder().ToString();
+			}
+		}
+
+		void SaveBuild(bool filters, bool results)
+		{
+			SaveFileDialog sfd = new SaveFileDialog();
+			sfd.Filter = "Build file (*.build)|*.build";
+			sfd.AddExtension = true;
+			if (sfd.ShowDialog() == false) return;
+
+			CurrentBuild.SetupLockedSlots(EquipmentSlots);
+
+			XmlDocument doc = CurrentBuild.ToXml(filters, results);
+
+			string raw = WriteXmlToString(doc);
+			File.WriteAllText(sfd.FileName, EncodeString(raw));
+		}
+
+		void LoadBuild(bool filters, bool results)
+		{
+			OpenFileDialog ofd = new OpenFileDialog();
+			ofd.Filter = "Build file (*.build)|*.build";
+			if (ofd.ShowDialog() == false) return;
+
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml(DecodeString(File.ReadAllText(ofd.FileName)));
+
+			GearSetBuild gsb = GearSetBuild.FromXml(dataset, doc, filters, results);
+			if (filters)
+			{
+				if (!results && CurrentBuild.BuildResults.Count > 0) CurrentBuild.FiltersResultsMismatch = true;
+				rsBuildML.LowerValue = CurrentBuild.MinimumLevel = gsb.MinimumLevel;
+				rsBuildML.UpperValue = CurrentBuild.MaximumLevel = gsb.MaximumLevel;
+				CurrentBuild.Filters = gsb.Filters;
+				btnStartBuild.IsEnabled = CurrentBuild.ValidateFilters(false);
+			}
+			if (results)
+			{
+				if (!filters && gsb.BuildResults.Count > 0) CurrentBuild.FiltersResultsMismatch = true;
+				CurrentBuild.BuildResults = gsb.BuildResults;
+				CurrentBuild.CurrentBuildResult = CurrentBuild.BuildResults.Count > 0 ? 0 : -1;
+				SetBuildResult(CurrentBuild.CurrentBuildResult);
+			}
+			if (filters && results) CurrentBuild.FiltersResultsMismatch = false;
+
+			return;
+		}
+
+		private void NewBuild_Click(object sender, RoutedEventArgs e)
+		{
+			SetBuildResult(-1);
+			CurrentBuild.Clear();
+			miSaveBuildFilters.IsEnabled = false;
+			miSaveBuildResults.IsEnabled = false;
+		}
+
+		private void LoadBuild_Click(object sender, RoutedEventArgs e)
+		{
+			LoadBuild(true, true);
+		}
+
+		private void SaveBuild_Click(object sender, RoutedEventArgs e)
+		{
+			SaveBuild(true, true);
+		}
+
+		private void LoadBuildFilters_Click(object sender, RoutedEventArgs e)
+		{
+			LoadBuild(true, false);
+		}
+
+		private void SaveBuildFilters_Click(object sender, RoutedEventArgs e)
+		{
+			SaveBuild(true, false);
+		}
+
+		private void LoadBuildResults_Click(object sender, RoutedEventArgs e)
+		{
+			LoadBuild(false, true);
+		}
+
+		private void SaveBuildResults_Click(object sender, RoutedEventArgs e)
+		{
+			SaveBuild(false, true);
 		}
 	}
 }
