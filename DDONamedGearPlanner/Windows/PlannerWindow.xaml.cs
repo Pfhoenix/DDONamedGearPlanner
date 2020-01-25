@@ -1090,8 +1090,6 @@ namespace DDONamedGearPlanner
 		{
 			SetBuildResult(-1);
 			CurrentBuild.Clear();
-			miSaveBuildFilters.IsEnabled = false;
-			miSaveBuildResults.IsEnabled = false;
 		}
 
 		private void LoadBuild_Click(object sender, RoutedEventArgs e)
@@ -1101,7 +1099,7 @@ namespace DDONamedGearPlanner
 
 		private void SaveBuild_Click(object sender, RoutedEventArgs e)
 		{
-			SaveBuild(true, true);
+			SaveBuild(true, !CurrentBuild.FiltersResultsMismatch);
 		}
 
 		private void LoadBuildFilters_Click(object sender, RoutedEventArgs e)
