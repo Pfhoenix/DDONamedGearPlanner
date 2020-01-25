@@ -53,6 +53,9 @@
     <StartupObject>
     </StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ddonamedgearplanner.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CoenM.Encoding.Z85e, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CoenM.Encoding.Z85e.1.2.1\lib\net461\CoenM.Encoding.Z85e.dll</HintPath>
@@ -247,6 +250,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\slot_fill_offhand_runearm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ddonamedgearplanner.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
