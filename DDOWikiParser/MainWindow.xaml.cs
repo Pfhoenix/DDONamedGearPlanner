@@ -1524,6 +1524,7 @@ namespace DDOWikiParser
 				}
 				else if (p.EndsWith("Spell Lore"))
 				{
+					if (origv == v) v = "equipment";
 					data.AddProperty("Acid Spell Critical Chance", v, vi, null);
 					data.AddProperty("Cold Spell Critical Chance", v, vi, null);
 					data.AddProperty("Electric Spell Critical Chance", v, vi, null);

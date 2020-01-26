@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows.Controls;
 
 namespace DDONamedGearPlanner
 {
@@ -70,6 +71,15 @@ namespace DDONamedGearPlanner
 			{
 				lvDetails.Items.Add(new { p.Property, p.Type, p.Value });
 			}
+		}
+
+		private void Details_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+		{
+			double tw = e.NewSize.Width;
+			GridView gv = lvDetails.View as GridView;
+			gv.Columns[2].Width = Math.Min(70, Math.Max(40, tw * 0.2));
+			gv.Columns[1].Width = Math.Min(110, Math.Max(60, tw * 0.257));
+			gv.Columns[0].Width = tw - gv.Columns[1].Width - gv.Columns[2].Width - 2;
 		}
 	}
 }

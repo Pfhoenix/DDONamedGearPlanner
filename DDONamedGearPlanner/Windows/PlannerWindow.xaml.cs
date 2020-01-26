@@ -379,7 +379,7 @@ namespace DDONamedGearPlanner
 						if (string.IsNullOrWhiteSpace(p.Type) && p.Value == 0) l = source;
 						else
 						{
-							if (!string.IsNullOrWhiteSpace(p.Type)) l += p.Type + " ";
+							l += (string.IsNullOrWhiteSpace(p.Type) ? "untyped" : p.Type) + " ";
 							l += p.Value + " (" + source + ")";
 						}
 						if (!ip.IsGroup && !string.IsNullOrWhiteSpace(lasttype) && p.Type == lasttype)
