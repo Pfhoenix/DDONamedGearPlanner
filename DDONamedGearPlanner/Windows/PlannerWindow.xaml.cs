@@ -24,7 +24,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public const string VERSION = "0.5";
+		public const string VERSION = "0.5.1";
 
 		public DDODataset dataset;
 		public GearSetBuild CurrentBuild = new GearSetBuild();
