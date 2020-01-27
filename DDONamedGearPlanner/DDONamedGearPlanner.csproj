@@ -163,6 +163,7 @@
     <Compile Include="Controls\ListViewItemProperties.xaml.cs">
       <DependentUpon>ListViewItemProperties.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LargeContainer.cs" />
     <Compile Include="Windows\BuildFiltersWindow.xaml.cs">
       <DependentUpon>BuildFiltersWindow.xaml</DependentUpon>
     </Compile>

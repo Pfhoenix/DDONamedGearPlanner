@@ -1013,6 +1013,8 @@ namespace DDONamedGearPlanner
 				return;
 			}
 
+			GC.Collect();
+
 			CurrentBuild.FiltersResultsMismatch = false;
 			CurrentBuild.SetupBuildProcess(EquipmentSlots);
 
@@ -1028,6 +1030,8 @@ namespace DDONamedGearPlanner
 				CurrentBuild.CurrentBuildResult = 0;
 				SetBuildResult(0);
 			}
+
+			GC.Collect();
 		}
 
 		string WriteXmlToString(XmlDocument doc)
@@ -1066,6 +1070,13 @@ namespace DDONamedGearPlanner
 			doc.LoadXml(DecodeString(File.ReadAllText(ofd.FileName)));
 
 			GearSetBuild gsb = GearSetBuild.FromXml(dataset, doc, filters, results);
+			if (results)
+			{
+				if (!filters && gsb.BuildResults.Count > 0) CurrentBuild.FiltersResultsMismatch = true;
+				CurrentBuild.BuildResults = gsb.BuildResults;
+				CurrentBuild.CurrentBuildResult = CurrentBuild.BuildResults.Count > 0 ? 0 : -1;
+				SetBuildResult(CurrentBuild.CurrentBuildResult);
+			}
 			if (filters)
 			{
 				if (!results && CurrentBuild.BuildResults.Count > 0) CurrentBuild.FiltersResultsMismatch = true;
@@ -1073,13 +1084,6 @@ namespace DDONamedGearPlanner
 				rsBuildML.UpperValue = CurrentBuild.MaximumLevel = gsb.MaximumLevel;
 				CurrentBuild.Filters = gsb.Filters;
 				btnStartBuild.IsEnabled = CurrentBuild.ValidateFilters(false);
-			}
-			if (results)
-			{
-				if (!filters && gsb.BuildResults.Count > 0) CurrentBuild.FiltersResultsMismatch = true;
-				CurrentBuild.BuildResults = gsb.BuildResults;
-				CurrentBuild.CurrentBuildResult = CurrentBuild.BuildResults.Count > 0 ? 0 : -1;
-				SetBuildResult(CurrentBuild.CurrentBuildResult);
 			}
 			if (filters && results) CurrentBuild.FiltersResultsMismatch = false;
 

@@ -468,10 +468,32 @@ namespace DDONamedGearPlanner
 			SetupLockedSlots(EquipmentSlots);
 		}
 
+		bool GearSetHasRedundantRings(GearSet gs)
+		{
+			List<BuildItem> rings = gs.Items.Where(i => i.Slot == EquipmentSlotType.Finger1 || i.Slot == EquipmentSlotType.Finger2).ToList();
+			if (rings.Count < 2) return false;
+			if (rings[0].Item != rings[1].Item) return false;
+			if (rings[0].OptionProperties.Count != rings[1].OptionProperties.Count) return false;
+			bool diff = false;
+			for (int p = 0; p < rings[0].OptionProperties.Count; p++)
+			{
+				if (!rings[1].OptionProperties.Contains(rings[0].OptionProperties[p]))
+				{
+					diff = true;
+					break;
+				}
+			}
+
+			return !diff;
+		}
+
 		public void AddBuildGearSet(GearSet gs)
 		{
 			foreach (var ls in LockedSlotItems) gs.AddItem(ls);
-			BuildResults.Add(new GearSetEvaluation(gs, new List<EquipmentSlotType>(LockedSlots)));
+
+			//TODO: perform multiple artifact check here as well
+
+			if (!GearSetHasRedundantRings(gs)) BuildResults.Add(new GearSetEvaluation(gs, new List<EquipmentSlotType>(LockedSlots)));
 		}
 		#endregion
 
@@ -532,21 +554,23 @@ namespace DDONamedGearPlanner
 				if (filters)
 				{
 					XmlElement xe = doc.GetElementsByTagName("Filters")[0] as XmlElement;
-					foreach (XmlElement xf in xe.ChildNodes)
-					{
-						BuildFilter bf = BuildFilter.FromXml(xf);
-						build.Filters[bf.Slot].Add(bf);
-					}
+					if (xe != null)
+						foreach (XmlElement xf in xe.ChildNodes)
+						{
+							BuildFilter bf = BuildFilter.FromXml(xf);
+							build.Filters[bf.Slot].Add(bf);
+						}
 				}
 
 				if (results)
 				{
 					XmlElement xe = doc.GetElementsByTagName("BuildResults")[0] as XmlElement;
-					foreach (XmlElement xb in xe.ChildNodes)
-					{
-						GearSetEvaluation gse = GearSetEvaluation.FromXml(xb, dataset);
-						build.BuildResults.Add(gse);
-					}
+					if (xe != null)
+						foreach (XmlElement xb in xe.ChildNodes)
+						{
+							GearSetEvaluation gse = GearSetEvaluation.FromXml(xb, dataset);
+							build.BuildResults.Add(gse);
+						}
 				}
 
 				return build;

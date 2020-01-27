@@ -14,6 +14,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class BuildProcessWindow : Window
 	{
+		public string Error;
 		bool CancelBuild = false;
 
 		Stopwatch BuildSW = new Stopwatch();
@@ -22,6 +23,8 @@ namespace DDONamedGearPlanner
 		GearSetBuild Build;
 		bool FilterTest;
 		bool DoneProcessing;
+
+		LargeContainer<List<BuildItem>> BuildBuffer;
 
 		public BuildProcessWindow()
 		{
@@ -79,6 +82,9 @@ namespace DDONamedGearPlanner
 			}
 			else
 			{
+				ItemCache = null;
+				BuildBuffer.Clear();
+				BuildBuffer = null;
 				DialogResult = !CancelBuild;
 				base.OnClosing(e);
 			}
@@ -287,6 +293,16 @@ namespace DDONamedGearPlanner
 
 			bdrPhase1Results.Visibility = Visibility.Visible;
 
+			try
+			{
+				BuildBuffer = new LargeContainer<List<BuildItem>>(combos);
+			}
+			catch
+			{
+				Error = "Insufficient memory to store the expected item combinations";
+				CancelAndClose();
+			}
+
 			// start phase 2
 			pbPhase2.Minimum = 0;
 			pbPhase2.Maximum = combos;
@@ -345,23 +361,25 @@ namespace DDONamedGearPlanner
 			if (Build.BuildResults.Count % 250 == 0) bw.ReportProgress(Build.BuildResults.Count);
 		}
 
-		public List<List<BuildItem>> BuildGearSets(BackgroundWorker bw, List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>> list)
+		List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>> ItemCache;
+
+		/*public List<List<BuildItem>> BuildGearSets(BackgroundWorker bw, int ici)
 		{
 			if (CancelBuild) return null;
 
-			SlotType filterslot = list[0].Key.ToSlotType();
+			SlotType filterslot = ItemCache[ici].Key.ToSlotType();
 			List<List<BuildItem>> result = new List<List<BuildItem>>();
 
 			// this only needs to be called once per list entry
 			List<List<BuildItem>> tailCombos = null;
-			if (list.Count > 1)
+			if (ici < ItemCache.Count - 1)
 			{
-				tailCombos = BuildGearSets(bw, list.Skip(1).ToList());
+				tailCombos = BuildGearSets(bw, ici + 1);
 				if (CancelBuild) return null;
 			}
 
 			// iterate over all items in the head list
-			foreach (var item in list[0].Value)
+			foreach (var item in ItemCache[ici].Value)
 			{
 				List<ItemProperty> options = new List<ItemProperty>();
 				List<List<ItemProperty>> optionsets = new List<List<ItemProperty>>();
@@ -393,11 +411,11 @@ namespace DDONamedGearPlanner
 				{
 					// head
 					result.Add(new List<BuildItem>());
-					result.Last().Add(new BuildItem(item, list[0].Key));
+					result.Last().Add(new BuildItem(item, ItemCache[ici].Key));
 					// make a copy and buffer it
 					added.Add(new List<BuildItem>(result.Last()));
 					BuildGearSet(bw, result.Last());
-					if (list.Count > 1)
+					if (tailCombos != null)
 					{
 						foreach (var combo in tailCombos)
 						{
@@ -406,7 +424,7 @@ namespace DDONamedGearPlanner
 							result.Add(new List<BuildItem>(combo));
 							// we create another copy of the previous results in order to add our items to them
 							List<BuildItem> nc = new List<BuildItem>(combo);
-							nc.Add(new BuildItem(item, list[0].Key));
+							nc.Add(new BuildItem(item, ItemCache[ici].Key));
 							result.Add(nc);
 							// make a copy and buffer it
 							added.Add(new List<BuildItem>(nc));
@@ -421,11 +439,11 @@ namespace DDONamedGearPlanner
 					{
 						// head
 						result.Add(new List<BuildItem>());
-						result.Last().Add(new BuildItem(item, list[0].Key) { OptionProperties = os });
+						result.Last().Add(new BuildItem(item, ItemCache[ici].Key) { OptionProperties = os });
 						// make a copy and buffer it
 						added.Add(new List<BuildItem>(result.Last()));
 						BuildGearSet(bw, result.Last());
-						if (list.Count > 1)
+						if (tailCombos != null)
 						{
 							foreach (var combo in tailCombos)
 							{
@@ -434,7 +452,7 @@ namespace DDONamedGearPlanner
 								result.Add(new List<BuildItem>(combo));
 								// we create another copy of the previous results in order to add our items to them
 								List<BuildItem> nc = new List<BuildItem>(combo);
-								nc.Add(new BuildItem(item, list[0].Key) { OptionProperties = os });
+								nc.Add(new BuildItem(item, ItemCache[ici].Key) { OptionProperties = os });
 								result.Add(nc);
 								// make a copy and buffer it
 								added.Add(new List<BuildItem>(nc));
@@ -450,8 +468,7 @@ namespace DDONamedGearPlanner
 						{
 							// each list in added has this calls' item at the end
 							// create a new item so we aren't modifying an existing, used build item
-							a[a.Count - 1] = new BuildItem(item, list[0].Key);
-							a.Last().OptionProperties = os;
+							a[a.Count - 1] = new BuildItem(item, ItemCache[ici].Key) { OptionProperties = os };
 							result.Add(new List<BuildItem>(a));
 							BuildGearSet(bw, result.Last());
 						}
@@ -460,16 +477,117 @@ namespace DDONamedGearPlanner
 			}
 
 			return result;
+		}*/
+
+		ulong DuplicateBuildBufferContents(ulong start, ulong end)
+		{
+			ulong newstart = BuildBuffer.Count;
+			for (ulong i = start; i <= end; i++)
+				BuildBuffer.Add(new List<BuildItem>(BuildBuffer[i]));
+
+			return newstart;
+		}
+
+		public void BuildGearSets(BackgroundWorker bw, int ici)
+		{
+			if (CancelBuild) return;
+
+			SlotType filterslot = ItemCache[ici].Key.ToSlotType();
+
+			if (ici < ItemCache.Count - 1)
+			{
+				BuildGearSets(bw, ici + 1);
+				if (CancelBuild) return;
+			}
+
+			ulong origend = BuildBuffer.Count - 1;
+
+			// iterate over all items in the head list
+			foreach (var item in ItemCache[ici].Value)
+			{
+				List<ItemProperty> options = new List<ItemProperty>();
+				List<List<ItemProperty>> optionsets = new List<List<ItemProperty>>();
+				bool stock = false;
+				options.Clear();
+				// figure out how many passes we need to do
+				foreach (var p in item.Properties)
+				{
+					if (CancelBuild) return;
+					// check slot filters first
+					if (GetFilteredProperties(p, Build.Filters[filterslot], options)) stock = true;
+					if (GetFilteredProperties(p, Build.Filters[SlotType.None], options)) stock = true;
+				}
+				// do all combinations of options
+				int comboCount = (int)Math.Pow(2, options.Count) - 1;
+				for (int h = 1; h < comboCount + 1; h++)
+				{
+					List<ItemProperty> ips = new List<ItemProperty>();
+					optionsets.Add(ips);
+					for (int j = 0; j < options.Count; j++)
+					{
+						if ((h >> j) % 2 != 0)
+							ips.Add(options[j]);
+					}
+				}
+
+				if (stock)
+				{
+					List<BuildItem> items = new List<BuildItem>();
+					items.Add(new BuildItem(item, ItemCache[ici].Key));
+					BuildBuffer.Add(items);
+					BuildGearSet(bw, items);
+					if (ici < ItemCache.Count - 1)
+					{
+						ulong start = DuplicateBuildBufferContents(0, origend);
+						ulong end = BuildBuffer.Count - 1;
+						for (; start <= end; start++)
+						{
+							if (CancelBuild) return;
+
+							BuildBuffer[start].Add(new BuildItem(item, ItemCache[ici].Key));
+							BuildGearSet(bw, BuildBuffer[start]);
+						}
+					}
+				}
+
+				foreach (var os in optionsets)
+				{
+					List<BuildItem> items = new List<BuildItem>();
+					items.Add(new BuildItem(item, ItemCache[ici].Key) { OptionProperties = os });
+					BuildBuffer.Add(items);
+					BuildGearSet(bw, items);
+					if (ici < ItemCache.Count - 1)
+					{
+						ulong start = DuplicateBuildBufferContents(0, origend);
+						ulong end = BuildBuffer.Count - 1;
+						for (; start <= end; start++)
+						{
+							if (CancelBuild) return;
+
+							BuildBuffer[start].Add(new BuildItem(item, ItemCache[ici].Key) { OptionProperties = os });
+							BuildGearSet(bw, BuildBuffer[start]);
+						}
+					}
+				}
+			}
 		}
 
 		// phase 2 builds every possible combination of gear sets
 		void Phase2_DoWork(object sender, DoWorkEventArgs e)
 		{
-			BuildGearSets(sender as BackgroundWorker, Build.DiscoveredItems.ToList());
+			ItemCache = Build.DiscoveredItems.ToList();
+			if (ItemCache.Count == 0)
+			{
+				CancelBuild = true;
+				return;
+			}
+
+			BuildGearSets(sender as BackgroundWorker, 0);
 		}
 
 		void Phase2_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
+			//if (e.ProgressPercentage % 250000 == 0) GC.Collect();
 			if (e.ProgressPercentage > pbPhase2.Maximum) pbPhase2.Maximum = e.ProgressPercentage;
 			pbPhase2.Value = e.ProgressPercentage;
 			tbPhase2.Text = e.ProgressPercentage + " generated";
@@ -592,25 +710,6 @@ namespace DDONamedGearPlanner
 		#endregion
 
 		#region Phase 4
-		bool GearSetHasRedundantRings(GearSet gs)
-		{
-			List<BuildItem> rings = gs.Items.Where(i => i.Slot == EquipmentSlotType.Finger1 || i.Slot == EquipmentSlotType.Finger2).ToList();
-			if (rings.Count < 2) return false;
-			if (rings[0].Item != rings[1].Item) return false;
-			if (rings[0].OptionProperties.Count != rings[1].OptionProperties.Count) return false;
-			bool diff = false;
-			for (int p = 0; p < rings[0].OptionProperties.Count; p++)
-			{
-				if (!rings[1].OptionProperties.Contains(rings[0].OptionProperties[p]))
-				{
-					diff = true;
-					break;
-				}
-			}
-
-			return !diff;
-		}
-
 		void Phase4_DoWork(object sender, DoWorkEventArgs e)
 		{
 			// sort buildresults by rating and penalty
@@ -636,13 +735,6 @@ namespace DDONamedGearPlanner
 			// do a pass to remove redundant gear sets
 			for (int i = 0; i < Build.BuildResults.Count; i++)
 			{
-				// check for gear sets that have two of the same rings on with no differences between the two rings
-				if (GearSetHasRedundantRings(Build.BuildResults[i].GearSet))
-				{
-					Build.BuildResults.RemoveAt(i--);
-					continue;
-				}
-
 				if (i == Build.BuildResults.Count - 1) break;
 
 				// dupe check
