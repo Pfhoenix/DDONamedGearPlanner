@@ -63,8 +63,13 @@ namespace DDOWikiCrawler
 
 				var config = new CrawlConfiguration
 				{
-					MinCrawlDelayPerDomainMilliSeconds = 100,
-					MaxCrawlDepth = 1
+					MinCrawlDelayPerDomainMilliSeconds = 50,
+					MaxCrawlDepth = 1,
+					IsIgnoreRobotsDotTextIfRootDisallowedEnabled = true,
+					IsRespectAnchorRelNoFollowEnabled = false,
+					IsRespectHttpXRobotsTagHeaderNoFollowEnabled = false,
+					IsRespectMetaRobotsNoFollowEnabled = false,
+					IsRespectRobotsDotTextEnabled = false,
 				};
 				PoliteWebCrawler crawler = new PoliteWebCrawler(config);
 				crawler.PageCrawlStarting += PageCrawlStarting;
@@ -114,7 +119,7 @@ namespace DDOWikiCrawler
 
 					var config = new CrawlConfiguration
 					{
-						MinCrawlDelayPerDomainMilliSeconds = 100,
+						MinCrawlDelayPerDomainMilliSeconds = 50,
 						MaxCrawlDepth = 1
 					};
 					PoliteWebCrawler crawler = new PoliteWebCrawler(config);
@@ -142,7 +147,7 @@ namespace DDOWikiCrawler
 
 						var config = new CrawlConfiguration
 						{
-							MinCrawlDelayPerDomainMilliSeconds = 100,
+							MinCrawlDelayPerDomainMilliSeconds = 50,
 							MaxCrawlDepth = 1
 						};
 						PoliteWebCrawler crawler = new PoliteWebCrawler(config);
@@ -216,7 +221,7 @@ namespace DDOWikiCrawler
 
 		void ItemCrawlCompleted(object sender, PageCrawlCompletedArgs e)
 		{
-			var httpStatus = e.CrawledPage.HttpResponseMessage.StatusCode;
+			var httpStatus = e.CrawledPage.HttpResponseMessage?.StatusCode;
 			if (httpStatus == HttpStatusCode.OK)
 			{
 				if (e.CrawledPage.Uri.AbsolutePath.StartsWith("/page/Item:"))
@@ -288,12 +293,17 @@ namespace DDOWikiCrawler
 			TreeViewItem tvi = tvCachedPages.SelectedItem as TreeViewItem;
 			if (tvi != null)
 			{
-				wbWebpageView.Navigate(tvi.Tag.ToString());
-				try
-				{
-					tbHtmlView.Text = File.ReadAllText(tvi.Tag.ToString());
-				}
-				catch { }
+				wbWebpageView.Source = new Uri(tvi.Tag.ToString());
+				//wbWebpageView.Navigate(tvi.Tag.ToString());
+			}
+		}
+
+		private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if ((sender as TabControl).SelectedIndex == 1)
+			{
+				dynamic doc = wbWebpageView.Document;
+				tbHtmlView.Text = doc?.documentElement.InnerHtml;
 			}
 		}
 	}

@@ -55,8 +55,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Abot2, Version=2.0.51.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Abot.2.0.51\lib\netstandard2.0\Abot2.dll</HintPath>
+    <Reference Include="Abot2, Version=2.0.54.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Abot.2.0.54\lib\netstandard2.0\Abot2.dll</HintPath>
     </Reference>
     <Reference Include="AngleSharp, Version=0.12.1.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
       <HintPath>..\packages\AngleSharp.0.12.1\lib\net46\AngleSharp.dll</HintPath>

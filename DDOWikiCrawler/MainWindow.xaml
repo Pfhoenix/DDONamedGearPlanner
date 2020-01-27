@@ -23,14 +23,12 @@
 			</StatusBarItem>
 		</StatusBar>
 		<TreeView DockPanel.Dock="Left" Name="tvCachedPages" HorizontalAlignment="Left" Width="200" KeyUp="TvCachedPages_KeyUp" SelectedItemChanged="TvCachedPages_SelectedItemChanged" MouseDoubleClick="TvCachedPages_MouseDoubleClick"></TreeView>
-		<TabControl DockPanel.Dock="Right">
+		<TabControl DockPanel.Dock="Right" SelectionChanged="TabControl_SelectionChanged">
 			<TabItem Header="Webpage">
 				<WebBrowser Name="wbWebpageView"/>
 			</TabItem>
 			<TabItem Header="HTML">
-				<ScrollViewer>
-					<TextBox Name="tbHtmlView"/>
-				</ScrollViewer>
+				<TextBox Name="tbHtmlView" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
 			</TabItem>
 		</TabControl>
 	</DockPanel>
