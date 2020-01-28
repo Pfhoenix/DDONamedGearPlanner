@@ -262,6 +262,8 @@ namespace DDONamedGearPlanner
 			}
 
 			CalculatePropertyGroups();
+
+			Properties.Sort((a, b) => string.Compare(a.Property, b.Property));
 		}
 
 		public XmlElement ToXml(XmlDocument doc)

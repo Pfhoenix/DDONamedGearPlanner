@@ -154,6 +154,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controls\SearchSlotToggleButton.cs" />
     <Compile Include="DDOData.cs" />
     <Compile Include="Controls\EquipmentSlotControl.xaml.cs">
       <DependentUpon>EquipmentSlotControl.xaml</DependentUpon>
@@ -274,6 +275,22 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ddonamedgearplanner.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\slot_bg_green_back.png" />
+    <Resource Include="Resources\slot_bg_green_body.png" />
+    <Resource Include="Resources\slot_bg_green_eye.png" />
+    <Resource Include="Resources\slot_bg_green_feet.png" />
+    <Resource Include="Resources\slot_bg_green_finger1.png" />
+    <Resource Include="Resources\slot_bg_green_finger2.png" />
+    <Resource Include="Resources\slot_bg_green_hand.png" />
+    <Resource Include="Resources\slot_bg_green_head.png" />
+    <Resource Include="Resources\slot_bg_green_neck.png" />
+    <Resource Include="Resources\slot_bg_green_offhand.png" />
+    <Resource Include="Resources\slot_bg_green_trinket.png" />
+    <Resource Include="Resources\slot_bg_green_waist.png" />
+    <Resource Include="Resources\slot_bg_green_weapon.png" />
+    <Resource Include="Resources\slot_bg_green_wrist.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
