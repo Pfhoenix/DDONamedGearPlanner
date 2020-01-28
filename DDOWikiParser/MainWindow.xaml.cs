@@ -151,7 +151,7 @@ namespace DDOWikiParser
 		private void MenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			FolderBrowserDialog fbd = new FolderBrowserDialog();
-			fbd.SelectedPath = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\DDOWikiCrawler\\bin\\debug\\HtmlCache\\");
+			fbd.SelectedPath = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..\\DDOWikiCrawler\\bin\\x64\\debug\\HtmlCache\\");
 			if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 			{
 				files = Directory.GetFiles(fbd.SelectedPath);
@@ -2561,7 +2561,7 @@ namespace DDOWikiParser
 		private void SaveMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			FolderBrowserDialog fbd = new FolderBrowserDialog();
-			fbd.SelectedPath = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\DDONamedGearPlanner\\");
+			fbd.SelectedPath = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..\\DDONamedGearPlanner\\");
 			if (fbd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
 			datasetFilepath = Path.Combine(fbd.SelectedPath, "ddodata.dat");
 

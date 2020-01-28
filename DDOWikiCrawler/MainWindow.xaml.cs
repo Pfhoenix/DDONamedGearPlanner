@@ -65,11 +65,9 @@ namespace DDOWikiCrawler
 				{
 					MinCrawlDelayPerDomainMilliSeconds = 50,
 					MaxCrawlDepth = 1,
-					IsIgnoreRobotsDotTextIfRootDisallowedEnabled = true,
-					IsRespectAnchorRelNoFollowEnabled = false,
-					IsRespectHttpXRobotsTagHeaderNoFollowEnabled = false,
-					IsRespectMetaRobotsNoFollowEnabled = false,
-					IsRespectRobotsDotTextEnabled = false,
+					LoginUser = "Pfhoenix",
+					LoginPassword = "danneskjold",
+					IsAlwaysLogin = true
 				};
 				PoliteWebCrawler crawler = new PoliteWebCrawler(config);
 				crawler.PageCrawlStarting += PageCrawlStarting;
