@@ -83,7 +83,7 @@ namespace DDONamedGearPlanner
 			else
 			{
 				ItemCache = null;
-				BuildBuffer.Clear();
+				BuildBuffer?.Clear();
 				BuildBuffer = null;
 				DialogResult = !CancelBuild;
 				base.OnClosing(e);
