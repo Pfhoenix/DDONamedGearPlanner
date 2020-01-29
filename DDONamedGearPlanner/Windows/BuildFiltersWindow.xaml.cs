@@ -45,6 +45,7 @@ namespace DDONamedGearPlanner
 			btn.SetValue(WidthProperty, 25.0);
 			btn.SetBinding(ContentProperty, new Binding("Priority"));
 			btn.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Left);
+			btn.SetValue(CursorProperty, Cursors.ScrollNS);
 			btn.AddHandler(PreviewMouseDownEvent, new MouseButtonEventHandler(FiltersPriority_PreviewMouseDown));
 			dp.AppendChild(btn);
 

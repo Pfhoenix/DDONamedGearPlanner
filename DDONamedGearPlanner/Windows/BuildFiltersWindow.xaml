@@ -46,7 +46,7 @@
 									<ListBox.ItemTemplate>
 										<DataTemplate>
 											<DockPanel>
-												<Button DockPanel.Dock="Left" Width="25" Content="{Binding Priority}" HorizontalAlignment="Left" PreviewMouseDown="FiltersPriority_PreviewMouseDown"/>
+												<Button DockPanel.Dock="Left" Width="25" Content="{Binding Priority}" HorizontalAlignment="Left" PreviewMouseDown="FiltersPriority_PreviewMouseDown" Cursor="ScrollNS"/>
 												<ComboBox DockPanel.Dock="Left" Margin="2,0,0,0" SelectedValuePath="Content" SelectedValue="{Binding Include, Mode=TwoWay}" Width="70" HorizontalAlignment="Left">
 													<ComboBoxItem Content="Include"/>
 													<ComboBoxItem Content="Exclude"/>
