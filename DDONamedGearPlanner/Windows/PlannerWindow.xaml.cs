@@ -1125,5 +1125,54 @@ namespace DDONamedGearPlanner
 		{
 			SaveBuild(false, true);
 		}
+
+		private void DumpGearsetToTextFile(object sender, RoutedEventArgs e)
+		{
+			SaveFileDialog sfd = new SaveFileDialog();
+			sfd.Filter = "Text file (*.txt)|*.txt";
+			sfd.AddExtension = true;
+			if (sfd.ShowDialog() == false) return;
+
+			StringBuilder sb = new StringBuilder();
+			foreach (var es in EquipmentSlots)
+			{
+				if (es.Value.Item != null)
+				{
+					sb.Append(es.Key.ToString());
+					sb.Append(':');
+					sb.Append(es.Value.Item.Item.Name);
+					if (es.Value.Item.OptionProperties != null)
+					{
+						foreach (var op in es.Value.Item.OptionProperties)
+						{
+							sb.Append('{');
+							sb.Append(string.IsNullOrWhiteSpace(op.Type) ? "untyped" : op.Type);
+							sb.Append(' ');
+							sb.Append(op.Property);
+							sb.Append(' ');
+							sb.Append(op.Value);
+							sb.Append('}');
+						}
+					}
+					sb.AppendLine();
+				}
+			}
+
+			File.WriteAllText(sfd.FileName, sb.ToString());
+		}
+
+		private void LockFilledSlots(object sender, RoutedEventArgs e)
+		{
+			CurrentBuild.LockedSlots.Clear();
+			foreach (var kv in EquipmentSlots)
+			{
+				if (kv.Value.Item != null)
+				{
+					CurrentBuild.LockedSlots.Add(kv.Key);
+					kv.Value.SetLockStatus(true);
+				}
+				else kv.Value.SetLockStatus(false);
+			}
+		}
 	}
 }
