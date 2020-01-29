@@ -931,31 +931,32 @@ namespace DDONamedGearPlanner
 			if (!btnStartBuild.IsEnabled) MessageBox.Show("A build cannot be started without a gear set or slot filter that includes an item property.", "Missing include filter", MessageBoxButton.OK, MessageBoxImage.Warning);
 		}
 
+		void ResetBuildResultsUI()
+		{
+			rsBuildML.LowerValue = 1;
+			rsBuildML.UpperValue = 30;
+			btnStartBuild.IsEnabled = false;
+			tbTotalGearSets.Text = "Gear Sets: 0";
+			btnPreviousGS.IsEnabled = false;
+			tbCurrentGS.Text = null;
+			btnNextGS.IsEnabled = false;
+			tbCurrentGSRating.Text = "Rating:";
+			tbCurrentGSPenalty.Text = "Penalty:";
+		}
+
 		void SetBuildResult(int cbr)
 		{
 			UnlockClearAll(null, null);
 
-			if (cbr < 0 || cbr >= CurrentBuild.BuildResults.Count)
-			{
-				rsBuildML.LowerValue = 1;
-				rsBuildML.UpperValue = 30;
-				btnStartBuild.IsEnabled = false;
-				tbTotalGearSets.Text = "Gear Sets: 0";
-				btnPreviousGS.IsEnabled = false;
-				tbCurrentGS.Text = null;
-				btnNextGS.IsEnabled = false;
-				tbCurrentGSRating.Text = "Rating:";
-				tbCurrentGSPenalty.Text = "Penalty:";
-				return;
-			}
+			if (cbr < 0 || cbr >= CurrentBuild.BuildResults.Count) return;
 
 			GearSetEvaluation br = CurrentBuild.BuildResults[cbr];
 			tbTotalGearSets.Text = "Gear Sets: " + CurrentBuild.BuildResults.Count;
 			btnPreviousGS.IsEnabled = cbr > 0;
 			tbCurrentGS.Text = (cbr + 1).ToString();
 			btnNextGS.IsEnabled = cbr < (CurrentBuild.BuildResults.Count - 1);
-			tbCurrentGSRating.Text = "Rating: " + (int)br.Rating;
-			tbCurrentGSPenalty.Text = "Penalty: " + (int)br.Penalty;
+			tbCurrentGSRating.Text = "Rating: " + br.Rating;
+			tbCurrentGSPenalty.Text = "Penalty: " + br.Penalty;
 
 			foreach (BuildItem bi in br.GearSet.Items)
 				SlotItem(bi);
@@ -968,13 +969,13 @@ namespace DDONamedGearPlanner
 
 		private void PreviousGearSet_Click(object sender, RoutedEventArgs e)
 		{
-			if (CurrentBuild.BuildResults.Count == 0 || CurrentBuild.CurrentBuildResult < 1) (sender as Button).IsEnabled = false;
+			if (CurrentBuild.CurrentBuildResult < 1) (sender as Button).IsEnabled = false;
 			SetBuildResult(--CurrentBuild.CurrentBuildResult);
 		}
 
 		private void NextGearSet_Click(object sender, RoutedEventArgs e)
 		{
-			if (CurrentBuild.BuildResults.Count == 0 || CurrentBuild.CurrentBuildResult >= CurrentBuild.BuildResults.Count) (sender as Button).IsEnabled = false;
+			if (CurrentBuild.CurrentBuildResult >= CurrentBuild.BuildResults.Count - 2) (sender as Button).IsEnabled = false;
 			SetBuildResult(++CurrentBuild.CurrentBuildResult);
 		}
 
@@ -1074,8 +1075,12 @@ namespace DDONamedGearPlanner
 			{
 				if (!filters && gsb.BuildResults.Count > 0) CurrentBuild.FiltersResultsMismatch = true;
 				CurrentBuild.BuildResults = gsb.BuildResults;
-				CurrentBuild.CurrentBuildResult = CurrentBuild.BuildResults.Count > 0 ? 0 : -1;
-				SetBuildResult(CurrentBuild.CurrentBuildResult);
+				if (CurrentBuild.BuildResults.Count == 0) ResetBuildResultsUI();
+				else
+				{
+					CurrentBuild.CurrentBuildResult = 0;
+					SetBuildResult(CurrentBuild.CurrentBuildResult);
+				}
 			}
 			if (filters)
 			{
@@ -1092,7 +1097,7 @@ namespace DDONamedGearPlanner
 
 		private void NewBuild_Click(object sender, RoutedEventArgs e)
 		{
-			SetBuildResult(-1);
+			ResetBuildResultsUI();
 			CurrentBuild.Clear();
 		}
 

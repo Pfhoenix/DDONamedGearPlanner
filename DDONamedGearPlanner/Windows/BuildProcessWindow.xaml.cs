@@ -578,7 +578,7 @@ namespace DDONamedGearPlanner
 			ItemCache = Build.DiscoveredItems.ToList();
 			if (ItemCache.Count == 0)
 			{
-				CancelBuild = true;
+				//CancelBuild = true;
 				return;
 			}
 
@@ -637,7 +637,7 @@ namespace DDONamedGearPlanner
 		// Phase 3 rates all gear sets
 		void Phase3_DoWork(object sender, DoWorkEventArgs e)
 		{
-			for (int i = 0; i <Build.BuildResults.Count; i++)
+			for (int i = 0; i < Build.BuildResults.Count; i++)
 			{
 				if (CancelBuild) return;
 
