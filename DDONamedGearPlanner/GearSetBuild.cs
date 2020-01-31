@@ -86,11 +86,11 @@ namespace DDONamedGearPlanner
 			return xb;
 		}
 
-		public static BuildItem FromXml(XmlElement xe, DDODataset ds)
+		public static BuildItem FromXml(XmlElement xe)
 		{
 			try
 			{
-				DDOItemData item = ds.Items.Find(i => i.Name == xe.GetAttribute("item"));
+				DDOItemData item = DatasetManager.Dataset.Items.Find(i => i.Name == xe.GetAttribute("item"));
 				if (item == null) return null;
 				EquipmentSlotType est = (EquipmentSlotType)Enum.Parse(typeof(EquipmentSlotType), xe.GetAttribute("slot"));
 				if (est == EquipmentSlotType.None) return null;
@@ -231,7 +231,7 @@ namespace DDONamedGearPlanner
 			}
 		}
 
-		public void ProcessItems(DDODataset dataset)
+		public void ProcessItems()
 		{
 			// need to find all set properties with qualifying set bonuses and expand them into the item properties
 			for (int i = 0; i < Properties.Count; i++)
@@ -240,7 +240,7 @@ namespace DDONamedGearPlanner
 				if (gsp.IsGroup && gsp.ItemProperties[0].Type == "set")
 				{
 					List<ItemProperty> ips = new List<ItemProperty>();
-					DDOItemSet set = dataset.Sets[gsp.ItemProperties[0].Property];
+					DDOItemSet set = DatasetManager.Dataset.Sets[gsp.ItemProperties[0].Property];
 					DDOItemSetBonus sb = null;
 					foreach (var sbs in set.SetBonuses)
 					{
@@ -276,17 +276,17 @@ namespace DDONamedGearPlanner
 			return xg;
 		}
 
-		public static GearSet FromXml(XmlElement xe, DDODataset ds)
+		public static GearSet FromXml(XmlElement xe)
 		{
 			try
 			{
 				GearSet gs = new GearSet();
 				foreach (XmlElement xb in xe.ChildNodes)
 				{
-					BuildItem bi = BuildItem.FromXml(xb, ds);
+					BuildItem bi = BuildItem.FromXml(xb);
 					if (bi != null) gs.AddItem(bi);
 				}
-				gs.ProcessItems(ds);
+				gs.ProcessItems();
 
 				return gs;
 			}
@@ -332,11 +332,11 @@ namespace DDONamedGearPlanner
 			return xg;
 		}
 
-		public static GearSetEvaluation FromXml(XmlElement xe, DDODataset ds)
+		public static GearSetEvaluation FromXml(XmlElement xe)
 		{
 			try
 			{
-				GearSet gs = GearSet.FromXml(xe.GetElementsByTagName("GearSet")[0] as XmlElement, ds);
+				GearSet gs = GearSet.FromXml(xe.GetElementsByTagName("GearSet")[0] as XmlElement);
 				XmlElement xls = xe.GetElementsByTagName("LockedSlots")[0] as XmlElement;
 				List<EquipmentSlotType> ls = new List<EquipmentSlotType>();
 				foreach (XmlElement xc in xls.ChildNodes)
@@ -543,7 +543,7 @@ namespace DDONamedGearPlanner
 			return doc;
 		}
 
-		public static GearSetBuild FromXml(DDODataset dataset, XmlDocument doc, bool filters, bool results)
+		public static GearSetBuild FromXml(XmlDocument doc, bool filters, bool results)
 		{
 			GearSetBuild build = new GearSetBuild();
 
@@ -570,7 +570,7 @@ namespace DDONamedGearPlanner
 					if (xe != null)
 						foreach (XmlElement xb in xe.ChildNodes)
 						{
-							GearSetEvaluation gse = GearSetEvaluation.FromXml(xb, dataset);
+							GearSetEvaluation gse = GearSetEvaluation.FromXml(xb);
 							build.BuildResults.Add(gse);
 						}
 				}

@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace DDONamedGearPlanner
 {
@@ -19,7 +9,6 @@ namespace DDONamedGearPlanner
     /// </summary>
     public partial class FilterTestResultsWindow : Window
     {
-		DDODataset Dataset;
 		GearSetBuild Build;
 
         public FilterTestResultsWindow()
@@ -72,9 +61,8 @@ namespace DDONamedGearPlanner
 			return added;
 		}
 
-		public void Initialize(DDODataset ds, GearSetBuild build)
+		public void Initialize(GearSetBuild build)
 		{
-			Dataset = ds;
 			Build = build;
 
 			foreach (var kv in Build.FilterTestItems)

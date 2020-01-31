@@ -118,6 +118,12 @@
     <Compile Include="Controls\RangeSlider.xaml.cs">
       <DependentUpon>RangeSlider.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\ComboBoxWindow.xaml.cs">
+      <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\TextBoxWindow.xaml.cs">
+      <DependentUpon>TextBoxWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="Controls\EquipmentSlotControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -131,6 +137,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\BuildProcessWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\CustomItemsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -155,6 +165,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controls\SearchSlotToggleButton.cs" />
+    <Compile Include="CustomItemsManager.cs" />
+    <Compile Include="DatasetManager.cs" />
     <Compile Include="DDOData.cs" />
     <Compile Include="Controls\EquipmentSlotControl.xaml.cs">
       <DependentUpon>EquipmentSlotControl.xaml</DependentUpon>
@@ -171,6 +183,9 @@
     <Compile Include="Windows\BuildProcessWindow.xaml.cs">
       <DependentUpon>BuildProcessWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\CustomItemsWindow.xaml.cs">
+      <DependentUpon>CustomItemsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\FilterTestResultsWindow.xaml.cs">
       <DependentUpon>FilterTestResultsWindow.xaml</DependentUpon>
     </Compile>
@@ -185,6 +200,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Controls\RangeSlider.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ComboBoxWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\TextBoxWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -19,7 +19,6 @@ namespace DDONamedGearPlanner
 
 		Stopwatch BuildSW = new Stopwatch();
 
-		DDODataset Dataset;
 		GearSetBuild Build;
 		bool FilterTest;
 		bool DoneProcessing;
@@ -37,9 +36,8 @@ namespace DDONamedGearPlanner
 			bdrFinalResults.Visibility = Visibility.Hidden;
 		}
 
-		public void Initialize(DDODataset ds, GearSetBuild b, bool filtertest)
+		public void Initialize(GearSetBuild b, bool filtertest)
 		{
-			Dataset = ds;
 			Build = b;
 			FilterTest = filtertest;
 		}
@@ -55,7 +53,7 @@ namespace DDONamedGearPlanner
 
 				// start the build process phase 1
 				pbPhase1.Minimum = 0;
-				pbPhase1.Maximum = Dataset.Items.Count;
+				pbPhase1.Maximum = DatasetManager.Dataset.Items.Count;
 				pbPhase1.Value = 0;
 				BackgroundWorker bw = new BackgroundWorker();
 				bw.WorkerReportsProgress = true;
@@ -151,13 +149,13 @@ namespace DDONamedGearPlanner
 
 		void Phase1_DoWork(object sender, DoWorkEventArgs e)
 		{
-			for (int i = 0; i < Dataset.Items.Count; i++)
+			for (int i = 0; i < DatasetManager.Dataset.Items.Count; i++)
 			{
 				if (CancelBuild) return;
 
 				if (i % 100 == 0) (sender as BackgroundWorker).ReportProgress(i);
 
-				DDOItemData item = Dataset.Items[i];
+				DDOItemData item = DatasetManager.Dataset.Items[i];
 				if (item.ML < Build.MinimumLevel || item.ML > Build.MaximumLevel) continue;
 
 				EquipmentSlotType slot1 = EquipmentSlotType.None, slot2 = EquipmentSlotType.None;
@@ -230,7 +228,7 @@ namespace DDONamedGearPlanner
 		void Phase1_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
 			pbPhase1.Value = e.ProgressPercentage;
-			tbPhase1.Text = e.ProgressPercentage + " of " + Dataset.Items.Count;
+			tbPhase1.Text = e.ProgressPercentage + " of " + DatasetManager.Dataset.Items.Count;
 		}
 
 		// phase 1 goes over all items and sorts any with an included property via filter
@@ -642,7 +640,7 @@ namespace DDONamedGearPlanner
 				if (CancelBuild) return;
 
 				if (i % 250 == 0) (sender as BackgroundWorker).ReportProgress(i);
-				Build.BuildResults[i].GearSet.ProcessItems(Dataset);
+				Build.BuildResults[i].GearSet.ProcessItems();
 
 				foreach (var gsp in Build.BuildResults[i].GearSet.Properties)
 				{

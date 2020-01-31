@@ -12,7 +12,6 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
-using System.Xml.Linq;
 using Microsoft.Win32;
 using CoenM.Encoding;
 
@@ -24,9 +23,8 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public const string VERSION = "0.5.1";
+		public const string VERSION = "0.5.2";
 
-		public DDODataset dataset;
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
 		Dictionary<EquipmentSlotType, EquipmentSlotControl> EquipmentSlots = new Dictionary<EquipmentSlotType, EquipmentSlotControl>();
@@ -46,20 +44,24 @@ namespace DDONamedGearPlanner
 			Title += VERSION;
 			CurrentBuild.AppVersion = VERSION;
 
-			if (!LoadDDODataset())
+			string error = DatasetManager.Load();
+			if (error != null)
 			{
+				MessageBox.Show("Error loading DDO dataset - " + error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 				Close();
 				return;
 			}
 
+			CustomItemsManager.Load();
+
 			BtnFilterApply_Click(null, null);
 
-			ItemListCopy = new List<DDOItemData>(dataset.Items);
+			ItemListCopy = new List<DDOItemData>(DatasetManager.Dataset.Items);
 			lvItemList.ItemsSource = ItemListCopy;
 			SetFilter(CustomFilter);
 
 			ItemPropertiesCopy = new List<DDOItemProperty>();
-			foreach (var ip in dataset.ItemProperties)
+			foreach (var ip in DatasetManager.Dataset.ItemProperties)
 				if (ip.Key == "Armor Category" || ip.Key == "Weapon Category" || ip.Key == "Offhand Category") continue;
 				else if (ip.Value.Items.Count > 0) ItemPropertiesCopy.Add(ip.Value);
 			ItemPropertiesCopy.Sort((a, b) => string.Compare(a.Property, b.Property));
@@ -68,27 +70,6 @@ namespace DDONamedGearPlanner
 			cbItemPropertyFilter.SelectedIndex = 0;
 
 			txtSearchBox.Focus();
-		}
-
-		bool LoadDDODataset()
-		{
-			FileStream fs = new FileStream("ddodata.dat", FileMode.Open);
-			try
-			{
-				BinaryFormatter bf = new BinaryFormatter();
-				dataset = (DDODataset)bf.Deserialize(fs);
-
-				return true;
-			}
-			catch (Exception e)
-			{
-				MessageBox.Show("Error loading DDO dataset - " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-				return false;
-			}
-			finally
-			{
-				fs.Close();
-			}
 		}
 
 		public void RegisterEquipmentSlot(EquipmentSlotControl esc)
@@ -344,7 +325,7 @@ namespace DDONamedGearPlanner
 				{
 					if (ip.ItemProperties[0].Type == "set")
 					{
-						DDOItemSet set = dataset.Sets[ip.Property];
+						DDOItemSet set = DatasetManager.Dataset.Sets[ip.Property];
 						DDOItemSetBonus sb = null;
 						foreach (var sbs in set.SetBonuses)
 						{
@@ -401,7 +382,7 @@ namespace DDONamedGearPlanner
 			GearSet gs = new GearSet();
 			foreach (var kv in EquipmentSlots)
 				if (kv.Value.Item != null) gs.AddItem(kv.Value.Item);
-			gs.ProcessItems(dataset);
+			gs.ProcessItems();
 
 			if (render) RenderGearSet(gs);
 
@@ -721,7 +702,7 @@ namespace DDONamedGearPlanner
 		{
 			NamedSetSelectorWindow sw = new NamedSetSelectorWindow();
 			sw.Owner = this;
-			sw.Initialize(dataset, EquipmentSlots);
+			sw.Initialize(EquipmentSlots);
 			if (sw.ShowDialog().Value)
 			{
 				List<DDOItemData> items = sw.GetItems();
@@ -849,7 +830,7 @@ namespace DDONamedGearPlanner
 				foreach (var s in split)
 				{
 					string[] itemsplit = s.Split('{');
-					DDOItemData item = dataset.Items.Find(i => i.Name == itemsplit[0]);
+					DDOItemData item = DatasetManager.Dataset.Items.Find(i => i.Name == itemsplit[0]);
 					if (item != null)
 					{
 						BuildItem bi = new BuildItem(item, EquipmentSlotType.None);
@@ -898,7 +879,6 @@ namespace DDONamedGearPlanner
 			{
 				IPBWindow = new ItemPropertyBrowserWindow();
 				IPBWindow.Owner = this;
-				IPBWindow.Initialize(dataset);
 				IPBWindow.ItemDoubleClicked += IPBWindow_ItemDoubleClicked;
 			}
 			
@@ -915,7 +895,7 @@ namespace DDONamedGearPlanner
 			CurrentBuild.SetupLockedSlots(EquipmentSlots);
 			BuildFiltersWindow bfw = new BuildFiltersWindow();
 			bfw.Owner = this;
-			bfw.Initialize(CurrentBuild, dataset, EquipmentSlots);
+			bfw.Initialize(CurrentBuild, EquipmentSlots);
 			bfw.ShowDialog();
 
 			if (bfw.FiltersChanged)
@@ -1022,7 +1002,7 @@ namespace DDONamedGearPlanner
 			miSaveBuildResults.IsEnabled = false;
 
 			BuildProcessWindow bpw = new BuildProcessWindow();
-			bpw.Initialize(dataset, CurrentBuild, false);
+			bpw.Initialize(CurrentBuild, false);
 			bpw.Owner = this;
 			if (bpw.ShowDialog() == true)
 			{
@@ -1070,7 +1050,7 @@ namespace DDONamedGearPlanner
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(DecodeString(File.ReadAllText(ofd.FileName)));
 
-			GearSetBuild gsb = GearSetBuild.FromXml(dataset, doc, filters, results);
+			GearSetBuild gsb = GearSetBuild.FromXml(doc, filters, results);
 			if (results)
 			{
 				if (!filters && gsb.BuildResults.Count > 0) CurrentBuild.FiltersResultsMismatch = true;
@@ -1099,6 +1079,7 @@ namespace DDONamedGearPlanner
 		{
 			ResetBuildResultsUI();
 			CurrentBuild.Clear();
+			GC.Collect();
 		}
 
 		private void LoadBuild_Click(object sender, RoutedEventArgs e)
@@ -1178,6 +1159,24 @@ namespace DDONamedGearPlanner
 				}
 				else kv.Value.SetLockStatus(false);
 			}
+		}
+
+		CustomItemsWindow CIWindow;
+		private void ManageCustomItems(object sender, RoutedEventArgs e)
+		{
+			if (CIWindow == null || !CIWindow.IsActive)
+			{
+				CIWindow = new CustomItemsWindow();
+				CIWindow.Owner = this;
+				CIWindow.ItemDoubleClicked += CIWindow_ItemDoubleClicked;
+			}
+
+			CIWindow.Show();
+		}
+
+		private void CIWindow_ItemDoubleClicked(CustomItem item)
+		{
+			
 		}
 	}
 }

@@ -17,7 +17,6 @@ namespace DDONamedGearPlanner
     {
 		const string ALL_TYPES = "< All >";
 		GearSetBuild CurrentBuild;
-		DDODataset Dataset;
 		Dictionary<EquipmentSlotType, EquipmentSlotControl> EquipmentSlots;
 
 		Dictionary<SlotType, ListBox> SlotListBoxes = new Dictionary<SlotType, ListBox>();
@@ -89,10 +88,9 @@ namespace DDONamedGearPlanner
 			SlotListBoxDT.VisualTree = dp;
 		}
 
-		public void Initialize(GearSetBuild build, DDODataset dataset, Dictionary<EquipmentSlotType, EquipmentSlotControl> equipslots)
+		public void Initialize(GearSetBuild build, Dictionary<EquipmentSlotType, EquipmentSlotControl> equipslots)
 		{
 			CurrentBuild = build;
-			Dataset = dataset;
 			EquipmentSlots = equipslots;
 
 			foreach (var cb in CurrentBuild.Filters)
@@ -121,7 +119,7 @@ namespace DDONamedGearPlanner
 			ComboBox cb = sender as ComboBox;
 			if (cb.SelectedIndex == -1) return;
 
-			var filter = new BuildFilterItemData { AvailableProperties = new List<DDOItemProperty>(Dataset.SlotExclusiveItemProperties[SlotType.None]), Include = "Include" };
+			var filter = new BuildFilterItemData { AvailableProperties = new List<DDOItemProperty>(DatasetManager.Dataset.SlotExclusiveItemProperties[SlotType.None]), Include = "Include" };
 
 			if (cb.SelectedIndex == 0)
 			{
@@ -187,7 +185,7 @@ namespace DDONamedGearPlanner
 			{
 				for (int i = 0; i < lbf.Value.Count; i++)
 				{
-					var filter = new BuildFilterItemData { Slot = lbf.Key, Priority = i + 1, ItemProperty = Dataset.ItemProperties[lbf.Value[i].Property], AvailableProperties = new List<DDOItemProperty>(Dataset.SlotExclusiveItemProperties[lbf.Key]), Type = string.IsNullOrWhiteSpace(lbf.Value[i].Type) ? ALL_TYPES : lbf.Value[i].Type, Include = lbf.Value[i].Include ? "Include" : "Exclude" };
+					var filter = new BuildFilterItemData { Slot = lbf.Key, Priority = i + 1, ItemProperty = DatasetManager.Dataset.ItemProperties[lbf.Value[i].Property], AvailableProperties = new List<DDOItemProperty>(DatasetManager.Dataset.SlotExclusiveItemProperties[lbf.Key]), Type = string.IsNullOrWhiteSpace(lbf.Value[i].Type) ? ALL_TYPES : lbf.Value[i].Type, Include = lbf.Value[i].Include ? "Include" : "Exclude" };
 					SetAvailableTypes(filter);
 					if (lbf.Key == SlotType.None) lbFiltersGS.Items.Add(filter);
 					else AddFilterToSlotListBox(filter);
@@ -210,12 +208,12 @@ namespace DDONamedGearPlanner
 			else
 			{
 				BuildProcessWindow bpw = new BuildProcessWindow();
-				bpw.Initialize(Dataset, CurrentBuild, true);
+				bpw.Initialize(CurrentBuild, true);
 				bpw.Owner = this;
 				if (bpw.ShowDialog() == true)
 				{
 					FilterTestResultsWindow ftrw = new FilterTestResultsWindow();
-					ftrw.Initialize(Dataset, CurrentBuild);
+					ftrw.Initialize(CurrentBuild);
 					ftrw.Owner = this;
 					ftrw.ShowDialog();
 				}
@@ -305,7 +303,7 @@ namespace DDONamedGearPlanner
 
 			SlotType slot = (SlotType)cb.SelectedValue;
 
-			var filter = new BuildFilterItemData { Slot = slot, AvailableProperties = new List<DDOItemProperty>(Dataset.SlotExclusiveItemProperties[slot]), Include = "Include" };
+			var filter = new BuildFilterItemData { Slot = slot, AvailableProperties = new List<DDOItemProperty>(DatasetManager.Dataset.SlotExclusiveItemProperties[slot]), Include = "Include" };
 			AddFilterToSlotListBox(filter);
 
 			Action a = () => cb.Text = "Add Filter";

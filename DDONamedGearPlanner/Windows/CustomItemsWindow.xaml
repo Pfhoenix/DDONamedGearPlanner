@@ -1,0 +1,50 @@
+﻿<Window x:Class="DDONamedGearPlanner.CustomItemsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DDONamedGearPlanner"
+        mc:Ignorable="d"
+        Title="Custom Items Management" Height="450" Width="600" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+	<DockPanel>
+		<Border DockPanel.Dock="Bottom" BorderThickness="1" BorderBrush="Black">
+			<Grid Height="28">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Button Grid.Column="2" Margin="0,3,0,3">Save to file</Button>
+			</Grid>
+		</Border>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="0.75*"/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<Border BorderThickness="1" BorderBrush="Black">
+				<TreeView Name="tvItems" SelectedItemChanged="Items_SelectedItemChanged" MouseDoubleClick="Items_MouseDoubleClick" PreviewMouseRightButtonDown="Items_PreviewMouseRightButtonDown">
+					<TreeView.Resources>
+						<ContextMenu x:Key="EmptyCM" StaysOpen="True">
+							<MenuItem Click="NewCustomItem_Click" Header="New Custom Item"/>
+						</ContextMenu>
+						<ContextMenu x:Key="SlotCM">
+							<MenuItem Click="NewCustomItem_Click" Header="New Custom Slot Item"/>
+						</ContextMenu>
+						<ContextMenu x:Key="ItemCM">
+							<MenuItem Click="RenameCustomItem_Click" Header="Rename"/>
+							<MenuItem Click="ChangeSlot_Click" Header="Change Slot"/>
+							<Separator/>
+							<MenuItem Click="DeleteCustomItem_Click" Header="Delete"/>
+						</ContextMenu>
+					</TreeView.Resources>
+				</TreeView>
+			</Border>
+			<Border Grid.Column="1" BorderThickness="1" BorderBrush="Black">
+				<local:ListViewItemProperties x:Name="lvDetails"/>
+			</Border>
+		</Grid>
+	</DockPanel>
+</Window>

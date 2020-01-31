@@ -52,7 +52,7 @@ namespace DDONamedGearPlanner
 		}
 
 
-		public void Initialize(DDODataset dataset, Dictionary<EquipmentSlotType, EquipmentSlotControl> es)
+		public void Initialize(Dictionary<EquipmentSlotType, EquipmentSlotControl> es)
 		{
 			FingerLimit = 2;
 			HandLimit = 2;
@@ -66,7 +66,7 @@ namespace DDONamedGearPlanner
 				}
 			}
 
-			foreach (var set in dataset.Sets)
+			foreach (var set in DatasetManager.Dataset.Sets)
 			{
 				if (string.IsNullOrWhiteSpace(set.Value.WikiURL)) continue;
 				int ml = 0;

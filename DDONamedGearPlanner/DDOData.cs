@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Xml;
 
 namespace DDONamedGearPlanner
 {
@@ -198,6 +198,62 @@ namespace DDONamedGearPlanner
 			}
 
 			return item;
+		}
+
+		// this is used only by the saving of custom items
+		// if this becomes the official way to save item data, it will need adjusting
+		public XmlElement ToXml(XmlDocument doc)
+		{
+			XmlElement xi = doc.CreateElement("Item");
+			XmlElement xe = doc.CreateElement("Name");
+			xe.InnerText = Name;
+			xi.AppendChild(xe);
+			// we skip WikiURL for custom items
+			xe = doc.CreateElement("Slot");
+			xe.InnerText = Slot.ToString();
+			xi.AppendChild(xe);
+			// we skip Category for custom items
+			xe = doc.CreateElement("Properties");
+			xi.AppendChild(xe);
+			foreach (var p in Properties)
+			{
+				XmlElement xp = doc.CreateElement("Property");
+				xp.InnerText = p.Property;
+				XmlAttribute xa = doc.CreateAttribute("type");
+				xa.InnerText = string.IsNullOrWhiteSpace(p.Type) ? "untyped" : p.Type;
+				xp.Attributes.Append(xa);
+				xa = doc.CreateAttribute("value");
+				xa.InnerText = p.Value.ToString();
+				xp.Attributes.Append(xa);
+				xe.AppendChild(xp);
+			}
+
+			return xi;
+		}
+
+		public static DDOItemData FromXml(XmlElement xe)
+		{
+			try
+			{
+				DDOItemData item = new DDOItemData();
+
+				item.Name = xe.GetElementsByTagName("Name")[0].InnerText;
+				item.Slot = (SlotType)Enum.Parse(typeof(SlotType), xe.GetElementsByTagName("Slot")[0].InnerText);
+				foreach (XmlElement xp in xe.GetElementsByTagName("Property"))
+				{
+					ItemProperty ip = new ItemProperty();
+					ip.Property = xp.InnerText;
+					ip.Type = xp.GetAttribute("type");
+					if (ip.Type == "untyped") ip.Type = null;
+					ip.Value = float.Parse(xp.GetAttribute("value"));
+				}
+
+				return item;
+			}
+			catch
+			{
+				return null;
+			}
 		}
 	}
 

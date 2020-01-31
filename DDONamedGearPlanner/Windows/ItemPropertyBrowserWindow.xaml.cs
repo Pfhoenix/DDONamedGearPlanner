@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace DDONamedGearPlanner
 {
@@ -22,6 +16,7 @@ namespace DDONamedGearPlanner
         public ItemPropertyBrowserWindow()
         {
             InitializeComponent();
+			Initialize();
         }
 
 		bool ProcessPropertyForSlots(string type, List<string> types, bool first, TextBlock tb)
@@ -39,9 +34,9 @@ namespace DDONamedGearPlanner
 			return first;
 		}
 
-		public void Initialize(DDODataset dataset)
+		void Initialize()
 		{
-			List<DDOItemProperty> ips = dataset.ItemProperties.Select(ip => ip.Value).OrderBy(ip => ip.Property).ToList();
+			List<DDOItemProperty> ips = DatasetManager.Dataset.ItemProperties.Select(ip => ip.Value).OrderBy(ip => ip.Property).ToList();
 
 			// populate by property treeview
 			foreach (var ip in ips)

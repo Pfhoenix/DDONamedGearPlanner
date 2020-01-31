@@ -38,6 +38,9 @@
 			<MenuItem Header="_View">
 				<MenuItem Header="Item Property Browser" Click="ViewItemPropertyBrowser"/>
 			</MenuItem>
+			<MenuItem Header="_Items">
+				<MenuItem Header="Custom Items" Click="ManageCustomItems"/>
+			</MenuItem>
 			<MenuItem Header="_Help">
 				<MenuItem Header="UI Tips" InputGestureText="F1" Click="HelpMenuItem_Click" />
 				<Separator/>
