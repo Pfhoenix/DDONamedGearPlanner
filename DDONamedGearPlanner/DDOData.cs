@@ -42,6 +42,9 @@ namespace DDONamedGearPlanner
 		Wrist = 4096
 	}
 
+	public enum ItemDataSource { None, Dataset, Custom, Cannith, SlaveLord, ThunderForge, GreenSteel }
+
+
 	static class EquipmentSlotTypeConversionExtensions
 	{
 		public static SlotType ToSlotType(this EquipmentSlotType est)
@@ -122,6 +125,7 @@ namespace DDONamedGearPlanner
 		public SlotType Slot { get; set; }
 		public int Category;
 		public List<ItemProperty> Properties = new List<ItemProperty>();
+		public readonly ItemDataSource Source;
 
 		// utility because it gets used so often
 		int _Handedness = -1;
@@ -161,13 +165,19 @@ namespace DDONamedGearPlanner
 			}
 		}
 
-		public ItemProperty AddProperty(string prop, string type, float value, List<ItemProperty> options)
+		public DDOItemData(ItemDataSource source)
+		{
+			Source = source;
+		}
+
+		public ItemProperty AddProperty(string prop, string type, float value, List<ItemProperty> options, int insertat = -1)
 		{
 			ItemProperty ip = new ItemProperty { Property = prop, Type = type, Value = value, Options = options, Owner = this };
 			if (type == "insightful") ip.Type = "insight";
 			if (options != null)
 				foreach (var i in options) i.Owner = this;
-			Properties.Add(ip);
+			if (insertat == -1) Properties.Add(ip);
+			else Properties.Insert(insertat, ip);
 			return ip;
 		}
 
@@ -178,7 +188,7 @@ namespace DDONamedGearPlanner
 
 		public DDOItemData Duplicate()
 		{
-			DDOItemData item = new DDOItemData
+			DDOItemData item = new DDOItemData(Source)
 			{
 				Name = Name,
 				WikiURL = WikiURL,
@@ -205,6 +215,9 @@ namespace DDONamedGearPlanner
 		public XmlElement ToXml(XmlDocument doc)
 		{
 			XmlElement xi = doc.CreateElement("Item");
+			XmlAttribute xa = doc.CreateAttribute("source");
+			xa.InnerText = Source.ToString();
+			xi.Attributes.Append(xa);
 			XmlElement xe = doc.CreateElement("Name");
 			xe.InnerText = Name;
 			xi.AppendChild(xe);
@@ -212,14 +225,16 @@ namespace DDONamedGearPlanner
 			xe = doc.CreateElement("Slot");
 			xe.InnerText = Slot.ToString();
 			xi.AppendChild(xe);
-			// we skip Category for custom items
+			xe = doc.CreateElement("Category");
+			xe.InnerText = Category.ToString();
+			xi.AppendChild(xe);
 			xe = doc.CreateElement("Properties");
 			xi.AppendChild(xe);
 			foreach (var p in Properties)
 			{
 				XmlElement xp = doc.CreateElement("Property");
 				xp.InnerText = p.Property;
-				XmlAttribute xa = doc.CreateAttribute("type");
+				xa = doc.CreateAttribute("type");
 				xa.InnerText = string.IsNullOrWhiteSpace(p.Type) ? "untyped" : p.Type;
 				xp.Attributes.Append(xa);
 				xa = doc.CreateAttribute("value");
@@ -235,17 +250,16 @@ namespace DDONamedGearPlanner
 		{
 			try
 			{
-				DDOItemData item = new DDOItemData();
+				DDOItemData item = new DDOItemData((ItemDataSource)Enum.Parse(typeof(ItemDataSource), xe.GetAttribute("source")));
 
 				item.Name = xe.GetElementsByTagName("Name")[0].InnerText;
 				item.Slot = (SlotType)Enum.Parse(typeof(SlotType), xe.GetElementsByTagName("Slot")[0].InnerText);
+				item.Category = int.Parse(xe.GetElementsByTagName("Category")[0].InnerText);
 				foreach (XmlElement xp in xe.GetElementsByTagName("Property"))
 				{
-					ItemProperty ip = new ItemProperty();
-					ip.Property = xp.InnerText;
-					ip.Type = xp.GetAttribute("type");
-					if (ip.Type == "untyped") ip.Type = null;
-					ip.Value = float.Parse(xp.GetAttribute("value"));
+					string type = xp.GetAttribute("type");
+					if (type == "untyped") type = null;
+					item.AddProperty(xp.InnerText, type, float.Parse(xp.GetAttribute("value")), null);
 				}
 
 				return item;

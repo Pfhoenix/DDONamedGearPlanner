@@ -17,10 +17,11 @@ namespace DDONamedGearPlanner
 			InitializeComponent();
 		}
 
-		public void Setup(string title, IEnumerable source)
+		public void Setup(string title, IEnumerable source, object initial = null)
 		{
 			Title = title;
 			CB.ItemsSource = source;
+			CB.SelectedItem = initial;
 		}
 
 		private void OK_Clicked(object sender, RoutedEventArgs e)

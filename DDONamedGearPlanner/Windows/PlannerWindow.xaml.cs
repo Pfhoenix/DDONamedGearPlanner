@@ -23,7 +23,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public const string VERSION = "0.5.2";
+		public const string VERSION = "0.5.3";
 
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
@@ -320,6 +320,8 @@ namespace DDONamedGearPlanner
 			tciGearSet.Content = tv;
 			foreach (var ip in gs.Properties)
 			{
+				if (DatasetManager.CategoryProperties.Contains(ip.Property)) continue;
+
 				TreeViewItem tvi = new TreeViewItem();
 				if (ip.IsGroup)
 				{
@@ -389,13 +391,13 @@ namespace DDONamedGearPlanner
 			return gs;
 		}
 
-		bool SlotItem(DDOItemData item, SlotType slot)
+		EquipmentSlotType SlotItem(DDOItemData item, SlotType slot)
 		{
 			return SlotItem(new BuildItem(item, EquipmentSlotType.None), slot);
 		}
 
 		// this finds a slot to put the item into
-		bool SlotItem(BuildItem item, SlotType slot)
+		EquipmentSlotType SlotItem(BuildItem item, SlotType slot)
 		{
 			EquipmentSlotControl esc = null;
 
@@ -427,7 +429,7 @@ namespace DDONamedGearPlanner
 							if (EquipmentSlots[EquipmentSlotType.Offhand].IsLocked)
 							{
 								MessageBox.Show("Can't load a weapon into a locked weapon nor offhand slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
-								return false;
+								return EquipmentSlotType.None;
 							}
 							else esc = EquipmentSlots[EquipmentSlotType.Offhand];
 						}
@@ -437,7 +439,7 @@ namespace DDONamedGearPlanner
 						if (EquipmentSlots[EquipmentSlotType.Offhand].IsLocked)
 						{
 							MessageBox.Show("Can't load a two-handed weapon with a locked offhand slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
-							return false;
+							return EquipmentSlotType.None;
 						}
 						else esc = EquipmentSlots[EquipmentSlotType.Weapon];
 					}
@@ -452,14 +454,14 @@ namespace DDONamedGearPlanner
 			if (esc == null || esc.IsLocked)
 			{
 				MessageBox.Show("Can't load an item into a locked slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
-				return false;
+				return EquipmentSlotType.None;
 			}
 			else
 			{
 				esc.SetItem(item);
 				// slotting a two-handed weapon means ensuring the offhand slot is empty
 				if (item.Item.Handedness == 2) EquipmentSlots[EquipmentSlotType.Offhand].SetItem(null);
-				return true;
+				return esc.Slot;
 			}
 		}
 
@@ -510,7 +512,7 @@ namespace DDONamedGearPlanner
 			if (lvItemList.SelectedItem == null) return;
 
 			DDOItemData item = lvItemList.SelectedItem as DDOItemData;
-			if (SlotItem(item, SlotType.None))
+			if (SlotItem(item, SlotType.None) != EquipmentSlotType.None)
 			{
 				CalculateGearSet(true);
 			}
@@ -518,7 +520,7 @@ namespace DDONamedGearPlanner
 
 		void IPBWindow_ItemDoubleClicked(DDOItemData item)
 		{
-			if (SlotItem(item, SlotType.None))
+			if (SlotItem(item, SlotType.None) != EquipmentSlotType.None)
 			{
 				CalculateGearSet(true);
 			}
@@ -1169,14 +1171,57 @@ namespace DDONamedGearPlanner
 				CIWindow = new CustomItemsWindow();
 				CIWindow.Owner = this;
 				CIWindow.ItemDoubleClicked += CIWindow_ItemDoubleClicked;
+				CIWindow.RefreshGearSet += RefreshGearSet;
+				CIWindow.CustomItemsReloaded += CustomItemsReloaded;
+				CIWindow.CustomItemChangedSlot += UnslotCustomItem;
+				CIWindow.CustomItemDeleted += UnslotCustomItem;
 			}
 
 			CIWindow.Show();
 		}
 
-		private void CIWindow_ItemDoubleClicked(CustomItem item)
+		void CIWindow_ItemDoubleClicked(DDOItemData item)
 		{
-			
+			SlotItem(item, item.Slot);
+			CalculateGearSet(true);
+		}
+
+		void RefreshGearSet()
+		{
+			CalculateGearSet(true);
+		}
+
+		void CustomItemsReloaded()
+		{
+			bool recalc = false;
+			foreach (var kv in EquipmentSlots)
+			{
+				if (kv.Value.Item == null) continue;
+				if (kv.Value.Item.Item.Source != ItemDataSource.Dataset)
+				{
+					// we match by name and source
+					// it's up to the user to not have duplicate item names if they reload while using an item
+					DDOItemData ni = CustomItemsManager.CustomItems.Find(i => i.Name == kv.Value.Item.Item.Name && i.Source == kv.Value.Item.Item.Source);
+					kv.Value.SetItem(new BuildItem(ni, EquipmentSlotType.None));
+					recalc = true;
+				}
+			}
+
+			if (recalc) CalculateGearSet(true);
+		}
+
+		void UnslotCustomItem(DDOItemData item)
+		{
+			foreach (var kv in EquipmentSlots)
+			{
+				if (kv.Value.Item == null) continue;
+				if (kv.Value.Item.Item == item)
+				{
+					kv.Value.SetItem(null);
+					CalculateGearSet(true);
+					return;
+				}
+			}
 		}
 	}
 }

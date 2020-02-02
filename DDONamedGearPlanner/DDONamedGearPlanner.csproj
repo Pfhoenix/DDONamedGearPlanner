@@ -115,6 +115,9 @@
     </ApplicationDefinition>
     <Compile Include="Controls\FixedComboBox.cs" />
     <Compile Include="Controls\FormattedSlider.cs" />
+    <Compile Include="Controls\ListViewCustomItemProperties.xaml.cs">
+      <DependentUpon>ListViewCustomItemProperties.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\RangeSlider.xaml.cs">
       <DependentUpon>RangeSlider.xaml</DependentUpon>
     </Compile>
@@ -125,6 +128,10 @@
       <DependentUpon>TextBoxWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\EquipmentSlotControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ListViewCustomItemProperties.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

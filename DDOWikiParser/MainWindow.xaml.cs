@@ -868,6 +868,7 @@ namespace DDOWikiParser
 								// we flag this for special handling later
 								if (p == "Parrying") v = numerals[vi - 1];
 								else if (p.EndsWith("Deception")) v = numerals[vi - 1];
+								else if (p == "Speed") v = numerals[vi - 1];
 							}
 						}
 
@@ -1489,9 +1490,19 @@ namespace DDOWikiParser
 				}
 				else if (p == "Speed")
 				{
-					data.AddProperty("Move Speed", v, vi, null);
-					data.AddProperty("Melee Attack Speed", v, vi / 2, null);
-					data.AddProperty("Ranged Attack Speed", v, vi / 2, null);
+					if (numerals.Contains(v))
+					{
+						v = "enhancement";
+						data.AddProperty("Move Speed", v, Math.Min(vi * 5, 30), null);
+						data.AddProperty("Melee Attack Speed", v, vi, null);
+						data.AddProperty("Ranged Attack Speed", v, vi, null);
+					}
+					else
+					{
+						data.AddProperty("Move Speed", v, vi, null);
+						data.AddProperty("Melee Attack Speed", v, vi / 2, null);
+						data.AddProperty("Ranged Attack Speed", v, vi / 2, null);
+					}
 				}
 				else if (p == "Axeblock")
 				{
@@ -2453,7 +2464,7 @@ namespace DDOWikiParser
 				if (itemName.Contains("(historic)")) continue;
 				else if (itemName == "Enchanted Chocolates by Fabiano & Zelda") continue;
 
-				DDOItemData data = new DDOItemData { Name = itemName };
+				DDOItemData data = new DDOItemData(ItemDataSource.Dataset) { Name = itemName };
 
 				// reconstruct the original URL
 				var linkNodes = doc.GetElementsByTagName("link");

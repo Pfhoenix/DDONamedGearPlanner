@@ -9,6 +9,13 @@ namespace DDONamedGearPlanner
 {
 	public class DatasetManager
 	{
+		public static readonly string[] CategoryProperties =
+		{
+			"Armor Category",
+			"Offhand Category",
+			"Weapon Category"
+		};
+
 		public static DDODataset Dataset;
 
 		public static string Load()

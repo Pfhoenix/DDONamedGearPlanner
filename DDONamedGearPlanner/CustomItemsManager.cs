@@ -7,51 +7,24 @@ using System.Xml;
 
 namespace DDONamedGearPlanner
 {
-	public enum CustomItemSource { Custom, Cannith, SlaveLord, ThunderForge, GreenSteel }
-
-	public class CustomItem
-	{
-		public DDOItemData Item;
-		public CustomItemSource Source;
-
-		public XmlElement ToXml(XmlDocument doc)
-		{
-			XmlElement xi = Item.ToXml(doc);
-			XmlAttribute xa = doc.CreateAttribute("source");
-			xa.InnerText = Source.ToString();
-			xi.Attributes.Append(xa);
-
-			return xi;
-		}
-
-		public static CustomItem FromXml(XmlElement xi)
-		{
-			CustomItem ci = new CustomItem();
-			ci.Item = DDOItemData.FromXml(xi);
-			ci.Source = (CustomItemSource)Enum.Parse(typeof(CustomItemSource), xi.GetAttribute("source"));
-
-			return ci;
-		}
-	}
-
 	public class CustomItemsManager
 	{
-		public static List<CustomItem> CustomItems { get; private set; }
-		public static List<CustomItem> GetItemsFromSource(CustomItemSource cis)
+		public static List<DDOItemData> CustomItems { get; private set; }
+		public static List<DDOItemData> GetItemsFromSource(ItemDataSource ids)
 		{
-			return CustomItems.Where(i => i.Source == cis).ToList();
+			return CustomItems.Where(i => i.Source == ids).ToList();
 		}
 
 		public static bool Load()
 		{
 			try
 			{
-				CustomItems = new List<CustomItem>();
+				CustomItems = new List<DDOItemData>();
 				XmlDocument doc = new XmlDocument();
 				doc.Load(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "customitems.xml"));
 				foreach (XmlElement xi in doc.GetElementsByTagName("Item"))
 				{
-					CustomItem item = CustomItem.FromXml(xi);
+					DDOItemData item = DDOItemData.FromXml(xi);
 					if (item != null) CustomItems.Add(item);
 				}
 

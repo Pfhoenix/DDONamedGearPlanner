@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDONamedGearPlanner"
         mc:Ignorable="d"
-        Title="Custom Items Management" Height="450" Width="600" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+        Title="Custom Items Management" Height="450" Width="700" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
 	<DockPanel>
 		<Border DockPanel.Dock="Bottom" BorderThickness="1" BorderBrush="Black">
 			<Grid Height="28">
@@ -16,7 +16,9 @@
 					<ColumnDefinition/>
 					<ColumnDefinition/>
 				</Grid.ColumnDefinitions>
-				<Button Grid.Column="2" Margin="0,3,0,3">Save to file</Button>
+				<Button Grid.Column="1" Margin="3,3,3,3" Click="RefreshGearSet_Click">Refresh gear set</Button>
+				<Button Grid.Column="2" Margin="3,3,3,3" Click="SaveCustomItems_Click">Save to file</Button>
+				<Button Grid.Column="3" Margin="3,3,3,3" Click="LoadCustomItems_Click">Load from file</Button>
 			</Grid>
 		</Border>
 		<Grid>
@@ -43,7 +45,7 @@
 				</TreeView>
 			</Border>
 			<Border Grid.Column="1" BorderThickness="1" BorderBrush="Black">
-				<local:ListViewItemProperties x:Name="lvDetails"/>
+				<local:ListViewCustomItemProperties x:Name="lvDetails"/>
 			</Border>
 		</Grid>
 	</DockPanel>

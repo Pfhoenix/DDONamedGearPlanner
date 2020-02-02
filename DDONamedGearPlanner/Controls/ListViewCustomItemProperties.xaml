@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="DDONamedGearPlanner.ListViewCustomItemProperties"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DDONamedGearPlanner"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="350">
+	<ListView Name="lvDetails" SizeChanged="Details_SizeChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" PreviewMouseRightButtonDown="ListView_PreviewMouseRightButtonDown">
+		<ListView.Resources>
+			<ContextMenu x:Key="ItemContextMenu">
+				<MenuItem Header="Delete" Click="ItemDelete_Click"/>
+			</ContextMenu>
+		</ListView.Resources>
+		<ListView.ItemContainerStyle>
+			<Style TargetType="ListViewItem">
+				<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+				<Setter Property="ContextMenu" Value="{StaticResource ItemContextMenu}" />
+			</Style>
+		</ListView.ItemContainerStyle>
+		<ListView.View>
+			<GridView>
+				<GridViewColumn Header="Property" Width="160">
+					<GridViewColumn.CellTemplate>
+						<DataTemplate>
+							<ComboBox IsEditable="{Binding EditProperty}" IsEnabled="{Binding EditProperty}" ItemsSource="{Binding AvailableProperties}" Text="{Binding Property, Mode=TwoWay}" Loaded="ComboBox_Loaded"/>
+						</DataTemplate>
+					</GridViewColumn.CellTemplate>
+				</GridViewColumn>
+				<GridViewColumn Header="Type" Width="110">
+					<GridViewColumn.CellTemplate>
+						<DataTemplate>
+							<ComboBox IsEditable="{Binding AnyType}" IsEnabled="{Binding EditType}" ItemsSource="{Binding AvailableTypes}" SelectedItem="{Binding Type, Mode=TwoWay}" Loaded="ComboBox_Loaded"/>
+						</DataTemplate>
+					</GridViewColumn.CellTemplate>
+				</GridViewColumn>
+				<GridViewColumn Header="Value" Width="70">
+					<GridViewColumn.CellTemplate>
+						<DataTemplate>
+							<TextBox IsEnabled="{Binding IsEditable}" Text="{Binding Value, Mode=TwoWay}" ContextMenu="{StaticResource ItemContextMenu}"/>
+						</DataTemplate>
+					</GridViewColumn.CellTemplate>
+				</GridViewColumn>
+			</GridView>
+		</ListView.View>
+		<ListView.ContextMenu>
+			<ContextMenu>
+				<MenuItem Header="Add property" Click="AddProperty_Click"/>
+			</ContextMenu>
+		</ListView.ContextMenu>
+	</ListView>
+</UserControl>
