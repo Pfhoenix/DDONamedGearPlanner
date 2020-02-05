@@ -42,6 +42,21 @@ namespace DDOWikiParser
 			"Repeating Heavy Crossbow",
 			"Repeating Light Crossbow"
 		};
+		string[] MinorArtifacts =
+		{
+			"Band of Diani ir'Wynarn",
+			"Brand of Kalok Shash",
+			"Doctor LeRoux's Curious Implant",
+			"Doctor Vulcana's Broken Wristwatch",
+			"Gauntlet of the Iron Council",
+			"Ir'Kesslan's Most Prescient Lens",
+			"Key of Rhukaan Draal",
+			"Radiant Ring of Taer Valaestas",
+			"Sigil of Regalport",
+			"Sigil of the Triumvirate",
+			"Stolen Signet of ir'Wynarn",
+			"The Zarash'ak Ward"
+		};
 		char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 		string[] numerals = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX" };
 		char[] spacers = { ' ', ',', '.', '(', ')', '-', '+', '=', '*', '%', '#' };
@@ -2464,7 +2479,7 @@ namespace DDOWikiParser
 				if (itemName.Contains("(historic)")) continue;
 				else if (itemName == "Enchanted Chocolates by Fabiano & Zelda") continue;
 
-				DDOItemData data = new DDOItemData(ItemDataSource.Dataset) { Name = itemName };
+				DDOItemData data = new DDOItemData(ItemDataSource.Dataset, MinorArtifacts.Contains(itemName)) { Name = itemName };
 
 				// reconstruct the original URL
 				var linkNodes = doc.GetElementsByTagName("link");

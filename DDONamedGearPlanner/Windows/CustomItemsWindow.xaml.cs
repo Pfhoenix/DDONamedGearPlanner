@@ -187,7 +187,7 @@ namespace DDONamedGearPlanner
 
 			if (slot == SlotType.None) return;
 
-			DDOItemData item = new DDOItemData(ItemDataSource.Custom) { Name = "<Custom Item>", Slot = slot };
+			DDOItemData item = new DDOItemData(ItemDataSource.Custom, false) { Name = "<Custom Item>", Slot = slot };
 			item.AddProperty("Minimum Level", null, 1, null);
 			AddSlotSpecificProperties(item);
 

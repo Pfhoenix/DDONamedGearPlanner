@@ -52,6 +52,12 @@ namespace DDONamedGearPlanner
 			if (est == EquipmentSlotType.Finger1 || est == EquipmentSlotType.Finger2) return SlotType.Finger;
 			else return (SlotType)Enum.Parse(typeof(SlotType), est.ToString());
 		}
+
+		public static EquipmentSlotType ToEquipmentSlotType(this SlotType st)
+		{
+			if (st == SlotType.Finger) return EquipmentSlotType.None;
+			else return (EquipmentSlotType)Enum.Parse(typeof(EquipmentSlotType), st.ToString());
+		}
 	}
 
 	[Flags]
@@ -125,6 +131,7 @@ namespace DDONamedGearPlanner
 		public SlotType Slot { get; set; }
 		public int Category;
 		public List<ItemProperty> Properties = new List<ItemProperty>();
+		public readonly bool MinorArtifact;
 		public readonly ItemDataSource Source;
 
 		// utility because it gets used so often
@@ -165,9 +172,10 @@ namespace DDONamedGearPlanner
 			}
 		}
 
-		public DDOItemData(ItemDataSource source)
+		public DDOItemData(ItemDataSource source, bool ma)
 		{
 			Source = source;
+			MinorArtifact = ma;
 		}
 
 		public ItemProperty AddProperty(string prop, string type, float value, List<ItemProperty> options, int insertat = -1)
@@ -188,7 +196,7 @@ namespace DDONamedGearPlanner
 
 		public DDOItemData Duplicate()
 		{
-			DDOItemData item = new DDOItemData(Source)
+			DDOItemData item = new DDOItemData(Source, MinorArtifact)
 			{
 				Name = Name,
 				WikiURL = WikiURL,
@@ -221,7 +229,7 @@ namespace DDONamedGearPlanner
 			XmlElement xe = doc.CreateElement("Name");
 			xe.InnerText = Name;
 			xi.AppendChild(xe);
-			// we skip WikiURL for custom items
+			// we skip WikiURL and MinorArtifact for custom items
 			xe = doc.CreateElement("Slot");
 			xe.InnerText = Slot.ToString();
 			xi.AppendChild(xe);
@@ -250,7 +258,7 @@ namespace DDONamedGearPlanner
 		{
 			try
 			{
-				DDOItemData item = new DDOItemData((ItemDataSource)Enum.Parse(typeof(ItemDataSource), xe.GetAttribute("source")));
+				DDOItemData item = new DDOItemData((ItemDataSource)Enum.Parse(typeof(ItemDataSource), xe.GetAttribute("source")), false);
 
 				item.Name = xe.GetElementsByTagName("Name")[0].InnerText;
 				item.Slot = (SlotType)Enum.Parse(typeof(SlotType), xe.GetElementsByTagName("Slot")[0].InnerText);

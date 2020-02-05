@@ -80,7 +80,7 @@ namespace DDONamedGearPlanner
 			}
 			else
 			{
-				ItemCache = null;
+				//ItemCache = null;
 				BuildBuffer?.Clear();
 				BuildBuffer = null;
 				DialogResult = !CancelBuild;
@@ -349,7 +349,7 @@ namespace DDONamedGearPlanner
 			return stock;
 		}
 
-		void BuildGearSet(BackgroundWorker bw, List<BuildItem> items)
+/*		void BuildGearSet(BackgroundWorker bw, List<BuildItem> items)
 		{
 			GearSet gs = new GearSet();
 			foreach (var item in items)
@@ -359,7 +359,7 @@ namespace DDONamedGearPlanner
 			if (Build.BuildResults.Count % 250 == 0) bw.ReportProgress(Build.BuildResults.Count);
 		}
 
-		List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>> ItemCache;
+		List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>> ItemCache;*/
 
 		/*public List<List<BuildItem>> BuildGearSets(BackgroundWorker bw, int ici)
 		{
@@ -477,7 +477,7 @@ namespace DDONamedGearPlanner
 			return result;
 		}*/
 
-		ulong DuplicateBuildBufferContents(ulong start, ulong end)
+		/*ulong DuplicateBuildBufferContents(ulong start, ulong end)
 		{
 			ulong newstart = BuildBuffer.Count;
 			for (ulong i = start; i <= end; i++)
@@ -581,6 +581,267 @@ namespace DDONamedGearPlanner
 			}
 
 			BuildGearSets(sender as BackgroundWorker, 0);
+		}*/
+
+		List<List<BuildItem>> BuildItemLists(List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>> itemlists)
+		{
+			List<List<BuildItem>> results = new List<List<BuildItem>>();
+			List<List<BuildItem>> tailCombos = null;
+			if (itemlists.Count > 1)
+			{
+				tailCombos = BuildItemLists(itemlists.Skip(1).ToList());
+				if (CancelBuild) return null;
+				results.AddRange(tailCombos);
+			}
+
+			List<ItemProperty> properties = itemlists[0].Value;
+			for (int i = 0; i < properties.Count; i++)
+			{
+				if (CancelBuild) return null;
+				int e = i;
+				List<List<ItemProperty>> proplists = new List<List<ItemProperty>>();
+
+				// scan ahead for properties from the same owner
+				for (e = i + 1; e < properties.Count; e++)
+				{
+					if (properties[e].Owner != properties[i].Owner)
+					{
+						e--;
+						break;
+					}
+				}
+
+				// generate combinations of the same-item properties
+				proplists.Add(new List<ItemProperty>());
+				List<ItemProperty> optionals = new List<ItemProperty>();
+				// setup the first proplist to be stock properties that can't change
+				for (int j = i; j <= e; j++)
+				{
+					if (!properties[j].Owner.Properties.Contains(properties[j])) proplists.Last().Add(properties[j]);
+					else optionals.Add(properties[j]);
+				}
+				if (optionals.Count > 0)
+				{
+					// now we need to create all the possible combinations of the optionals with the stock in proplist[0]
+					int comboCount = (int)Math.Pow(2, optionals.Count) - 1;
+					for (int h = 1; h < comboCount + 1; h++)
+					{
+						proplists.Add(new List<ItemProperty>());
+						for (int j = 0; j < optionals.Count; j++)
+						{
+							if ((h >> j) % 2 != 0)
+								proplists.Last().Add(optionals[j]);
+						}
+					}
+				}
+
+				// the stock item needs to be included
+				if (proplists[0].Count != 0)
+				{
+					// add just the item as a possible combination
+					BuildItem bi = new BuildItem(properties[i].Owner, itemlists[0].Key);
+					results.Add(new List<BuildItem> { bi });
+					foreach (var tc in tailCombos)
+					{
+						if (CancelBuild) return null;
+
+						results.Add(new List<BuildItem>(tc));
+						results.Last().Add(bi);
+					}
+				}
+				for (int pl = 1; pl < proplists.Count; pl++)
+				{
+					BuildItem bi = new BuildItem(properties[i].Owner, itemlists[0].Key);
+					bi.OptionProperties = proplists[pl];
+					results.Add(new List<BuildItem> { bi });
+					foreach (var tc in tailCombos)
+					{
+						if (CancelBuild) return null;
+
+						results.Add(new List<BuildItem>(tc));
+						results.Last().Add(bi);
+					}
+				}
+
+				// this allows us to not process properties from the same owner more than once (this pass)
+				i = e;
+			}
+
+			return results;
+		}
+
+		// returns a list of the equipment slots filled
+		void Phase2_ProcessBuildFilters(List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>> items, List<BuildFilter> filters)
+		{
+			foreach (var bf in filters)
+			{
+				// exclude filters are handled long before here
+				if (!bf.Include) continue;
+
+				// make a duplicate list of lists of just the item properties that match this filter
+				List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>> filteredproperties = new List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>>();
+				foreach (var il in items)
+				{
+					List<ItemProperty> tfi = new List<ItemProperty>();
+					KeyValuePair<EquipmentSlotType, List<ItemProperty>> kvp = new KeyValuePair<EquipmentSlotType, List<ItemProperty>>(il.Key, tfi);
+					// each item's relevant properties get stored in tfi for evaluation
+					// it's possible for an item to contribute more than one property
+					foreach (var item in il.Value)
+					{
+						foreach (var p in item.Properties)
+						{
+							if (bf.Property == p.Property)
+							{
+								if (bf.Type == null || bf.Type == p.Type || (bf.Type == "untyped" && string.IsNullOrWhiteSpace(p.Type)))
+								{
+									tfi.Add(p);
+								}
+							}
+							else if (p.Options != null)
+							{
+								foreach (var op in p.Options)
+								{
+									if (bf.Property == op.Property)
+									{
+										if (bf.Type == null || bf.Type == op.Type || (bf.Type == "untyped" && string.IsNullOrWhiteSpace(op.Type)))
+										{
+											tfi.Add(p);
+										}
+									}
+								}
+							}
+						}
+					}
+					filteredproperties.Add(kvp);
+				}
+
+				// ensure we have at least one gear set to add to
+				if (Build.BuildResults.Count == 0)
+				{
+					GearSet gs = new GearSet();
+					gs.Items.AddRange(Build.LockedSlotItems);
+					Build.BuildResults.Add(new GearSetEvaluation(gs, new List<EquipmentSlotType>(Build.LockedSlots)));
+				}
+
+				// now we process per gear set already started
+				// next we cull out properties belonging to items that can't be slotted into the existing gear sets
+				foreach (var gse in Build.BuildResults)
+				{
+					List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>> gearsetoptions = new List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>>();
+					foreach (var tfi in filteredproperties)
+					{
+						// ignore items that fit into an already occupied slot in the gear set
+						if (gse.GearSet.Items.Find(f => f.Slot == tfi.Key) != null) continue;
+						List<ItemProperty> props = null;
+						foreach (var ip in tfi.Value)
+						{
+							// check that this property's item isn't already slotted in the gear set (avoid duplicate rings used)
+							if (gse.GearSet.Items.Find(f => f.Item == ip.Owner) != null) continue;
+							// check that 2-handed weapons won't be possibly slotted when the gear set has an offhand already set
+							if (tfi.Key == EquipmentSlotType.Weapon)
+							{
+								if (gse.GearSet.Items.Find(f => f.Slot == EquipmentSlotType.Offhand) != null && ip.Owner.Handedness > 1) continue;
+							}
+							// check that offhand items won't be possibly slotted when the gear set has a two-handed weapon already set
+							else if (tfi.Key == EquipmentSlotType.Offhand)
+							{
+								if (gse.GearSet.Items.Find(f => f.Slot == EquipmentSlotType.Weapon && f.Item.Handedness > 1) != null) continue;
+							}
+							//check that there isn't a minor artifact already in the gear set
+							if (ip.Owner.MinorArtifact && gse.GearSet.Items.Find(f => f.Item.MinorArtifact == true) != null) continue;
+							// check that this property isn't already overridden by slotted gear
+							if (!string.IsNullOrWhiteSpace(ip.Type))
+							{
+								bool overridden = false;
+								foreach (var gsi in gse.GearSet.Items)
+								{
+									// check selected optional properties of the gear set item
+									if (gsi.OptionProperties.Find(f => f.Property == ip.Property && f.Type == ip.Type && f.Value >= ip.Value) != null)
+									{
+										overridden = true;
+										break;
+									}
+									// check item properties of the gear set item
+									if (gsi.Item.Properties.Find(f => f.Property == ip.Property && f.Type == ip.Type && f.Value >= ip.Value) != null)
+									{
+										overridden = true;
+										break;
+									}
+								}
+								if (overridden) continue;
+							}
+
+							// this is a property that is valid to otherwise be used in the gear set
+							if (props == null)
+							{
+								props = new List<ItemProperty>();
+								KeyValuePair<EquipmentSlotType, List<ItemProperty>> kvp = new KeyValuePair<EquipmentSlotType, List<ItemProperty>>(tfi.Key, props);
+								gearsetoptions.Add(kvp);
+							}
+							props.Add(ip);
+						}
+					}
+
+					// we now have lists by slot of item properties that satisfy this filter
+					// now we figure out maximum values by type for each slot
+					foreach (var tfi in gearsetoptions)
+					{
+						// first sort the item properties
+						tfi.Value.Sort((a, b) => string.Compare(a.Type, b.Type) != 0 ? string.Compare(a.Type, b.Type) : (a.Value > b.Value ? -1 : (a.Value < b.Value ? 1 : 0)));
+						// now we remove all but the max values for each type, with the exception of untyped (null), as they stack with everything including each other
+						string curtype = null;
+						for (int i = 0; i < tfi.Value.Count; i++)
+						{
+							if (string.IsNullOrWhiteSpace(tfi.Value[i].Type)) continue;
+							else if (curtype == tfi.Value[i].Type) tfi.Value.RemoveAt(i--);
+							else curtype = tfi.Value[i].Type;
+						}
+						// now we resort by item name, so properties from the same item end up together
+						tfi.Value.Sort((a, b) => string.Compare(a.Owner.Name, b.Owner.Name));
+					}
+
+					// now we can do full combination checks on the remaining properties
+
+					// after combination checks, we can slot and remove
+				}
+			}
+		}
+
+		void Phase2_DoWork(object sender, DoWorkEventArgs e)
+		{
+			List<BuildFilter> gearsetfilters = null;
+			foreach (var kvp in Build.Filters)
+			{
+				if (kvp.Key == SlotType.None) gearsetfilters = kvp.Value;
+				else
+				{
+					if (kvp.Key == SlotType.Finger)
+					{
+						if (Build.DiscoveredItems.ContainsKey(EquipmentSlotType.Finger1))
+						{
+							Phase2_ProcessBuildFilters(new List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>>() { Build.DiscoveredItems.First(f => f.Key == EquipmentSlotType.Finger1) }, kvp.Value);
+						}
+						if (Build.DiscoveredItems.ContainsKey(EquipmentSlotType.Finger2))
+						{
+							Phase2_ProcessBuildFilters(new List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>>() { Build.DiscoveredItems.First(f => f.Key == EquipmentSlotType.Finger2) }, kvp.Value);
+						}
+					}
+					else
+					{
+						EquipmentSlotType est = kvp.Key.ToEquipmentSlotType();
+						if (Build.DiscoveredItems.ContainsKey(est))
+						{
+							Phase2_ProcessBuildFilters(new List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>>() { Build.DiscoveredItems.First(f => f.Key == est) }, kvp.Value);
+						}
+					}
+				}
+			}
+
+			if (gearsetfilters != null)
+			{
+				List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>> itemlists = Build.DiscoveredItems.ToList();
+				Phase2_ProcessBuildFilters(itemlists, gearsetfilters);
+			}
 		}
 
 		void Phase2_ProgressChanged(object sender, ProgressChangedEventArgs e)

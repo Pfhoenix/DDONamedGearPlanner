@@ -107,6 +107,17 @@ namespace DDONamedGearPlanner
 			}
 		}
 
+		bool IsMinorArtifactSlotted()
+		{
+			foreach (var es in EquipmentSlots)
+			{
+				if (es.Value.Item == null) continue;
+				if (es.Value.Item.Item.MinorArtifact) return true;
+			}
+
+			return false;
+		}
+
 		public void SetFilter(Predicate<object> filter)
 		{
 			if (lvItemList.Items.CurrentItem != null && !filter(lvItemList.Items.CurrentItem))
@@ -456,6 +467,11 @@ namespace DDONamedGearPlanner
 				MessageBox.Show("Can't load an item into a locked slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
 				return EquipmentSlotType.None;
 			}
+			else if (item.Item.MinorArtifact && IsMinorArtifactSlotted())
+			{
+				MessageBox.Show("Can't equip more than one minor artifact.", "Minor Artifact Limit", MessageBoxButton.OK, MessageBoxImage.Stop);
+				return EquipmentSlotType.None;
+			}
 			else
 			{
 				esc.SetItem(item);
@@ -500,6 +516,12 @@ namespace DDONamedGearPlanner
 						else EquipmentSlots[EquipmentSlotType.Weapon].SetItem(null);
 					}
 				}
+			}
+
+			if (item.Item.MinorArtifact && IsMinorArtifactSlotted())
+			{
+				MessageBox.Show("Can't equip more than one minor artifact.", "Minor Artifact Limit", MessageBoxButton.OK, MessageBoxImage.Stop);
+				return false;
 			}
 
 			EquipmentSlots[item.Slot].SetItem(item);
