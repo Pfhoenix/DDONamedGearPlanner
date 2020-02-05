@@ -253,7 +253,7 @@ namespace DDONamedGearPlanner
 			bool weaponcounted = false;
 			int numitems = 0;
 			int numslots = 0;
-			ulong combos = 1;
+			//ulong combos = 1;
 			foreach (var kv in Build.DiscoveredItems)
 			{
 				// process the slot's items
@@ -283,15 +283,15 @@ namespace DDONamedGearPlanner
 					numslots++;
 				}
 
-				combos *= (ulong)(kv.Value.Count + 1);
+				//combos *= (ulong)(kv.Value.Count + 1);
 			}
 
-			combos -= 1;
-			tbPhase1Results.Text = string.Format("{0} items across {1} slot{2}, {3} minimum combinations", numitems, numslots, numslots > 1 ? "s" : "", combos);
+			//combos -= 1;
+			tbPhase1Results.Text = string.Format("{0} items across {1} slot{2}", numitems, numslots, numslots > 1 ? "s" : "");
 
 			bdrPhase1Results.Visibility = Visibility.Visible;
 
-			try
+			/*try
 			{
 				BuildBuffer = new LargeContainer<List<BuildItem>>(combos);
 			}
@@ -299,11 +299,11 @@ namespace DDONamedGearPlanner
 			{
 				Error = "Insufficient memory to store the expected item combinations";
 				CancelAndClose();
-			}
+			}*/
 
 			// start phase 2
 			pbPhase2.Minimum = 0;
-			pbPhase2.Maximum = combos;
+			pbPhase2.Maximum = 1;// was combos
 			pbPhase2.Value = 0;
 			tbPhase2.Text = null;
 			bdrPhase2.Visibility = Visibility.Visible;
@@ -318,7 +318,7 @@ namespace DDONamedGearPlanner
 		#endregion
 
 		#region Phase 2
-		bool GetFilteredProperties(ItemProperty p, List<BuildFilter> filters, List<ItemProperty> options)
+		/*bool GetFilteredProperties(ItemProperty p, List<BuildFilter> filters, List<ItemProperty> options)
 		{
 			bool stock = false;
 
@@ -347,9 +347,9 @@ namespace DDONamedGearPlanner
 			}
 
 			return stock;
-		}
+		}*/
 
-/*		void BuildGearSet(BackgroundWorker bw, List<BuildItem> items)
+		/*void BuildGearSet(BackgroundWorker bw, List<BuildItem> items)
 		{
 			GearSet gs = new GearSet();
 			foreach (var item in items)
@@ -610,6 +610,7 @@ namespace DDONamedGearPlanner
 						break;
 					}
 				}
+				if (e == properties.Count) e = properties.Count - 1;
 
 				// generate combinations of the same-item properties
 				proplists.Add(new List<ItemProperty>());
@@ -617,7 +618,7 @@ namespace DDONamedGearPlanner
 				// setup the first proplist to be stock properties that can't change
 				for (int j = i; j <= e; j++)
 				{
-					if (!properties[j].Owner.Properties.Contains(properties[j])) proplists.Last().Add(properties[j]);
+					if (properties[j].Owner.Properties.Contains(properties[j])) proplists.Last().Add(properties[j]);
 					else optionals.Add(properties[j]);
 				}
 				if (optionals.Count > 0)
@@ -641,12 +642,15 @@ namespace DDONamedGearPlanner
 					// add just the item as a possible combination
 					BuildItem bi = new BuildItem(properties[i].Owner, itemlists[0].Key);
 					results.Add(new List<BuildItem> { bi });
-					foreach (var tc in tailCombos)
+					if (tailCombos != null)
 					{
-						if (CancelBuild) return null;
+						foreach (var tc in tailCombos)
+						{
+							if (CancelBuild) return null;
 
-						results.Add(new List<BuildItem>(tc));
-						results.Last().Add(bi);
+							results.Add(new List<BuildItem>(tc));
+							results.Last().Add(bi);
+						}
 					}
 				}
 				for (int pl = 1; pl < proplists.Count; pl++)
@@ -654,12 +658,15 @@ namespace DDONamedGearPlanner
 					BuildItem bi = new BuildItem(properties[i].Owner, itemlists[0].Key);
 					bi.OptionProperties = proplists[pl];
 					results.Add(new List<BuildItem> { bi });
-					foreach (var tc in tailCombos)
+					if (tailCombos != null)
 					{
-						if (CancelBuild) return null;
+						foreach (var tc in tailCombos)
+						{
+							if (CancelBuild) return null;
 
-						results.Add(new List<BuildItem>(tc));
-						results.Last().Add(bi);
+							results.Add(new List<BuildItem>(tc));
+							results.Last().Add(bi);
+						}
 					}
 				}
 
@@ -675,6 +682,9 @@ namespace DDONamedGearPlanner
 		{
 			foreach (var bf in filters)
 			{
+				// yes this will slow things down, but it's necessary for memory usage
+				GC.Collect();
+
 				// exclude filters are handled long before here
 				if (!bf.Include) continue;
 
@@ -705,7 +715,7 @@ namespace DDONamedGearPlanner
 									{
 										if (bf.Type == null || bf.Type == op.Type || (bf.Type == "untyped" && string.IsNullOrWhiteSpace(op.Type)))
 										{
-											tfi.Add(p);
+											tfi.Add(op);
 										}
 									}
 								}
@@ -723,6 +733,7 @@ namespace DDONamedGearPlanner
 					Build.BuildResults.Add(new GearSetEvaluation(gs, new List<EquipmentSlotType>(Build.LockedSlots)));
 				}
 
+				List<GearSet> gearsets = new List<GearSet>();
 				// now we process per gear set already started
 				// next we cull out properties belonging to items that can't be slotted into the existing gear sets
 				foreach (var gse in Build.BuildResults)
@@ -790,20 +801,52 @@ namespace DDONamedGearPlanner
 						tfi.Value.Sort((a, b) => string.Compare(a.Type, b.Type) != 0 ? string.Compare(a.Type, b.Type) : (a.Value > b.Value ? -1 : (a.Value < b.Value ? 1 : 0)));
 						// now we remove all but the max values for each type, with the exception of untyped (null), as they stack with everything including each other
 						string curtype = null;
+						float value = 0;
 						for (int i = 0; i < tfi.Value.Count; i++)
 						{
 							if (string.IsNullOrWhiteSpace(tfi.Value[i].Type)) continue;
-							else if (curtype == tfi.Value[i].Type) tfi.Value.RemoveAt(i--);
-							else curtype = tfi.Value[i].Type;
+							else if (curtype == tfi.Value[i].Type && value > tfi.Value[i].Value) tfi.Value.RemoveAt(i--);
+							else
+							{
+								curtype = tfi.Value[i].Type;
+								value = tfi.Value[i].Value;
+							}
 						}
 						// now we resort by item name, so properties from the same item end up together
 						tfi.Value.Sort((a, b) => string.Compare(a.Owner.Name, b.Owner.Name));
 					}
 
-					// now we can do full combination checks on the remaining properties
-
-					// after combination checks, we can slot and remove
+					// now we can generate all combinations on the remaining properties
+					List<List<BuildItem>> itemcombos = BuildItemLists(gearsetoptions);
+					foreach (var bil in itemcombos)
+					{
+						if (CancelBuild) return;
+						GearSet gs = new GearSet();
+						foreach (var gsi in gse.GearSet.Items) gs.AddItem(gsi);
+						foreach (var bi in bil) gs.AddItem(bi);
+						gs.ProcessItems();
+						gearsets.Add(gs);
+					}
 				}
+
+				// now we have gearsets, find the one with the highest totalvalue in its properties that matches the filtered property
+				decimal maxvalue = -1;
+				List<GearSet> finalgs = new List<GearSet>();
+				foreach (var gs in gearsets)
+				{
+					if (CancelBuild) return;
+					decimal tv = (decimal)(gs.Properties.Find(p => p.Property == bf.Property)?.TotalValue ?? 0);
+					if (tv > maxvalue)
+					{
+						maxvalue = tv;
+						finalgs.Clear();
+						finalgs.Add(gs);
+					}
+					else if (tv == maxvalue) finalgs.Add(gs);
+				}
+				Build.BuildResults.Clear();
+				foreach (var gs in finalgs)
+					Build.BuildResults.Add(new GearSetEvaluation(gs, Build.LockedSlots));
 			}
 		}
 
@@ -812,6 +855,8 @@ namespace DDONamedGearPlanner
 			List<BuildFilter> gearsetfilters = null;
 			foreach (var kvp in Build.Filters)
 			{
+				if (CancelBuild) return;
+				if (kvp.Value.Count == 0) continue;
 				if (kvp.Key == SlotType.None) gearsetfilters = kvp.Value;
 				else
 				{
@@ -820,10 +865,12 @@ namespace DDONamedGearPlanner
 						if (Build.DiscoveredItems.ContainsKey(EquipmentSlotType.Finger1))
 						{
 							Phase2_ProcessBuildFilters(new List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>>() { Build.DiscoveredItems.First(f => f.Key == EquipmentSlotType.Finger1) }, kvp.Value);
+							if (CancelBuild) return;
 						}
 						if (Build.DiscoveredItems.ContainsKey(EquipmentSlotType.Finger2))
 						{
 							Phase2_ProcessBuildFilters(new List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>>() { Build.DiscoveredItems.First(f => f.Key == EquipmentSlotType.Finger2) }, kvp.Value);
+							if (CancelBuild) return;
 						}
 					}
 					else
@@ -832,6 +879,7 @@ namespace DDONamedGearPlanner
 						if (Build.DiscoveredItems.ContainsKey(est))
 						{
 							Phase2_ProcessBuildFilters(new List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>>() { Build.DiscoveredItems.First(f => f.Key == est) }, kvp.Value);
+							if (CancelBuild) return;
 						}
 					}
 				}
@@ -841,6 +889,7 @@ namespace DDONamedGearPlanner
 			{
 				List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>> itemlists = Build.DiscoveredItems.ToList();
 				Phase2_ProcessBuildFilters(itemlists, gearsetfilters);
+				if (CancelBuild) return;
 			}
 		}
 
