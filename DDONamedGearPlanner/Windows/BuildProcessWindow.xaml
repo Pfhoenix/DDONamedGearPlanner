@@ -19,32 +19,21 @@
 			</Grid>
 		</Border>
 		<Border Name="bdrPhase1Results" BorderThickness="1" BorderBrush="Black">
-			<TextBlock Name="tbPhase1Results" Margin="2,2,2,2">1234 items across 10 slots, 1234567 combinations</TextBlock>
+			<TextBlock Name="tbPhase1Results" Margin="2,2,2,2">1234 items across 10 slots</TextBlock>
 		</Border>
 		<Border Name="bdrPhase2" BorderThickness="1" BorderBrush="Black">
 			<Grid Margin="2,2,2,2">
 				<Grid.RowDefinitions>
 					<RowDefinition/>
 					<RowDefinition/>
-				</Grid.RowDefinitions>
-				<TextBlock Grid.Row="0">Phase 2: Generating gear sets</TextBlock>
-				<ProgressBar Grid.Row="1" Name="pbPhase2" Margin="0,2,0,0" SnapsToDevicePixels="True"/>
-				<TextBlock Grid.Row="1" Name="tbPhase2" Margin="0,2,0,0" TextAlignment="Center">1234567890 generated</TextBlock>
-			</Grid>
-		</Border>
-		<Border Name="bdrPhase3" BorderThickness="1" BorderBrush="Black">
-			<Grid Margin="2,2,2,2">
-				<Grid.RowDefinitions>
-					<RowDefinition/>
 					<RowDefinition/>
 				</Grid.RowDefinitions>
-				<TextBlock Grid.Row="0">Phase 3: Rating gear sets</TextBlock>
-				<ProgressBar Grid.Row="1" Name="pbPhase3" Margin="0,2,0,0" SnapsToDevicePixels="True"/>
-				<TextBlock Grid.Row="1" Name="tbPhase3" Margin="0,2,0,0" TextAlignment="Center">12345 of 1234567890</TextBlock>
+				<TextBlock Grid.Row="0">Phase 2: Processing filters</TextBlock>
+				<ProgressBar Grid.Row="1" Name="pbFilters" Margin="0,2,0,0" SnapsToDevicePixels="True"/>
+				<TextBlock Grid.Row="1" Name="tbFilters" Margin="0,2,0,0" TextAlignment="Center">1 of 19</TextBlock>
+				<ProgressBar Grid.Row="2" Name="pbPhase2" Margin="0,2,0,0" SnapsToDevicePixels="True"/>
+				<TextBlock Grid.Row="2" Name="tbPhase2" Margin="0,2,0,0" TextAlignment="Center">1 of 9o8324987</TextBlock>
 			</Grid>
-		</Border>
-		<Border Name="bdrPhase4" BorderThickness="1" BorderBrush="Black">
-			<TextBlock Name="tbPhase4" Margin="2,2,2,2">Sorting results by gear set ratings</TextBlock>
 		</Border>
 		<Border Name="bdrFinalResults" BorderThickness="1" BorderBrush="Black">
 			<TextBlock Name="tbFinalResults" Margin="2,2,2,2">Build completed in 88:88:88</TextBlock>

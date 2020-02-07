@@ -63,6 +63,13 @@ namespace DDONamedGearPlanner
 			Slot = slot;
 		}
 
+		public BuildItem Clone()
+		{
+			BuildItem bi = new BuildItem(Item, Slot) { InUse = InUse };
+			bi.OptionProperties.AddRange(OptionProperties);
+			return bi;
+		}
+
 		public XmlElement ToXml(XmlDocument doc)
 		{
 			XmlElement xb = doc.CreateElement("BuildItem");
@@ -132,6 +139,7 @@ namespace DDONamedGearPlanner
 		public bool IsGroup;
 		public string Property;
 		public float TotalValue;
+		public float OverriddenValue;
 		public List<ItemProperty> ItemProperties = new List<ItemProperty>();
 
 		// this adds an item property, sorting by highest value and type alphabetically
@@ -227,6 +235,7 @@ namespace DDONamedGearPlanner
 						gsp.TotalValue += ip.Value;
 						lasttype = ip.Type;
 					}
+					else gsp.OverriddenValue += ip.Value;
 				}
 			}
 		}

@@ -23,16 +23,12 @@ namespace DDONamedGearPlanner
 		bool FilterTest;
 		bool DoneProcessing;
 
-		LargeContainer<List<BuildItem>> BuildBuffer;
-
 		public BuildProcessWindow()
 		{
 			InitializeComponent();
 
 			bdrPhase1Results.Visibility = Visibility.Hidden;
 			bdrPhase2.Visibility = Visibility.Hidden;
-			bdrPhase3.Visibility = Visibility.Hidden;
-			bdrPhase4.Visibility = Visibility.Hidden;
 			bdrFinalResults.Visibility = Visibility.Hidden;
 		}
 
@@ -80,9 +76,7 @@ namespace DDONamedGearPlanner
 			}
 			else
 			{
-				//ItemCache = null;
-				BuildBuffer?.Clear();
-				BuildBuffer = null;
+				ItemPropertyCache = null;
 				DialogResult = !CancelBuild;
 				base.OnClosing(e);
 			}
@@ -240,6 +234,7 @@ namespace DDONamedGearPlanner
 				return;
 			}
 
+			pbPhase1.Value = pbPhase1.Maximum;
 			tbPhase1.Text = "Done";
 
 			if (FilterTest)
@@ -282,28 +277,15 @@ namespace DDONamedGearPlanner
 					if (kv.Key == EquipmentSlotType.Weapon || (kv.Key == EquipmentSlotType.Offhand && flagweapon)) weaponcounted = true;
 					numslots++;
 				}
-
-				//combos *= (ulong)(kv.Value.Count + 1);
 			}
 
-			//combos -= 1;
 			tbPhase1Results.Text = string.Format("{0} items across {1} slot{2}", numitems, numslots, numslots > 1 ? "s" : "");
 
 			bdrPhase1Results.Visibility = Visibility.Visible;
 
-			/*try
-			{
-				BuildBuffer = new LargeContainer<List<BuildItem>>(combos);
-			}
-			catch
-			{
-				Error = "Insufficient memory to store the expected item combinations";
-				CancelAndClose();
-			}*/
-
 			// start phase 2
 			pbPhase2.Minimum = 0;
-			pbPhase2.Maximum = 1;// was combos
+			pbPhase2.Maximum = 1;
 			pbPhase2.Value = 0;
 			tbPhase2.Text = null;
 			bdrPhase2.Visibility = Visibility.Visible;
@@ -357,9 +339,9 @@ namespace DDONamedGearPlanner
 
 			Build.AddBuildGearSet(gs);
 			if (Build.BuildResults.Count % 250 == 0) bw.ReportProgress(Build.BuildResults.Count);
-		}
+		}*/
 
-		List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>> ItemCache;*/
+		List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>> ItemPropertyCache;
 
 		/*public List<List<BuildItem>> BuildGearSets(BackgroundWorker bw, int ici)
 		{
@@ -484,9 +466,9 @@ namespace DDONamedGearPlanner
 				BuildBuffer.Add(new List<BuildItem>(BuildBuffer[i]));
 
 			return newstart;
-		}
+		}*/
 
-		public void BuildGearSets(BackgroundWorker bw, int ici)
+		/*public void BuildGearSets(BackgroundWorker bw, int ici)
 		{
 			if (CancelBuild) return;
 
@@ -568,33 +550,22 @@ namespace DDONamedGearPlanner
 					}
 				}
 			}
-		}
-
-		// phase 2 builds every possible combination of gear sets
-		void Phase2_DoWork(object sender, DoWorkEventArgs e)
-		{
-			ItemCache = Build.DiscoveredItems.ToList();
-			if (ItemCache.Count == 0)
-			{
-				//CancelBuild = true;
-				return;
-			}
-
-			BuildGearSets(sender as BackgroundWorker, 0);
 		}*/
 
-		List<List<BuildItem>> BuildItemLists(List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>> itemlists)
+		BuildPhase2Progress BP2P;
+
+		List<List<BuildItem>> BuildItemLists(BackgroundWorker bw, int ici)
 		{
 			List<List<BuildItem>> results = new List<List<BuildItem>>();
 			List<List<BuildItem>> tailCombos = null;
-			if (itemlists.Count > 1)
+			if (ici < ItemPropertyCache.Count - 1)
 			{
-				tailCombos = BuildItemLists(itemlists.Skip(1).ToList());
+				tailCombos = BuildItemLists(bw, ici + 1);
 				if (CancelBuild) return null;
 				results.AddRange(tailCombos);
 			}
 
-			List<ItemProperty> properties = itemlists[0].Value;
+			List<ItemProperty> properties = ItemPropertyCache[ici].Value;
 			for (int i = 0; i < properties.Count; i++)
 			{
 				if (CancelBuild) return null;
@@ -639,8 +610,9 @@ namespace DDONamedGearPlanner
 				// the stock item needs to be included
 				if (proplists[0].Count != 0)
 				{
+					if (++BP2P.BarValue % 250 == 0) bw.ReportProgress(BP2P.BarValue);
 					// add just the item as a possible combination
-					BuildItem bi = new BuildItem(properties[i].Owner, itemlists[0].Key);
+					BuildItem bi = new BuildItem(properties[i].Owner, ItemPropertyCache[ici].Key);
 					results.Add(new List<BuildItem> { bi });
 					if (tailCombos != null)
 					{
@@ -648,6 +620,7 @@ namespace DDONamedGearPlanner
 						{
 							if (CancelBuild) return null;
 
+							if (++BP2P.BarValue % 250 == 0) bw.ReportProgress(BP2P.BarValue);
 							results.Add(new List<BuildItem>(tc));
 							results.Last().Add(bi);
 						}
@@ -655,7 +628,8 @@ namespace DDONamedGearPlanner
 				}
 				for (int pl = 1; pl < proplists.Count; pl++)
 				{
-					BuildItem bi = new BuildItem(properties[i].Owner, itemlists[0].Key);
+					if (++BP2P.BarValue % 250 == 0) bw.ReportProgress(BP2P.BarValue);
+					BuildItem bi = new BuildItem(properties[i].Owner, ItemPropertyCache[ici].Key);
 					bi.OptionProperties = proplists[pl];
 					results.Add(new List<BuildItem> { bi });
 					if (tailCombos != null)
@@ -664,6 +638,7 @@ namespace DDONamedGearPlanner
 						{
 							if (CancelBuild) return null;
 
+							if (++BP2P.BarValue % 250 == 0) bw.ReportProgress(BP2P.BarValue);
 							results.Add(new List<BuildItem>(tc));
 							results.Last().Add(bi);
 						}
@@ -678,10 +653,22 @@ namespace DDONamedGearPlanner
 		}
 
 		// returns a list of the equipment slots filled
-		void Phase2_ProcessBuildFilters(List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>> items, List<BuildFilter> filters)
+		void Phase2_ProcessBuildFilters(BackgroundWorker bw, List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>> items, List<BuildFilter> filters)
 		{
+			decimal maxvalue = -1;
+			decimal curoverridevalue = 0;
+			List<GearSet> finalgs = new List<GearSet>();
+
 			foreach (var bf in filters)
 			{
+				BP2P.CurrentFilter++;
+				BP2P.BarMin = 0;
+				BP2P.BarMax = 1;
+				BP2P.BarValue = 0;
+				BP2P.Format = "Processing filter {0} of {1}";
+				BP2P.Stage = EBuildPhase2Progress.FilterStart;
+				bw.ReportProgress(0, BP2P);
+
 				// yes this will slow things down, but it's necessary for memory usage
 				GC.Collect();
 
@@ -692,6 +679,7 @@ namespace DDONamedGearPlanner
 				List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>> filteredproperties = new List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>>();
 				foreach (var il in items)
 				{
+					if (CancelBuild) return;
 					List<ItemProperty> tfi = new List<ItemProperty>();
 					KeyValuePair<EquipmentSlotType, List<ItemProperty>> kvp = new KeyValuePair<EquipmentSlotType, List<ItemProperty>>(il.Key, tfi);
 					// each item's relevant properties get stored in tfi for evaluation
@@ -700,6 +688,7 @@ namespace DDONamedGearPlanner
 					{
 						foreach (var p in item.Properties)
 						{
+							if (CancelBuild) return;
 							if (bf.Property == p.Property)
 							{
 								if (bf.Type == null || bf.Type == p.Type || (bf.Type == "untyped" && string.IsNullOrWhiteSpace(p.Type)))
@@ -738,16 +727,49 @@ namespace DDONamedGearPlanner
 				// next we cull out properties belonging to items that can't be slotted into the existing gear sets
 				foreach (var gse in Build.BuildResults)
 				{
-					List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>> gearsetoptions = new List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>>();
-					foreach (var tfi in filteredproperties)
+					if (CancelBuild) return;
+					ItemPropertyCache.Clear();
+					// this is the filteredproperties with the addition of any applicable optional properties from the gear set
+					List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>> gsfp = new List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>>();
+					foreach (var tfi in filteredproperties) gsfp.Add(new KeyValuePair<EquipmentSlotType, List<ItemProperty>>(tfi.Key, new List<ItemProperty>(tfi.Value)));
+					bool gearpropertyinfiltered = false;
+					foreach (var item in gse.GearSet.Items)
 					{
-						// ignore items that fit into an already occupied slot in the gear set
-						if (gse.GearSet.Items.Find(f => f.Slot == tfi.Key) != null) continue;
+						foreach (var p in item.Item.Properties)
+						{
+							if (CancelBuild) return;
+							if (p.Options == null) continue;
+							if (p.Options.Any(a => item.OptionProperties.Contains(a))) continue;
+							foreach (var op in p.Options)
+							{
+								if (bf.Property == op.Property)
+								{
+									if (bf.Type == null || bf.Type == op.Type || (bf.Type == "untyped" && string.IsNullOrWhiteSpace(op.Type)))
+									{
+										var tfi = gsfp.Find(f => f.Key == item.Slot);
+										if (tfi.Key == EquipmentSlotType.None) gsfp.Add(new KeyValuePair<EquipmentSlotType, List<ItemProperty>>(item.Slot, new List<ItemProperty>() { op }));
+										else tfi.Value.Add(op);
+										gearpropertyinfiltered = true;
+									}
+								}
+							}
+						}
+					}
+
+					foreach (var tfi in gsfp)
+					{
+						if (CancelBuild) return;
+						// ignore items that fit into an already occupied slot in the gear set when there aren't any gear set item properties being tested
+						var gsi = gse.GearSet.Items.Find(f => f.Slot == tfi.Key);
+						if (!gearpropertyinfiltered && gsi != null) continue;
 						List<ItemProperty> props = null;
 						foreach (var ip in tfi.Value)
 						{
-							// check that this property's item isn't already slotted in the gear set (avoid duplicate rings used)
-							if (gse.GearSet.Items.Find(f => f.Item == ip.Owner) != null) continue;
+							if (gearpropertyinfiltered && gsi != null && ip.Owner != gsi.Item) continue;
+							// check that this property's item isn't already slotted in the gear set in a different slot (avoid duplicate rings and duplicate weapons)
+							// the same slot indicates that this property is an optional being checked for validity
+							var ti = gse.GearSet.Items.Find(f => f.Item == ip.Owner);
+							if (ti != null && ti.Slot != tfi.Key) continue;
 							// check that 2-handed weapons won't be possibly slotted when the gear set has an offhand already set
 							if (tfi.Key == EquipmentSlotType.Weapon)
 							{
@@ -764,16 +786,16 @@ namespace DDONamedGearPlanner
 							if (!string.IsNullOrWhiteSpace(ip.Type))
 							{
 								bool overridden = false;
-								foreach (var gsi in gse.GearSet.Items)
+								foreach (var bi in gse.GearSet.Items)
 								{
 									// check selected optional properties of the gear set item
-									if (gsi.OptionProperties.Find(f => f.Property == ip.Property && f.Type == ip.Type && f.Value >= ip.Value) != null)
+									if (bi.OptionProperties.Find(f => f.Property == ip.Property && f.Type == ip.Type && f.Value >= ip.Value) != null)
 									{
 										overridden = true;
 										break;
 									}
 									// check item properties of the gear set item
-									if (gsi.Item.Properties.Find(f => f.Property == ip.Property && f.Type == ip.Type && f.Value >= ip.Value) != null)
+									if (bi.Item.Properties.Find(f => f.Property == ip.Property && f.Type == ip.Type && f.Value >= ip.Value) != null)
 									{
 										overridden = true;
 										break;
@@ -787,15 +809,18 @@ namespace DDONamedGearPlanner
 							{
 								props = new List<ItemProperty>();
 								KeyValuePair<EquipmentSlotType, List<ItemProperty>> kvp = new KeyValuePair<EquipmentSlotType, List<ItemProperty>>(tfi.Key, props);
-								gearsetoptions.Add(kvp);
+								ItemPropertyCache.Add(kvp);
 							}
 							props.Add(ip);
 						}
 					}
 
+					if (ItemPropertyCache.Count == 0) continue;
+
 					// we now have lists by slot of item properties that satisfy this filter
 					// now we figure out maximum values by type for each slot
-					foreach (var tfi in gearsetoptions)
+					BP2P.BarMax = 1;
+					foreach (var tfi in ItemPropertyCache)
 					{
 						// first sort the item properties
 						tfi.Value.Sort((a, b) => string.Compare(a.Type, b.Type) != 0 ? string.Compare(a.Type, b.Type) : (a.Value > b.Value ? -1 : (a.Value < b.Value ? 1 : 0)));
@@ -814,35 +839,85 @@ namespace DDONamedGearPlanner
 						}
 						// now we resort by item name, so properties from the same item end up together
 						tfi.Value.Sort((a, b) => string.Compare(a.Owner.Name, b.Owner.Name));
+
+						BP2P.BarMax *= tfi.Value.Count + 1;
 					}
 
+					BP2P.BarValue = 0;
+					BP2P.Stage = EBuildPhase2Progress.GenerateItemLists;
+					BP2P.Format = "Item combos : {0} of {1}";
+					bw.ReportProgress(0, BP2P);
 					// now we can generate all combinations on the remaining properties
-					List<List<BuildItem>> itemcombos = BuildItemLists(gearsetoptions);
+					List<List<BuildItem>> itemcombos = BuildItemLists(bw, 0);
+
+					BP2P.BarValue = 0;
+					BP2P.BarMax = itemcombos.Count;
+					BP2P.Stage = EBuildPhase2Progress.BuildGearSets;
+					BP2P.Format = "Gear sets : {0} of {1}";
+					bw.ReportProgress(0, BP2P);
+					// build gear sets
+					maxvalue = -1;
+					curoverridevalue = 0;
+					finalgs.Clear();
 					foreach (var bil in itemcombos)
 					{
 						if (CancelBuild) return;
+						if (++BP2P.BarValue % 250 == 0) bw.ReportProgress(BP2P.BarValue);
 						GearSet gs = new GearSet();
-						foreach (var gsi in gse.GearSet.Items) gs.AddItem(gsi);
-						foreach (var bi in bil) gs.AddItem(bi);
+						// only add items from the gear set that aren't in the additional build
+						foreach (var gsi in gse.GearSet.Items)
+							if (!bil.Exists(i => i.Item == gsi.Item)) gs.AddItem(gsi.Clone());
+						foreach (var bi in bil)
+						{
+							var ti = gse.GearSet.Items.Find(f => f.Item == bi.Item);
+							// the item doesn't exist in the existing gear set, so add it
+							if (ti == null) gs.AddItem(bi.Clone());
+							// the item does exist, meaning we're adding optional properties to it
+							else
+							{
+								var tbi = ti.Clone();
+								tbi.OptionProperties.AddRange(bi.OptionProperties);
+								gs.AddItem(tbi);
+							}
+						}
 						gs.ProcessItems();
-						gearsets.Add(gs);
+						// now we test early to find maximum current filtered property values
+						GearSetProperty gsp = gs.Properties.Find(p => p.Property == bf.Property);
+						if (gsp == null) continue;
+						decimal tv = (decimal)gsp.TotalValue;
+						if (tv > maxvalue || (tv == maxvalue && (decimal)gsp.OverriddenValue < curoverridevalue))
+						{
+							maxvalue = tv;
+							curoverridevalue = (decimal)gsp.OverriddenValue;
+							finalgs.Clear();
+							finalgs.Add(gs);
+						}
+						else if (tv == maxvalue && (decimal)gsp.OverriddenValue == curoverridevalue) finalgs.Add(gs);
 					}
+
+					gearsets.AddRange(finalgs);
 				}
 
-				// now we have gearsets, find the one with the highest totalvalue in its properties that matches the filtered property
-				decimal maxvalue = -1;
-				List<GearSet> finalgs = new List<GearSet>();
+				if (gearsets.Count == 0) continue;
+
+				// now we have gearsets for each prior existing build result, find the one with the highest totalvalue in its properties that matches the filtered property
+				maxvalue = -1;
+				curoverridevalue = 0;
+				finalgs.Clear();
 				foreach (var gs in gearsets)
 				{
 					if (CancelBuild) return;
-					decimal tv = (decimal)(gs.Properties.Find(p => p.Property == bf.Property)?.TotalValue ?? 0);
-					if (tv > maxvalue)
+					GearSetProperty gsp = gs.Properties.Find(p => p.Property == bf.Property);
+					if (gsp == null) continue;
+					decimal tv = (decimal)gsp.TotalValue;
+					if (tv > maxvalue || (tv == maxvalue && (decimal)gsp.OverriddenValue < curoverridevalue))
 					{
 						maxvalue = tv;
+						curoverridevalue = (decimal)gsp.OverriddenValue;
 						finalgs.Clear();
 						finalgs.Add(gs);
 					}
-					else if (tv == maxvalue) finalgs.Add(gs);
+					else if (tv == maxvalue && (decimal)gsp.OverriddenValue == curoverridevalue) finalgs.Add(gs);
 				}
 				Build.BuildResults.Clear();
 				foreach (var gs in finalgs)
@@ -852,6 +927,10 @@ namespace DDONamedGearPlanner
 
 		void Phase2_DoWork(object sender, DoWorkEventArgs e)
 		{
+			BackgroundWorker bw = sender as BackgroundWorker;
+			foreach (var kvp in Build.Filters) BP2P.TotalFilters += kvp.Value.Count;
+			ItemPropertyCache = new List<KeyValuePair<EquipmentSlotType, List<ItemProperty>>>();
+
 			List<BuildFilter> gearsetfilters = null;
 			foreach (var kvp in Build.Filters)
 			{
@@ -864,12 +943,12 @@ namespace DDONamedGearPlanner
 					{
 						if (Build.DiscoveredItems.ContainsKey(EquipmentSlotType.Finger1))
 						{
-							Phase2_ProcessBuildFilters(new List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>>() { Build.DiscoveredItems.First(f => f.Key == EquipmentSlotType.Finger1) }, kvp.Value);
+							Phase2_ProcessBuildFilters(bw, new List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>>() { Build.DiscoveredItems.First(f => f.Key == EquipmentSlotType.Finger1) }, kvp.Value);
 							if (CancelBuild) return;
 						}
 						if (Build.DiscoveredItems.ContainsKey(EquipmentSlotType.Finger2))
 						{
-							Phase2_ProcessBuildFilters(new List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>>() { Build.DiscoveredItems.First(f => f.Key == EquipmentSlotType.Finger2) }, kvp.Value);
+							Phase2_ProcessBuildFilters(bw, new List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>>() { Build.DiscoveredItems.First(f => f.Key == EquipmentSlotType.Finger2) }, kvp.Value);
 							if (CancelBuild) return;
 						}
 					}
@@ -878,7 +957,7 @@ namespace DDONamedGearPlanner
 						EquipmentSlotType est = kvp.Key.ToEquipmentSlotType();
 						if (Build.DiscoveredItems.ContainsKey(est))
 						{
-							Phase2_ProcessBuildFilters(new List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>>() { Build.DiscoveredItems.First(f => f.Key == est) }, kvp.Value);
+							Phase2_ProcessBuildFilters(bw, new List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>>() { Build.DiscoveredItems.First(f => f.Key == est) }, kvp.Value);
 							if (CancelBuild) return;
 						}
 					}
@@ -888,17 +967,40 @@ namespace DDONamedGearPlanner
 			if (gearsetfilters != null)
 			{
 				List<KeyValuePair<EquipmentSlotType, List<DDOItemData>>> itemlists = Build.DiscoveredItems.ToList();
-				Phase2_ProcessBuildFilters(itemlists, gearsetfilters);
+				Phase2_ProcessBuildFilters(bw, itemlists, gearsetfilters);
 				if (CancelBuild) return;
 			}
 		}
 
+		BuildPhase2Progress uibp2p;
 		void Phase2_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
-			//if (e.ProgressPercentage % 250000 == 0) GC.Collect();
-			if (e.ProgressPercentage > pbPhase2.Maximum) pbPhase2.Maximum = e.ProgressPercentage;
+			if (e.UserState != null)
+			{
+				uibp2p = (BuildPhase2Progress)e.UserState;
+				pbPhase2.Minimum = uibp2p.BarMin;
+				pbPhase2.Maximum = uibp2p.BarMax;
+				pbPhase2.Value = uibp2p.BarValue;
+				pbFilters.Minimum = 0;
+				pbFilters.Maximum = uibp2p.TotalFilters;
+				pbFilters.Value = uibp2p.CurrentFilter;
+				tbFilters.Text = uibp2p.CurrentFilter + " of " + uibp2p.TotalFilters;
+			}
+
+			if (pbPhase2.Maximum < e.ProgressPercentage) pbPhase2.Maximum = e.ProgressPercentage;
 			pbPhase2.Value = e.ProgressPercentage;
-			tbPhase2.Text = e.ProgressPercentage + " generated";
+
+			switch (uibp2p.Stage)
+			{
+				case EBuildPhase2Progress.FilterStart:
+					tbPhase2.Text = null;
+					break;
+
+				case EBuildPhase2Progress.GenerateItemLists:
+				case EBuildPhase2Progress.BuildGearSets:
+					tbPhase2.Text = string.Format(uibp2p.Format, e.ProgressPercentage, (int)pbPhase2.Maximum);
+					break;
+			}
 		}
 
 		void Phase2_Completed(object sender, RunWorkerCompletedEventArgs e)
@@ -909,204 +1011,26 @@ namespace DDONamedGearPlanner
 				return;
 			}
 
+			pbFilters.Value = pbFilters.Maximum;
 			pbPhase2.Value = pbPhase2.Maximum;
-			tbPhase2.Text = Build.BuildResults.Count + " generated";
+			tbPhase2.Text = "Done";
 
-			// start phase 3
-			pbPhase3.Minimum = 0;
-			pbPhase3.Maximum = Build.BuildResults.Count;
-			pbPhase3.Value = 0;
-			tbPhase3.Text = null;
-			bdrPhase3.Visibility = Visibility.Visible;
-			BackgroundWorker bw = new BackgroundWorker();
-			bw.WorkerReportsProgress = true;
-			bw.DoWork += Phase3_DoWork;
-			bw.ProgressChanged += Phase3_ProgressChanged;
-			bw.RunWorkerCompleted += Phase3_Completed;
-
-			bw.RunWorkerAsync();
-		}
-		#endregion
-
-		#region Phase 3
-		bool IsPropertyFiltered(string property)
-		{
-			foreach (var kv in Build.Filters)
-			{
-				foreach (var bf in kv.Value)
-				{
-					if (bf.Include && bf.Property == property) return true;
-				}
-			}
-
-			return false;
-		}
-
-		// Phase 3 rates all gear sets
-		void Phase3_DoWork(object sender, DoWorkEventArgs e)
-		{
-			for (int i = 0; i < Build.BuildResults.Count; i++)
-			{
-				if (CancelBuild) return;
-
-				if (i % 250 == 0) (sender as BackgroundWorker).ReportProgress(i);
-				Build.BuildResults[i].GearSet.ProcessItems();
-
-				foreach (var gsp in Build.BuildResults[i].GearSet.Properties)
-				{
-					if (!IsPropertyFiltered(gsp.Property)) continue;
-
-					if (gsp.IsGroup)
-					{
-						Build.BuildResults[i].Rating += 5;
-						continue;
-					}
-
-					string lasttype = null;
-					foreach (var ip in gsp.ItemProperties)
-					{
-						if (string.IsNullOrWhiteSpace(lasttype) || lasttype != ip.Type)
-						{
-							Build.BuildResults[i].Rating += (int)Math.Max(1, Math.Abs((ip.Value > 0 && ip.Value < 1) ? ip.Value * 10 : ip.Value));
-							lasttype = ip.Type;
-						}
-						else Build.BuildResults[i].Penalty += (int)Math.Max(1, Math.Abs((ip.Value > 0 && ip.Value < 1) ? ip.Value * 10 : ip.Value));
-					}
-				}
-			}
-		}
-
-		void Phase3_ProgressChanged(object sender, ProgressChangedEventArgs e)
-		{
-			pbPhase3.Value = e.ProgressPercentage;
-			tbPhase3.Text = e.ProgressPercentage + " of " + Build.BuildResults.Count;
-		}
-
-		Timer DotTimer;
-		Stopwatch Phase4SW;
-		void Phase3_Completed(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if (CancelBuild)
-			{
-				CancelAndClose();
-				return;
-			}
-
-			pbPhase3.Value = pbPhase3.Maximum;
-			tbPhase3.Text = "Done";
-
-			// start phase 4
-			bdrPhase4.Visibility = Visibility.Visible;
-
-			DotTimer = new Timer(1000);
-			DotTimer.AutoReset = true;
-			DotTimer.Elapsed += (obj, args) =>
-			{
-				Dispatcher.BeginInvoke((Action)(() => Phase4ProgressUpdate()));
-			};
-			DotTimer.Start();
-			Phase4SW = new Stopwatch();
-			Phase4SW.Start();
-
-			BackgroundWorker bw = new BackgroundWorker();
-			bw.WorkerReportsProgress = true;
-			bw.DoWork += Phase4_DoWork;
-			bw.RunWorkerCompleted += Phase4_Completed;
-
-			bw.RunWorkerAsync();
-		}
-		#endregion
-
-		#region Phase 4
-		void Phase4_DoWork(object sender, DoWorkEventArgs e)
-		{
-			// sort buildresults by rating and penalty
-			Build.BuildResults.Sort((a, b) => a.Penalty == 0 && b.Penalty == 0 ? (a.Rating > b.Rating ? -1 : (a.Rating < b.Rating ? 1 : 0)) : 
-				(a.Penalty == 0 ? -1 : 
-					(b.Penalty == 0 ? 1 : 
-						(a.Rating > b.Rating ? -1 : 
-							(a.Rating < b.Rating ? 1 : 
-								(a.Penalty < b.Penalty ? -1 : 
-									(a.Penalty > b.Penalty ? 1 : 0)
-								)
-							)
-						)
-					)
-				)
-			);
-			// sort all item lists in each buildresult
-			for (int i = 0; i < Build.BuildResults.Count; i++)
-			{
-				if (CancelBuild) return;
-				Build.BuildResults[i].GearSet.Items.Sort((a, b) => string.Compare(a.Item.Name, b.Item.Name));
-			}
-			// do a pass to remove redundant gear sets
-			for (int i = 0; i < Build.BuildResults.Count; i++)
-			{
-				if (i == Build.BuildResults.Count - 1) break;
-
-				// dupe check
-				if (Build.BuildResults[i].Rating != Build.BuildResults[i + 1].Rating) continue;
-				if (Build.BuildResults[i].Penalty != Build.BuildResults[i + 1].Penalty) continue;
-				if (Build.BuildResults[i].GearSet.Items.Count != Build.BuildResults[i + 1].GearSet.Items.Count) continue;
-				bool dupe = false;
-				for (int j = 0; j < Build.BuildResults[i].GearSet.Items.Count; j++)
-				{
-					if (Build.BuildResults[i].GearSet.Items[j].Item != Build.BuildResults[i + 1].GearSet.Items[j].Item) break;
-					if (Build.BuildResults[i].GearSet.Items[j].OptionProperties.Count != Build.BuildResults[i + 1].GearSet.Items[j].OptionProperties.Count) continue;
-					if (Build.BuildResults[i].GearSet.Items[j].OptionProperties.Count == 0)
-					{
-						dupe = true;
-						break;
-					}
-					else
-					{
-						bool diff = false;
-						for (int p = 0; p < Build.BuildResults[i].GearSet.Items[j].OptionProperties.Count; p++)
-						{
-							if (!Build.BuildResults[i + 1].GearSet.Items[j].OptionProperties.Contains(Build.BuildResults[i].GearSet.Items[j].OptionProperties[p]))
-							{
-								diff = true;
-								break;
-							}
-						}
-
-						if (!diff)
-						{
-							dupe = true;
-							break;
-						}
-					}
-				}
-
-				if (dupe) Build.BuildResults.RemoveAt(i--);
-			}
-		}
-
-		void Phase4ProgressUpdate()
-		{
-			if (tbPhase4.Text.Length > 45) tbPhase4.Text = "Sorting and removing duplicate gear sets";
-			else tbPhase4.Text += ".";
-		}
-
-		void Phase4_Completed(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if (CancelBuild)
-			{
-				CancelAndClose();
-				return;
-			}
-			Phase4SW.Stop();
 			BuildSW.Stop();
-			DotTimer.Stop();
-
-			tbPhase4.Text = string.Format("Sorting and removing duplicate gear sets took {0:F3} seconds", Phase4SW.ElapsedMilliseconds / 500.0);
-
 			tbFinalResults.Text = string.Format("Build completed in {0}:{1:D2}:{2:D2}", BuildSW.Elapsed.Hours, BuildSW.Elapsed.Minutes, BuildSW.Elapsed.Seconds);
 			bdrFinalResults.Visibility = Visibility.Visible;
 
 			DoneProcessing = true;
 		}
 		#endregion
+	}
+
+	public enum EBuildPhase2Progress { FilterStart, GenerateItemLists, BuildGearSets }
+	public struct BuildPhase2Progress
+	{
+		public int BarValue;
+		public double BarMin, BarMax;
+		public int CurrentFilter, TotalFilters;
+		public string Format;
+		public EBuildPhase2Progress Stage;
 	}
 }
