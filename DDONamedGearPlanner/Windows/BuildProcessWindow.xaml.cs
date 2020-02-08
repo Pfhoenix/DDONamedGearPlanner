@@ -970,6 +970,22 @@ namespace DDONamedGearPlanner
 				Phase2_ProcessBuildFilters(bw, itemlists, gearsetfilters);
 				if (CancelBuild) return;
 			}
+
+			// now we need to cull out duplicate builds (only possible where the same two rings or two weapons are used but in different slots
+			Dictionary<string, List<GearSetEvaluation>> gss = new Dictionary<string, List<GearSetEvaluation>>();
+			// alphabetically sort each gear set and then add the string representation to the dictionary
+			foreach (var br in Build.BuildResults)
+			{
+				br.GearSet.Items.Sort((a, b) => string.Compare(a.Item.Name, b.Item.Name));
+				string s = br.GearSet.ToString(false);
+				if (gss.ContainsKey(s)) gss[s].Add(br);
+				else gss[s] = new List<GearSetEvaluation>() { br };
+			}
+			// duplicates are now identified, so remove them from the BuildResult
+			foreach (var kvp in gss)
+			{
+				for (int i = 1; i < kvp.Value.Count; i++) Build.BuildResults.Remove(kvp.Value[i]);
+			}
 		}
 
 		BuildPhase2Progress uibp2p;

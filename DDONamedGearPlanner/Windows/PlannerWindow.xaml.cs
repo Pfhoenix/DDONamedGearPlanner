@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -23,7 +21,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public const string VERSION = "0.5.3";
+		public static readonly string VERSION = "0.6";
 
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
@@ -911,7 +909,9 @@ namespace DDONamedGearPlanner
 
 		private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			MessageBox.Show("DDO Named Gear Planner by Martin \"Pfhoenix\" Actor." + Environment.NewLine + "Feedback welcome @ pfhoenix@gmail.com", "About");
+			AboutWindow aw = new AboutWindow();
+			aw.Owner = this;
+			aw.ShowDialog();
 		}
 
 		private void BuildFilters_Click(object sender, RoutedEventArgs e)
@@ -1146,26 +1146,7 @@ namespace DDONamedGearPlanner
 			StringBuilder sb = new StringBuilder();
 			foreach (var es in EquipmentSlots)
 			{
-				if (es.Value.Item != null)
-				{
-					sb.Append(es.Key.ToString());
-					sb.Append(':');
-					sb.Append(es.Value.Item.Item.Name);
-					if (es.Value.Item.OptionProperties != null)
-					{
-						foreach (var op in es.Value.Item.OptionProperties)
-						{
-							sb.Append('{');
-							sb.Append(string.IsNullOrWhiteSpace(op.Type) ? "untyped" : op.Type);
-							sb.Append(' ');
-							sb.Append(op.Property);
-							sb.Append(' ');
-							sb.Append(op.Value);
-							sb.Append('}');
-						}
-					}
-					sb.AppendLine();
-				}
+				if (es.Value.Item != null) sb.AppendLine(es.Value.Item.ToString(true));
 			}
 
 			File.WriteAllText(sfd.FileName, sb.ToString());

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Xml;
 
 namespace DDONamedGearPlanner
@@ -131,6 +132,31 @@ namespace DDONamedGearPlanner
 			{
 				return null;
 			}
+		}
+
+		public string ToString(bool slot)
+		{
+			StringBuilder sb = new StringBuilder();
+			if (slot)
+			{
+				sb.Append(Slot.ToString());
+				sb.Append(':');
+			}
+			sb.Append(Item.Name);
+			if (OptionProperties != null)
+			{
+				foreach (var op in OptionProperties)
+				{
+					sb.Append('{');
+					sb.Append(string.IsNullOrWhiteSpace(op.Type) ? "untyped" : op.Type);
+					sb.Append(' ');
+					sb.Append(op.Property);
+					sb.Append(' ');
+					sb.Append(op.Value);
+					sb.Append('}');
+				}
+			}
+			return sb.ToString();
 		}
 	}
 
@@ -300,6 +326,13 @@ namespace DDONamedGearPlanner
 				return gs;
 			}
 			catch { return null; }
+		}
+
+		public string ToString(bool slot)
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach (var item in Items) sb.AppendLine(item.ToString(slot));
+			return sb.ToString();
 		}
 	}
 
