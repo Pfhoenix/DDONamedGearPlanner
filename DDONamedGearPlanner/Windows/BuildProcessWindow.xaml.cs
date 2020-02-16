@@ -765,6 +765,7 @@ namespace DDONamedGearPlanner
 						List<ItemProperty> props = null;
 						foreach (var ip in tfi.Value)
 						{
+							if (CancelBuild) return;
 							if (gearpropertyinfiltered && gsi != null && ip.Owner != gsi.Item) continue;
 							// check that this property's item isn't already slotted in the gear set in a different slot (avoid duplicate rings and duplicate weapons)
 							// the same slot indicates that this property is an optional being checked for validity
@@ -822,6 +823,7 @@ namespace DDONamedGearPlanner
 					BP2P.BarMax = 1;
 					foreach (var tfi in ItemPropertyCache)
 					{
+						if (CancelBuild) return;
 						// first sort the item properties
 						tfi.Value.Sort((a, b) => string.Compare(a.Type, b.Type) != 0 ? string.Compare(a.Type, b.Type) : (a.Value > b.Value ? -1 : (a.Value < b.Value ? 1 : 0)));
 						// now we remove all but the max values for each type, with the exception of untyped (null), as they stack with everything including each other
@@ -849,7 +851,7 @@ namespace DDONamedGearPlanner
 					bw.ReportProgress(0, BP2P);
 					// now we can generate all combinations on the remaining properties
 					List<List<BuildItem>> itemcombos = BuildItemLists(bw, 0);
-
+					if (CancelBuild) return;
 					BP2P.BarValue = 0;
 					BP2P.BarMax = itemcombos.Count;
 					BP2P.Stage = EBuildPhase2Progress.BuildGearSets;
@@ -1014,7 +1016,7 @@ namespace DDONamedGearPlanner
 
 				case EBuildPhase2Progress.GenerateItemLists:
 				case EBuildPhase2Progress.BuildGearSets:
-					tbPhase2.Text = string.Format(uibp2p.Format, e.ProgressPercentage, (int)pbPhase2.Maximum);
+					tbPhase2.Text = string.Format(uibp2p.Format, e.ProgressPercentage, (ulong)pbPhase2.Maximum);
 					break;
 			}
 		}

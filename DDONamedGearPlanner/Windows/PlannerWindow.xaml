@@ -228,14 +228,14 @@
 						<Button DockPanel.Dock="Top" Name="btnStartBuild" Margin="3" IsEnabled="False" Click="StartBuild_Click">Start Build</Button>
 						<GroupBox Header="Build Results">
 							<StackPanel>
-								<TextBlock Name="tbTotalGearSets" Margin="0,2,0,0">Gear Sets: 0</TextBlock>
-								<DockPanel Margin="0,2,0,0">
+								<TextBlock Name="tbTotalGearSets" Margin="2,2,2,2">Gear Sets: 0</TextBlock>
+								<DockPanel Margin="2,2,2,2">
 									<Button DockPanel.Dock="Left" Name="btnPreviousGS" IsEnabled="False" Click="PreviousGearSet_Click">&lt;-</Button>
 									<Button DockPanel.Dock="Right" Name="btnNextGS" IsEnabled="False" Click="NextGearSet_Click">-&gt;</Button>
 									<TextBlock Name="tbCurrentGS" TextAlignment="Center"/>
 								</DockPanel>
-								<TextBlock Name="tbCurrentGSRating" Margin="0,2,0,0">Rating:</TextBlock>
-								<TextBlock Name="tbCurrentGSPenalty" Margin="0,2,0,0">Penalty:</TextBlock>
+								<!--TextBlock Name="tbCurrentGSRating" Margin="0,2,0,0" Foreground="DarkGray">Rating:</>
+								<TextBlock Name="tbCurrentGSPenalty" Margin="0,2,0,0" Foreground="DarkGray">Penalty:</TextBlock-->
 							</StackPanel>
 						</GroupBox>
 					</DockPanel>
@@ -256,6 +256,7 @@
 				</Grid>
 				<Button Margin="11,11,11,0" Click="EncodeGearsetToClipboard">Copy to Clipboard</Button>
 				<Button Margin="11,3,11,0" Click="DecodeGearsetFromClipboard">Paste from Clipboard</Button>
+				<Separator Margin="6,5,6,2"/>
 				<Button Margin="11,3,11,0" Click="ImportGearsetFromFile">Import Gear Set From File</Button>
 				<Button Margin="11,3,11,0" Click="ExportGearsetToFile">Export Gear Set to File</Button>
 				<Button Margin="11,3,11,0" Click="DumpGearsetToTextFile">Dump Gear Set to Text File</Button>

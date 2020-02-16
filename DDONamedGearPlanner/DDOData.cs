@@ -124,6 +124,23 @@ namespace DDONamedGearPlanner
 	}
 
 	[Serializable]
+	public class DDOAdventurePackData
+	{
+		public string Name;
+		public List<DDOQuestData> Quests = new List<DDOQuestData>();
+		public bool FreeToVIP;
+	}
+
+	[Serializable]
+	public class DDOQuestData
+	{
+		public string Name;
+		public DDOAdventurePackData Adpack;
+		public bool IsRaid;
+		public bool IsFree;
+	}
+
+	[Serializable]
 	public class DDOItemData
 	{
 		public string Name { get; set; }
@@ -133,6 +150,7 @@ namespace DDONamedGearPlanner
 		public List<ItemProperty> Properties = new List<ItemProperty>();
 		public readonly bool MinorArtifact;
 		public readonly ItemDataSource Source;
+		public DDOQuestData QuestFoundIn;
 
 		// utility because it gets used so often
 		int _Handedness = -1;
@@ -328,6 +346,7 @@ namespace DDONamedGearPlanner
 		public List<DDOItemData> Items = new List<DDOItemData>();
 		public Dictionary<string, DDOItemSet> Sets = new Dictionary<string, DDOItemSet>();
 		public Dictionary<SlotType, List<DDOItemProperty>> SlotExclusiveItemProperties = new Dictionary<SlotType, List<DDOItemProperty>>();
+		public List<DDOAdventurePackData> AdventurePacks;
 
 		public void Initialize()
 		{
@@ -4295,9 +4314,9 @@ namespace DDONamedGearPlanner
 			#endregion
 
 			#region Ravenloft sets
-			Sets.Add("Beacon of Magic", new DDOItemSet
+			Sets.Add("Beacon of Magic Set (Heroic)", new DDOItemSet
 			{
-				Name = "Beacon of Magic",
+				Name = "Beacon of Magic Set (Heroic)",
 				WikiURL = "https://ddowiki.com/page/Named_item_sets#Beacon_of_Magic_Set_.28Heroic.29",
 				SetBonuses = new List<DDOItemSetBonus>
 				{
@@ -4314,69 +4333,75 @@ namespace DDONamedGearPlanner
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell Power",
+								Property = "Acid Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell Power",
+								Property = "Cold Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell Power",
+								Property = "Electric Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell Power",
+								Property = "Fire Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell Power",
+								Property = "Force Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell Power",
+								Property = "Light Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell Power",
+								Property = "Negative Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell Power",
+								Property = "Poison Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Positive Spell Power",
+								Property = "Positive Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Repair Spell Power",
+								Property = "Repair Spell DC",
 								Type = "artifact",
 								Value = 1
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Sonic Spell Power",
+								Property = "Sonic Spell DC",
 								Type = "artifact",
 								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magical Resistance Rating",
+								Type = "artifact",
+								Value = 5
 							},
 							new DDOItemSetBonusProperty
 							{
@@ -4394,9 +4419,9 @@ namespace DDONamedGearPlanner
 				}
 			});
 
-			Sets.Add("Legendary Beacon of Magic", new DDOItemSet
+			Sets.Add("Beacon of Magic Set (Legendary)", new DDOItemSet
 			{
-				Name = "Legendary Beacon of Magic",
+				Name = "Beacon of Magic Set (Legendary)",
 				WikiURL = "https://ddowiki.com/page/Named_item_sets#Beacon_of_Magic_Set_.28Legendary.29",
 				SetBonuses = new List<DDOItemSetBonus>
 				{
@@ -4409,94 +4434,100 @@ namespace DDONamedGearPlanner
 							{
 								Property = "Universal Spell Power",
 								Type = "artifact",
-								Value = 20
+								Value = 50
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Acid Spell Power",
+								Property = "Acid Spell DC",
 								Type = "artifact",
-								Value = 1
+								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Cold Spell Power",
+								Property = "Cold Spell DC",
 								Type = "artifact",
-								Value = 1
+								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Electric Spell Power",
+								Property = "Electric Spell DC",
 								Type = "artifact",
-								Value = 1
+								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Fire Spell Power",
+								Property = "Fire Spell DC",
 								Type = "artifact",
-								Value = 1
+								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Force Spell Power",
+								Property = "Force Spell DC",
 								Type = "artifact",
-								Value = 1
+								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Light Spell Power",
+								Property = "Light Spell DC",
 								Type = "artifact",
-								Value = 1
+								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Negative Spell Power",
+								Property = "Negative Spell DC",
 								Type = "artifact",
-								Value = 1
+								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Poison Spell Power",
+								Property = "Poison Spell DC",
 								Type = "artifact",
-								Value = 1
+								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Positive Spell Power",
+								Property = "Positive Spell DC",
 								Type = "artifact",
-								Value = 1
+								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Repair Spell Power",
+								Property = "Repair Spell DC",
 								Type = "artifact",
-								Value = 1
+								Value = 2
 							},
 							new DDOItemSetBonusProperty
 							{
-								Property = "Sonic Spell Power",
+								Property = "Sonic Spell DC",
 								Type = "artifact",
-								Value = 1
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magical Resistance Rating",
+								Type = "artifact",
+								Value = 10
 							},
 							new DDOItemSetBonusProperty
 							{
 								Property = "Magical Resistance Rating Cap",
-								Value = 10
+								Value = 20
 							},
 							new DDOItemSetBonusProperty
 							{
 								Property = "Missile Deflection",
 								Type = "artifact",
-								Value = 2
+								Value = 5
 							}
 						}
 					}
 				}
 			});
 
-			Sets.Add("Knight of the Shadows", new DDOItemSet
+			Sets.Add("Knight of the Shadows Set (Heroic)", new DDOItemSet
 			{
-				Name = "Knight of the Shadows",
-				WikiURL = "https://ddowiki.com/page/Named_item_sets#Knight_of_the_Shadows",
+				Name = "Knight of the Shadows Set (Heroic)",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Knight_of_the_Shadows_Set_.28Heroic.29",
 				SetBonuses = new List<DDOItemSetBonus>
 				{
 					new DDOItemSetBonus
@@ -4539,10 +4570,10 @@ namespace DDONamedGearPlanner
 				}
 			});
 
-			Sets.Add("Legendary Knight of the Shadows", new DDOItemSet
+			Sets.Add("Knight of the Shadows Set (Legendary)", new DDOItemSet
 			{
-				Name = "Legendary Knight of the Shadows",
-				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Knight_of_the_Shadows",
+				Name = "Knight of the Shadows Set (Legendary)",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Knight_of_the_Shadows_Set_.28Legendary.29",
 				SetBonuses = new List<DDOItemSetBonus>
 				{
 					new DDOItemSetBonus
@@ -4585,10 +4616,10 @@ namespace DDONamedGearPlanner
 				}
 			});
 
-			Sets.Add("Crypt Raider", new DDOItemSet
+			Sets.Add("Crypt Raider Set (Heroic)", new DDOItemSet
 			{
-				Name = "Crypt Raider",
-				WikiURL = "https://ddowiki.com/page/Named_item_sets#Crypt_Raider",
+				Name = "Crypt Raider Set (Heroic)",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Crypt_Raider_Set_.28Heroic.29",
 				SetBonuses = new List<DDOItemSetBonus>
 				{
 					new DDOItemSetBonus
@@ -4637,10 +4668,10 @@ namespace DDONamedGearPlanner
 				}
 			});
 
-			Sets.Add("Legendary Crypt Raider", new DDOItemSet
+			Sets.Add("Crypt Raider Set (Legendary)", new DDOItemSet
 			{
-				Name = "Legendary Crypt Raider",
-				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Crypt_Raider",
+				Name = "Crypt Raider Set (Legendary)",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Crypt_Raider_Set_.28Legendary.29",
 				SetBonuses = new List<DDOItemSetBonus>
 				{
 					new DDOItemSetBonus
@@ -4689,10 +4720,10 @@ namespace DDONamedGearPlanner
 				}
 			});
 
-			Sets.Add("Silent Avenger", new DDOItemSet
+			Sets.Add("Silent Avenger Set (Heroic)", new DDOItemSet
 			{
-				Name = "Silent Avenger",
-				WikiURL = "https://ddowiki.com/page/Named_item_sets#Silent_Avenger",
+				Name = "Silent Avenger Set (Heroic)",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Silent_Avenger_Set_.28Heroic.29",
 				SetBonuses = new List<DDOItemSetBonus>
 				{
 					new DDOItemSetBonus
@@ -4734,10 +4765,10 @@ namespace DDONamedGearPlanner
 				}
 			});
 
-			Sets.Add("Legendary Silent Avenger", new DDOItemSet
+			Sets.Add("Silent Avenger Set (Legendary)", new DDOItemSet
 			{
-				Name = "Legendary Silent Avenger",
-				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Silent_Avenger",
+				Name = "Silent Avenger Set (Legendary)",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Silent_Avenger_Set_.28Legendary.29",
 				SetBonuses = new List<DDOItemSetBonus>
 				{
 					new DDOItemSetBonus
@@ -4779,10 +4810,10 @@ namespace DDONamedGearPlanner
 				}
 			});
 
-			Sets.Add("Adherent of the Mists", new DDOItemSet
+			Sets.Add("Adherent of the Mists Set (Heroic)", new DDOItemSet
 			{
-				Name = "Adherent of the Mists",
-				WikiURL = "https://ddowiki.com/page/Named_item_sets#Adherent_of_the_Mists",
+				Name = "Adherent of the Mists Set (Heroic)",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Adherent_of_the_Mists_Set_.28Heroic.29",
 				SetBonuses = new List<DDOItemSetBonus>
 				{
 					new DDOItemSetBonus
@@ -4837,10 +4868,10 @@ namespace DDONamedGearPlanner
 				}
 			});
 
-			Sets.Add("Legendary Adherent of the Mists", new DDOItemSet
+			Sets.Add("Adherent of the Mists Set (Legendary)", new DDOItemSet
 			{
-				Name = "Legendary Adherent of the Mists",
-				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Adherent_of_the_Mists",
+				Name = "Adherent of the Mists Set (Legendary)",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Adherent_of_the_Mists_Set_.28Legendary.29",
 				SetBonuses = new List<DDOItemSetBonus>
 				{
 					new DDOItemSetBonus

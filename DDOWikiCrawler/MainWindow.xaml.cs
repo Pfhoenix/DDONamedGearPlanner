@@ -65,9 +65,6 @@ namespace DDOWikiCrawler
 				{
 					MinCrawlDelayPerDomainMilliSeconds = 50,
 					MaxCrawlDepth = 1,
-					LoginUser = "Pfhoenix",
-					LoginPassword = "danneskjold",
-					IsAlwaysLogin = true
 				};
 				PoliteWebCrawler crawler = new PoliteWebCrawler(config);
 				crawler.PageCrawlStarting += PageCrawlStarting;

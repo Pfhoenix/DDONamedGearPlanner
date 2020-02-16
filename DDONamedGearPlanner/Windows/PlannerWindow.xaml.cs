@@ -944,8 +944,8 @@ namespace DDONamedGearPlanner
 			btnPreviousGS.IsEnabled = false;
 			tbCurrentGS.Text = null;
 			btnNextGS.IsEnabled = false;
-			tbCurrentGSRating.Text = "Rating:";
-			tbCurrentGSPenalty.Text = "Penalty:";
+			//tbCurrentGSRating.Text = "Rating:";
+			//tbCurrentGSPenalty.Text = "Penalty:";
 		}
 
 		void SetBuildResult(int cbr)
@@ -959,8 +959,8 @@ namespace DDONamedGearPlanner
 			btnPreviousGS.IsEnabled = cbr > 0;
 			tbCurrentGS.Text = (cbr + 1).ToString();
 			btnNextGS.IsEnabled = cbr < (CurrentBuild.BuildResults.Count - 1);
-			tbCurrentGSRating.Text = "Rating: " + br.Rating;
-			tbCurrentGSPenalty.Text = "Penalty: " + br.Penalty;
+			//tbCurrentGSRating.Text = "Rating: " + br.Rating;
+			//tbCurrentGSPenalty.Text = "Penalty: " + br.Penalty;
 
 			foreach (BuildItem bi in br.GearSet.Items)
 				SlotItem(bi);

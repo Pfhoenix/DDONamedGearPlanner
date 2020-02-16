@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,6 +12,7 @@ using System.Xml;
 using Sgml;
 using DDONamedGearPlanner;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
 
 namespace DDOWikiParser
 {
@@ -72,81 +74,8 @@ namespace DDOWikiParser
 		string[] files;
 		string ErrorFile = "errors.log";
 
-		/*string[] NullTypeProperties =
-		{
-			"Bludgeoning",
-			"Holy",
-			"Axiomatic",
-			"Evil Outsider Bane",
-			"Elf Bane",
-			"Mithral",
-			"Spikes",
-			"Keen",
-			"Greater Construct Bane",
-			"Entropic",
-			"Hemorrhaging",
-			"Disintegration",
-			"Returning",
-			"Greater Elf Bane",
-			"Unbalancing",
-			"Incredible Potential",
-			"Greater Giant Bane",
-			"Giant Slayer",
-			"Undead Guard",
-			"Antipodal",
-			"Impactful",
-			"Fire Guard",
-			"Ice Guard",
-			"Starter",
-			"Swim like a Fish",
-			"Reverberating",
-			"Jolting",
-			"Blunted Ammunition",
-			"Force",
-			"Lesser Incorporeal Bane",
-			"Greater Dispelling",
-			"Intercession Ward",
-			"Life-Devouring",
-			"Strength Sapping",
-			"Weakening",
-			"True Chaos",
-			"Corrosive Salt Guard",
-			"Vulnerability Guard",
-			"Undead Bane",
-			"Fiery",
-			"Silver",
-			"Life Shield",
-			"Immunity to Fear",
-			"Regeneration",
-			"Acid Guard",
-			"Spiked",
-			"Spike Guard",
-			"Masterwork",
-			"Fetters of Unreality",
-			"Disease: Unholy Tear",
-			"Limb Chopper",
-			"Metalline",
-			"Disruption",
-			"Antimagic Spike",
-			"Telekinesis Guard",
-			"Trace of Madness",
-			"Metal Fatigue",
-			"Negative Energy Absorption",
-			"Taint of Evil",
-			"Haste Guard",
-			"Ethereal",
-			"Boon of Undeath",
-			"Freedom of Movement",
-			"Medusa Fury",
-			"Demon Fever",
-			"Wounding",
-			"Fusible",
-			"Lesser Undead Bane",
-			"Improved Paralyzing",
-			"Bodyfeeder",
-			"Bewildering",
-			"Slay Living",
-		};*/
+		Dictionary<string, List<DDOItemData>> QuestLookup = new Dictionary<string, List<DDOItemData>>();
+		Dictionary<string, DDOAdventurePackData> AdpackLookup = new Dictionary<string, DDOAdventurePackData>();
 
 		public MainWindow()
 		{
@@ -175,15 +104,15 @@ namespace DDOWikiParser
 				pbProgressBar.Value = 0;
 				BackgroundWorker bw = new BackgroundWorker();
 				bw.WorkerReportsProgress = true;
-				bw.DoWork += worker_DoWork;
-				bw.ProgressChanged += worker_ProgressChanged;
-				bw.RunWorkerCompleted += worker_Completed;
+				bw.DoWork += InitialLoad_DoWork;
+				bw.ProgressChanged += InitialLoad_ProgressChanged;
+				bw.RunWorkerCompleted += InitialLoad_Completed;
 
 				bw.RunWorkerAsync();
 			}
 		}
 
-		private void worker_Completed(object sender, RunWorkerCompletedEventArgs e)
+		private void InitialLoad_Completed(object sender, RunWorkerCompletedEventArgs e)
 		{
 			// go through treeview and generate item counts
 			foreach (TreeViewItem cat in tvList.Items)
@@ -202,6 +131,22 @@ namespace DDOWikiParser
 				cat.Header += " (" + sum + ")";
 			}
 
+			pbProgressBar.Minimum = 0;
+			pbProgressBar.Maximum = QuestLookup.Count;
+			pbProgressBar.Value = 0;
+
+			BackgroundWorker bw = new BackgroundWorker();
+			bw.WorkerReportsProgress = true;
+			bw.DoWork += QuestParse_DoWork;
+			bw.ProgressChanged += QuestParse_ProgressChanged;
+			bw.RunWorkerCompleted += QuestParse_Completed;
+
+			bw.RunWorkerAsync();
+		}
+
+		void QuestParse_Completed(object sender, RunWorkerCompletedEventArgs e)
+		{
+			tbProgressText.Text = null;
 			tbStatusBarText.Text = "Done";
 		}
 
@@ -240,6 +185,18 @@ namespace DDOWikiParser
 			string[] split = row.InnerText.Split('\n');
 			if (!int.TryParse(split[1], out ml)) ml = 1;
 			data.AddProperty("Minimum Level", null, ml, null);
+		}
+
+		void ParseLocation(DDOItemData data, XmlElement row)
+		{
+			var a = row.GetElementsByTagName("a");
+			if (a.Count > 0)
+			{
+				string href = (a[0] as XmlElement)?.GetAttribute("href");
+				if (string.IsNullOrWhiteSpace(href)) return;
+				if (QuestLookup.ContainsKey(href)) QuestLookup[href].Add(data);
+				else QuestLookup[href] = new List<DDOItemData>() { data };
+			}
 		}
 
 		int ParseNumber(string s, int start = 0)
@@ -1616,7 +1573,7 @@ namespace DDOWikiParser
 				}
 				else if (p == "Fortification")
 				{
-					vi = ParseNumber(v);
+					if (vi == 0) vi = ParseNumber(v);
 					if (vi != 0) data.AddProperty(p, "enhancement", vi, null);
 				}
 				else if (p.EndsWith(" Threat Reduction"))
@@ -1908,7 +1865,7 @@ namespace DDOWikiParser
 				}
 				else if (p.StartsWith("Litany of the Dead "))
 				{
-					if (p.EndsWith("Attack Bonus"))
+					if (p.EndsWith("Ability Bonus"))
 					{
 						vi = ParseNumber(trimmed);
 						data.AddProperty("Strength", v, vi, null);
@@ -2299,6 +2256,10 @@ namespace DDOWikiParser
 				{
 					return null;
 				}
+				else if (r.InnerText.StartsWith("Location"))
+				{
+					ParseLocation(data, r);
+				}
 			}
 
 			return tvpath;
@@ -2335,6 +2296,10 @@ namespace DDOWikiParser
 				else if (r.InnerText.IndexOf("drops on death", StringComparison.InvariantCultureIgnoreCase) > -1)
 				{
 					return null;
+				}
+				else if (r.InnerText.StartsWith("Location"))
+				{
+					ParseLocation(data, r);
 				}
 			}
 
@@ -2400,6 +2365,10 @@ namespace DDOWikiParser
 				{
 					return null;
 				}
+				else if (r.InnerText.StartsWith("Location"))
+				{
+					ParseLocation(data, r);
+				}
 			}
 
 			return tvpath;
@@ -2446,12 +2415,16 @@ namespace DDOWikiParser
 				{
 					return null;
 				}
+				else if (r.InnerText.StartsWith("Location"))
+				{
+					ParseLocation(data, r);
+				}
 			}
 
 			return tvpath;
 		}
 
-		void worker_DoWork(object sender, DoWorkEventArgs e)
+		void InitialLoad_DoWork(object sender, DoWorkEventArgs e)
 		{
 			for (int i = 0; i < files.Length; i++)
 			{
@@ -2528,10 +2501,142 @@ namespace DDOWikiParser
 			}
 		}
 
-		void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		XmlDocument DownloadWebpage(string url)
+		{
+			try
+			{
+				WebClient wc = new WebClient();
+				Stream quest = wc.OpenRead(url);
+				// sgml reader to help format and process html into xml
+				SgmlReader sgmlReader = new SgmlReader();
+				sgmlReader.DocType = "HTML";
+				sgmlReader.WhitespaceHandling = WhitespaceHandling.None;
+				sgmlReader.CaseFolding = CaseFolding.ToLower;
+				sgmlReader.InputStream = new StreamReader(quest);
+
+				// create xml document
+				XmlDocument doc = new XmlDocument();
+				doc.PreserveWhitespace = false;
+				doc.XmlResolver = null;
+				doc.Load(sgmlReader);
+
+				return doc;
+			}
+			catch
+			{
+				LogError("Error downloading webpage " + url);
+				return null;
+			}
+		}
+
+		DDOAdventurePackData LoadAdventurePack(string name)
+		{
+			// we first get the page because it's possible it redirects
+			string url = "https://ddowiki.com/page/" + name.Replace(' ', '_');
+			XmlDocument doc = DownloadWebpage(url);
+			if (doc == null)
+			{
+				LogError("Attempted to load adventure pack " + name + " at url " + url);
+				return null;
+			}
+			// find the edit url
+			var aas = doc.GetElementsByTagName("a");
+			foreach (XmlElement a in aas)
+			{
+				if (a.GetAttribute("accesskey") == "e")
+				{
+					XmlDocument rdoc = DownloadWebpage("https://ddowiki.com" + a.GetAttribute("href"));
+					var taNodes = rdoc.GetElementsByTagName("textarea");
+					if (taNodes.Count == 0) continue;
+					DDOAdventurePackData apd = new DDOAdventurePackData();
+					foreach (XmlElement ta in taNodes)
+					{
+						if (ta.GetAttribute("id") != "wpTextbox1") continue;
+						apd.FreeToVIP = !ta.InnerText.Contains("[[Category:Expansion Packs]]");
+						apd.Name = name;
+						// find adpack token
+						//int ai = ta.InnerText.IndexOf("{{Adpack");
+						//if (ai == -1) apd.Name = name;
+						return apd;
+					}
+
+					break;
+				}
+			}
+
+			return null;
+		}
+
+		void QuestParse_DoWork(object sender, DoWorkEventArgs e)
+		{
+			BackgroundWorker bw = sender as BackgroundWorker;
+			int progress = 0;
+			foreach (var kvp in QuestLookup)
+			{
+				bw.ReportProgress(++progress, kvp.Key);
+				XmlDocument doc = DownloadWebpage("https://ddowiki.com" + kvp.Key.Replace("page", "edit"));
+
+				var taNodes = doc.GetElementsByTagName("textarea");
+				if (taNodes.Count == 0) continue;
+
+				DDOQuestData questdata = new DDOQuestData();
+				foreach (var item in kvp.Value)
+					item.QuestFoundIn = questdata;
+
+				foreach (XmlElement ta in taNodes)
+				{
+					if (ta.GetAttribute("id") != "wpTextbox1") continue;
+
+					string[] props = ta.InnerText.Split('|');
+					foreach (string p in props)
+					{
+						string[] ps;
+						if (p.Contains("}}")) ps = p.Substring(0, p.IndexOf("}}")).Split('=');
+						else ps = p.Split('=');
+						if (ps.Length != 2) continue;
+						ps[0] = ps[0].Trim();
+						ps[1] = ps[1].Trim();
+						if (string.IsNullOrWhiteSpace(ps[1])) continue;
+						if (string.Compare(ps[0], "name", true) == 0)
+						{
+							questdata.Name = ps[1];
+						}
+						else if (string.Compare(ps[0], "adpack", true) == 0)
+						{
+							DDOAdventurePackData apd;
+							if (AdpackLookup.ContainsKey(ps[1])) apd = AdpackLookup[ps[1]];
+							else
+							{
+								apd = LoadAdventurePack(ps[1]);
+								AdpackLookup[ps[1]] = apd;
+							}
+							apd.Quests.Add(questdata);
+							questdata.Adpack = apd;
+						}
+						else if (string.Compare(ps[0], "raid", true) == 0)
+						{
+							questdata.IsRaid = string.Compare(ps[1], "yes", true) == 0;
+						}
+						else if (string.Compare(ps[0], "free", true) == 0)
+						{
+							questdata.IsFree = string.Compare(ps[1], "yes", true) == 0;
+						}
+					}
+				}
+			}
+		}
+
+		void InitialLoad_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
 			tbStatusBarText.Text = Path.GetFileName(files[e.ProgressPercentage]);
 			tbProgressText.Text = (e.ProgressPercentage + 1).ToString() + " of " + files.Length;
+			pbProgressBar.Value = e.ProgressPercentage;
+		}
+
+		void QuestParse_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		{
+			tbStatusBarText.Text = e.UserState.ToString();
+			tbProgressText.Text = e.ProgressPercentage + " of " + QuestLookup.Count;
 			pbProgressBar.Value = e.ProgressPercentage;
 		}
 
@@ -2593,6 +2698,7 @@ namespace DDOWikiParser
 
 			dataset = new DDODataset();
 			dataset.Initialize();
+			dataset.AdventurePacks = AdpackLookup.Select(s => s.Value).OrderBy(s => s.Name).ToList();
 
 			// first go through all set bonuses and populate the properties into the itemproperty list
 			foreach (var set in dataset.Sets)
