@@ -46,6 +46,7 @@ namespace DDOWikiParser
 		};
 		string[] MinorArtifacts =
 		{
+			"Epic Voice of the Master",
 			"Band of Diani ir'Wynarn",
 			"Brand of Kalok Shash",
 			"Doctor LeRoux's Curious Implant",
