@@ -75,6 +75,7 @@ namespace DDOWikiParser
 		string[] files;
 		string ErrorFile = "errors.log";
 
+		List<DDOItemData> ItemsCache = new List<DDOItemData>();
 		Dictionary<string, List<DDOItemData>> QuestLookup = new Dictionary<string, List<DDOItemData>>();
 		Dictionary<string, DDOAdventurePackData> AdpackLookup = new Dictionary<string, DDOAdventurePackData>();
 
@@ -149,6 +150,11 @@ namespace DDOWikiParser
 		{
 			tbProgressText.Text = null;
 			tbStatusBarText.Text = "Done";
+
+			foreach (var item in ItemsCache)
+			{
+				if (item.QuestFoundIn == null) LogError("Null quest for item " + item.Name + ", " + item.WikiURL);
+			}
 		}
 
 		void SetTreeViewItemAtPath(string path, DDOItemData data)
@@ -188,16 +194,27 @@ namespace DDOWikiParser
 			data.AddProperty("Minimum Level", null, ml, null);
 		}
 
-		void ParseLocation(DDOItemData data, XmlElement row)
+		string ParseLocation(DDOItemData data, XmlElement row)
 		{
 			var a = row.GetElementsByTagName("a");
 			if (a.Count > 0)
 			{
 				string href = (a[0] as XmlElement)?.GetAttribute("href");
-				if (string.IsNullOrWhiteSpace(href)) return;
+				if (string.IsNullOrWhiteSpace(href)) return null;
+
+				if (href == "/page/Epic_Crafting")
+				{
+					// this will signal the process further on to look for 
+					href = row.InnerText.Replace("Location\n", "");
+				}
+
 				if (QuestLookup.ContainsKey(href)) QuestLookup[href].Add(data);
 				else QuestLookup[href] = new List<DDOItemData>() { data };
+
+				return href;
 			}
+
+			return null;
 		}
 
 		int ParseNumber(string s, int start = 0)
@@ -1924,12 +1941,13 @@ namespace DDOWikiParser
 			return options;
 		}
 
-		void ParseEnhancements(DDOItemData data, XmlElement row)
+		bool ParseEnhancements(DDOItemData data, XmlElement row)
 		{
+			int orig = data.Properties.Count;
 			try
 			{
 				var ul = row.GetElementsByTagName("ul");
-				if (ul.Count == 0) return;
+				if (ul.Count == 0) return false;
 				foreach (XmlElement e in ul[0].ChildNodes)
 				{
 					List<ItemProperty> options = null;
@@ -2193,6 +2211,8 @@ namespace DDOWikiParser
 			{
 				LogError("- parsing error with enhancements for item " + data.Name + Environment.NewLine + ex.Message);
 			}
+
+			return data.Properties.Count != orig;
 		}
 
 		string ParseArmor(DDOItemData data, XmlNodeList rows)
@@ -2251,7 +2271,7 @@ namespace DDOWikiParser
 				}
 				else if (r.InnerText.StartsWith("Enchantments"))
 				{
-					ParseEnhancements(data, r);
+					if (!ParseEnhancements(data, r)) return null;
 				}
 				else if (r.InnerText.IndexOf("drops on death", StringComparison.InvariantCultureIgnoreCase) > -1)
 				{
@@ -2259,7 +2279,8 @@ namespace DDOWikiParser
 				}
 				else if (r.InnerText.StartsWith("Location"))
 				{
-					ParseLocation(data, r);
+					string loc = ParseLocation(data, r);
+					if (loc == "/page/Test_Dojo_Loot_Room") return null;
 				}
 			}
 
@@ -2288,7 +2309,7 @@ namespace DDOWikiParser
 				}
 				else if (r.InnerText.StartsWith("Enhancements"))
 				{
-					ParseEnhancements(data, r);
+					if (!ParseEnhancements(data, r)) return null;
 				}
 				else if (r.InnerText.StartsWith("Shield Bonus"))
 				{
@@ -2300,7 +2321,8 @@ namespace DDOWikiParser
 				}
 				else if (r.InnerText.StartsWith("Location"))
 				{
-					ParseLocation(data, r);
+					string loc = ParseLocation(data, r);
+					if (loc == "/page/Test_Dojo_Loot_Room") return null;
 				}
 			}
 
@@ -2360,7 +2382,7 @@ namespace DDOWikiParser
 				}
 				else if (r.InnerText.StartsWith("Enchantments"))
 				{
-					ParseEnhancements(data, r);
+					if (!ParseEnhancements(data, r)) return null;
 				}
 				else if (r.InnerText.IndexOf("drops on death", StringComparison.InvariantCultureIgnoreCase) > -1)
 				{
@@ -2368,7 +2390,8 @@ namespace DDOWikiParser
 				}
 				else if (r.InnerText.StartsWith("Location"))
 				{
-					ParseLocation(data, r);
+					string loc = ParseLocation(data, r);
+					if (loc == "/page/Test_Dojo_Loot_Room") return null;
 				}
 			}
 
@@ -2410,7 +2433,7 @@ namespace DDOWikiParser
 				}
 				else if (r.InnerText.StartsWith("Enchantments"))
 				{
-					ParseEnhancements(data, r);
+					if (!ParseEnhancements(data, r)) return null;
 				}
 				else if (r.InnerText.IndexOf("drops on death", StringComparison.InvariantCultureIgnoreCase) > -1)
 				{
@@ -2418,7 +2441,8 @@ namespace DDOWikiParser
 				}
 				else if (r.InnerText.StartsWith("Location"))
 				{
-					ParseLocation(data, r);
+					string loc = ParseLocation(data, r);
+					if (loc == "/page/Test_Dojo_Loot_Room") return null;
 				}
 			}
 
@@ -2452,6 +2476,18 @@ namespace DDOWikiParser
 
 				if (itemName.Contains("(historic)")) continue;
 				else if (itemName == "Enchanted Chocolates by Fabiano & Zelda") continue;
+				else
+				{
+					var aas = doc.GetElementsByTagName("a");
+					bool historic = false;
+					foreach (XmlElement a in aas)
+						if (a.GetAttribute("href") == "/page/Category:History")
+						{
+							historic = true;
+							break;
+						}
+					if (historic) continue;
+				}
 
 				DDOItemData data = new DDOItemData(ItemDataSource.Dataset, MinorArtifacts.Contains(itemName)) { Name = itemName };
 
@@ -2480,7 +2516,11 @@ namespace DDOWikiParser
 					else if (tr.InnerText.StartsWith("Proficiency Class")) tvpath = ParseWeapon(data, trs);
 					else tvpath = ParseItem(data, trs);
 
-					if (tvpath != null) Dispatcher.Invoke(new Action(() => { SetTreeViewItemAtPath(tvpath, data); }));
+					if (tvpath != null)
+					{
+						ItemsCache.Add(data);
+						Dispatcher.Invoke(new Action(() => { SetTreeViewItemAtPath(tvpath, data); }));
+					}
 
 					// special case tests for Slaver's items that can fit into multiple slots, so we create duplicates for the non-listed slot versions
 					SlotType other = SlotType.None;
@@ -2496,6 +2536,15 @@ namespace DDOWikiParser
 							int c = tvpath.IndexOf('|');
 							tvpath = other.ToString() + "|" + tvpath.Substring(c + 1);
 							Dispatcher.Invoke(new Action(() => { SetTreeViewItemAtPath(tvpath, dup); }));
+
+							foreach (var kvp in QuestLookup)
+							{
+								if (kvp.Value.Exists(it => it.Name == data.Name))
+								{
+									kvp.Value.Add(dup);
+									break;
+								}
+							}
 						}
 					}
 				}
@@ -2555,9 +2604,6 @@ namespace DDOWikiParser
 						if (ta.GetAttribute("id") != "wpTextbox1") continue;
 						apd.FreeToVIP = !ta.InnerText.Contains("[[Category:Expansion Packs]]");
 						apd.Name = name;
-						// find adpack token
-						//int ai = ta.InnerText.IndexOf("{{Adpack");
-						//if (ai == -1) apd.Name = name;
 						return apd;
 					}
 
@@ -2568,12 +2614,54 @@ namespace DDOWikiParser
 			return null;
 		}
 
+		DDOAdventurePackData GetAdventurePackData(string adpname)
+		{
+			if (!AdpackLookup.ContainsKey(adpname))
+			{
+				DDOAdventurePackData apd = LoadAdventurePack(adpname);
+				AdpackLookup[adpname] = apd;
+			}
+
+			return AdpackLookup[adpname];
+		}
+
+		DDOAdventurePackData GetCreateAdventurePackData(string adpname, bool freetovip)
+		{
+			if (!AdpackLookup.ContainsKey(adpname))
+			{
+				DDOAdventurePackData apd = new DDOAdventurePackData() { Name = adpname, FreeToVIP = freetovip };
+				AdpackLookup[adpname] = apd;
+			}
+
+			return AdpackLookup[adpname];
+		}
+
+		void AddQuestToAdventurePack(DDOQuestData qd, string apdname, bool freetovip)
+		{
+			DDOAdventurePackData apd = GetCreateAdventurePackData(apdname, freetovip);
+			apd.Quests.Add(qd);
+			qd.Adpack = apd;
+		}
+
+		string GetNameFromPartialPath(string pp)
+		{
+			return pp.Substring(pp.LastIndexOf('/') + 1).Replace('_', ' ').Replace("%27", "'");
+		}
+
 		void QuestParse_DoWork(object sender, DoWorkEventArgs e)
 		{
 			BackgroundWorker bw = sender as BackgroundWorker;
 			int progress = 0;
-			foreach (var kvp in QuestLookup)
+			List<KeyValuePair<string, List<DDOItemData>>> epiccrafting = new List<KeyValuePair<string, List<DDOItemData>>>();
+			var qllist = QuestLookup.ToList();
+			foreach (var kvp in qllist)
 			{
+				if (kvp.Key.StartsWith("Epic version "))
+				{
+					epiccrafting.Add(kvp);
+					continue;
+				}
+
 				bw.ReportProgress(++progress, kvp.Key);
 				XmlDocument doc = DownloadWebpage("https://ddowiki.com" + kvp.Key.Replace("page", "edit"));
 
@@ -2582,11 +2670,167 @@ namespace DDOWikiParser
 
 				DDOQuestData questdata = new DDOQuestData();
 				foreach (var item in kvp.Value)
+				{
 					item.QuestFoundIn = questdata;
+					questdata.Items.Add(item);
+				}
+
+				if (kvp.Key == "/page/DDO_Store")
+				{
+					questdata.Name = "DDO Store";
+					continue;
+				}
+				else if (kvp.Key == "/page/Advance_to_level_15")
+				{
+					questdata.Name = "Iconic Gear";
+					AddQuestToAdventurePack(questdata, "Iconic Gear", false);
+					continue;
+				}
+				else if (kvp.Key == "/page/Treasure_of_Crystal_Cove" || kvp.Key == "/page/Anniversary_Party" || kvp.Key == "/page/Anniversary_Card_Collection" ||
+						kvp.Key == "/page/The_Night_Revels" || kvp.Key == "/page/Mimic_Hunt" || kvp.Key == "/page/Mabar_Endless_Night_Festival" || kvp.Key == "/page/Festivult" ||
+						kvp.Key == "/page/Risia_Ice_Games")
+				{
+					questdata.Name = GetNameFromPartialPath(kvp.Key);
+					questdata.IsFree = true;
+					AddQuestToAdventurePack(questdata, "Special Events", true);
+					continue;
+				}
+				else if (kvp.Key == "/page/Cauldron_of_Sora_Katra")
+				{
+					questdata.Name = GetNameFromPartialPath(kvp.Key);
+					AddQuestToAdventurePack(questdata, "Attack on Stormreach", true);
+					continue;
+				}
+				else if (kvp.Key == "/page/Tome_of_Untold_Legends")
+				{
+					questdata.Name = GetNameFromPartialPath(kvp.Key);
+					AddQuestToAdventurePack(questdata, "The Necropolis, Part 4", true);
+					continue;
+				}
+				else if (kvp.Key == "/page/Dreamforge")
+				{
+					questdata.Name = GetNameFromPartialPath(kvp.Key);
+					AddQuestToAdventurePack(questdata, "The Dreaming Dark", true);
+					continue;
+				}
+				else if (kvp.Key == "/page/Magma_Forge")
+				{
+					questdata.Name = GetNameFromPartialPath(kvp.Key);
+					AddQuestToAdventurePack(questdata, "Shadow Under Thunderholme", true);
+					continue;
+				}
+				else if (kvp.Key == "/page/Altar_of_Fecundity")
+				{
+					questdata.Name = GetNameFromPartialPath(kvp.Key);
+					AddQuestToAdventurePack(questdata, "The Vale of Twilight", true);
+					continue;
+				}
+				else if (kvp.Key == "/page/Syranian_Forged_Weaponry")
+				{
+					questdata.Name = GetNameFromPartialPath(kvp.Key);
+					AddQuestToAdventurePack(questdata, "Masterminds of Sharn", true);
+				}
+				else if (kvp.Key == "/page/The_Underdark")
+				{
+					questdata.Name = GetNameFromPartialPath(kvp.Key);
+					AddQuestToAdventurePack(questdata, "Menace of the Underdark", false);
+				}
 
 				foreach (XmlElement ta in taNodes)
 				{
 					if (ta.GetAttribute("id") != "wpTextbox1") continue;
+
+					// this is a quest whose page redirects
+					// there are a number of reasons why a location page redirects
+					if (ta.InnerText.StartsWith("#REDIRECT"))
+					{
+						questdata.Name = kvp.Key.Substring(6).Replace('_', ' ');
+						questdata.IsFree = questdata.IsRaid = false;
+						int c = ta.InnerText.IndexOf("[[");
+						string adpname = ta.InnerText.Substring(c + 2, ta.InnerText.IndexOf("]]", c) - c - 2).Trim();
+
+						DDOAdventurePackData apd = null;
+						// this is a redirect to the adpack page, because it's too hard for the DDO Wiki people to keep things well organized.
+						if (kvp.Key == "/page/The_Abandoned_Excavation" || kvp.Key == "/page/The_Maleficent_Cabal" || kvp.Key == "/page/Catacombs" || kvp.Key == "/page/Ruins_of_Gianthold")
+						{
+							apd = GetAdventurePackData(adpname);
+						}
+						else if (kvp.Key == "/page/Silver_Flame_Nugget" || kvp.Key == "/page/Emerald_Claw_Nugget")
+						{
+							// adpname is an item page, so we have to hardcode the actual adpack name
+							apd = GetAdventurePackData("The Necropolis, Part 4");
+						}
+						else if (kvp.Key == "/page/Special_event_items")
+						{
+							// this is a unique location, it covers multiple quests across multiple special events, but has no adpack, so we fake it
+							apd = GetCreateAdventurePackData("Special Events", true);
+							questdata.IsFree = true;
+						}
+						else if (kvp.Key == "/page/Blue_Water_Inn")
+						{
+							// this redirects to a wilderness zone page, so hardcode the proper adpack
+							apd = GetAdventurePackData("Mists of Ravenloft");
+						}
+						else if (kvp.Key == "/page/Necropolis")
+						{
+							// apparently a name change/fix needed a page redirect, so hardcode the first of the adpacks
+							apd = GetAdventurePackData("The Necropolis, Part 1");
+						}
+						else if (kvp.Key == "/page/Crafted" || kvp.Key == "/page/Stone_of_Experience")
+						{
+							// this isn't really a quest, and it's not appropriate to have an adpack created for it
+							continue;
+						}
+						else if (kvp.Key == "/page/None")
+						{
+							// this is a one-off item that is given to players during Delera's Tomb quests
+							apd = GetAdventurePackData("Delera's Tomb");
+						}
+						else if (kvp.Key == "/page/Return_to_the_Sanctuary")
+						{
+							apd = GetAdventurePackData("The Catacombs");
+						}
+						else if (kvp.Key == "/page/Altar_of_Vulkoor")
+						{
+							apd = GetAdventurePackData("The Red Fens");
+						}
+						else if (kvp.Key == "/page/Champion_Hunter" || kvp.Key == "/page/Favor_Rewards")
+						{
+							// this is for items purchasable with mysterious remnants or as rewards for patron favor, so the quest needs to be marked as free but with no adpack
+							questdata.IsFree = true;
+						}
+						else if (kvp.Key == "/page/Orchard_of_the_Macabre")
+						{
+							// another name change/fix needed a page redirect (sure, right), so hardcode the proper adpack
+							apd = GetAdventurePackData("The Necropolis, Part 4");
+						}
+						else if (kvp.Key == "/page/Black_Dragonscale_Armor" || kvp.Key == "/page/Blue_Dragonscale_Armor" || kvp.Key == "/page/White_Dragonscale_Armor" ||
+								 kvp.Key == "/page/Dragoncraft_Armor" || kvp.Key == "/page/Elfcraft_Armor" || kvp.Key == "/page/Giantcraft_Armor")
+						{
+							// this is a reference to Gianthold crafting, so hardcode the proper adpack
+							apd = GetAdventurePackData("Ruins of Gianthold");
+						}
+						else if (kvp.Key == "/page/Dragontouched_Armor")
+						{
+							// this is a reference to Reaver's Reach crafting, so hardcode the proper adpack
+							apd = GetAdventurePackData("The Reaver's Reach");
+						}
+						else if (kvp.Key == "/page/A_Break_in_the_Ice")
+						{
+							apd = GetAdventurePackData("Shadowfell Conspiracy");
+						}
+						else
+						{
+							LogError("Redirecting quest from " + kvp.Key + " to " + adpname + ". " + kvp.Value.Count + " items, first is " + kvp.Value[0].WikiURL);
+						}
+
+						if (apd != null)
+						{
+							apd.Quests.Add(questdata);
+							questdata.Adpack = apd;
+						}
+						continue;
+					}
 
 					string[] props = ta.InnerText.Split('|');
 					foreach (string p in props)
@@ -2604,13 +2848,7 @@ namespace DDOWikiParser
 						}
 						else if (string.Compare(ps[0], "adpack", true) == 0)
 						{
-							DDOAdventurePackData apd;
-							if (AdpackLookup.ContainsKey(ps[1])) apd = AdpackLookup[ps[1]];
-							else
-							{
-								apd = LoadAdventurePack(ps[1]);
-								AdpackLookup[ps[1]] = apd;
-							}
+							DDOAdventurePackData apd = GetAdventurePackData(ps[1]);
 							apd.Quests.Add(questdata);
 							questdata.Adpack = apd;
 						}
@@ -2623,7 +2861,33 @@ namespace DDOWikiParser
 							questdata.IsFree = string.Compare(ps[1], "yes", true) == 0;
 						}
 					}
+
+					if (questdata.Adpack == null)
+					{
+						if (string.IsNullOrWhiteSpace(questdata.Name))
+						{
+							questdata.Name = GetNameFromPartialPath(kvp.Key);
+							questdata.IsFree = true;
+							LogError("Quest page without proper adpack nor templating : " + kvp.Key + ", " + kvp.Value.Count + " items, first is " + kvp.Value[0].WikiURL);
+						}
+					}
 				}
+			}
+
+			foreach (var kvp in epiccrafting)
+			{
+				bw.ReportProgress(++progress, kvp.Key);
+				string heroicname = kvp.Key.Substring(16).Replace("Item:", "").Trim();
+				DDOItemData id = ItemsCache.Find(i => i.Name == heroicname);
+				if (id != null)
+				{
+					foreach (var item in kvp.Value)
+					{
+						item.QuestFoundIn = id.QuestFoundIn;
+						id.QuestFoundIn.Items.Add(item);
+					}
+				}
+				else LogError("Couldn't find heroic item " + heroicname + ", original string is " + kvp.Key);
 			}
 		}
 
