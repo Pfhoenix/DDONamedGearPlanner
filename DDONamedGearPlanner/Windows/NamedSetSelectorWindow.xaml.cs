@@ -70,14 +70,24 @@ namespace DDONamedGearPlanner
 			{
 				if (string.IsNullOrWhiteSpace(set.Value.WikiURL)) continue;
 				int ml = 0;
+				List<DDOAdventurePackData> apds = new List<DDOAdventurePackData>();
 				foreach (var item in set.Value.Items)
 				{
+					if (item.QuestFoundIn.Adpack != null && !apds.Contains(item.QuestFoundIn.Adpack)) apds.Add(item.QuestFoundIn.Adpack);
+					if (!QuestSourceManager.IsItemAllowed(item)) continue;
 					var mlp = item.Properties.Find(i => i.Property == "Minimum Level");
 					if (mlp != null && mlp.Value > ml)
 						ml = (int)mlp.Value;
 				}
 
-				Sets.Add(new NamedSetInfo{ Name = set.Value.Name, ML = ml, WikiURL = set.Value.WikiURL, Set = set.Value });
+				foreach (var apd in apds)
+				{
+					if (QuestSourceManager.IsAllowed(apd))
+					{
+						Sets.Add(new NamedSetInfo{ Name = set.Value.Name, ML = ml, WikiURL = set.Value.WikiURL, Set = set.Value });
+						break;
+					}
+				}
 			}
 
 			Sets.Sort((a, b) => a.ML < b.ML ? -1 : (a.ML > b.ML ? 1 : a.Name.CompareTo(b.Name)));
@@ -119,6 +129,9 @@ namespace DDONamedGearPlanner
 			SlotPanel.Tag = set;
 			foreach (var item in set.Items)
 			{
+				// don't show items that aren't allowed
+				if (!QuestSourceManager.IsItemAllowed(item)) continue;
+
 				string group = item.Slot.ToString() + " Slot";
 				bool ro = false;
 				// search for an existing groupbox first

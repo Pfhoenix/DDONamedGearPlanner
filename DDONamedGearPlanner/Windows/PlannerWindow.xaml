@@ -37,9 +37,14 @@
 			</MenuItem>
 			<MenuItem Header="_View">
 				<MenuItem Header="Item Property Browser" Click="ViewItemPropertyBrowser"/>
-			</MenuItem>
-			<MenuItem Header="_Items">
+				<Separator/>
 				<MenuItem Header="Custom Items" Click="ManageCustomItems"/>
+			</MenuItem>
+			<MenuItem Name="miQuestSources" Header="_Quest Sources">
+				<MenuItem Header="{x:Static local:QuestSourceManager.FreeToVIP}" IsCheckable="True" IsChecked="True" Click="QuestSourceItem_Clicked"/>
+				<MenuItem Header="{x:Static local:QuestSourceManager.RaidDrops}" IsCheckable="True" IsChecked="True" Click="QuestSourceItem_Clicked"/>
+				<Separator/>
+				<MenuItem Header="Manage Quest Sources" Click="ManageQuestSources_Clicked"/>
 			</MenuItem>
 			<MenuItem Header="_Help">
 				<MenuItem Header="UI Tips" InputGestureText="F1" Click="HelpMenuItem_Click" />

@@ -151,6 +151,7 @@ namespace DDONamedGearPlanner
 
 				DDOItemData item = DatasetManager.Dataset.Items[i];
 				if (item.ML < Build.MinimumLevel || item.ML > Build.MaximumLevel) continue;
+				if (!QuestSourceManager.IsItemAllowed(item)) continue;
 
 				EquipmentSlotType slot1 = EquipmentSlotType.None, slot2 = EquipmentSlotType.None;
 

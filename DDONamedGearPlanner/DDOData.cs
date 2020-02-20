@@ -138,6 +138,7 @@ namespace DDONamedGearPlanner
 		public DDOAdventurePackData Adpack;
 		public bool IsRaid;
 		public bool IsFree;
+		public List<DDOItemData> Items = new List<DDOItemData>();
 	}
 
 	[Serializable]
@@ -219,7 +220,8 @@ namespace DDONamedGearPlanner
 				Name = Name,
 				WikiURL = WikiURL,
 				Slot = Slot,
-				Category = Category
+				Category = Category,
+				QuestFoundIn = QuestFoundIn
 			};
 			foreach (var p in Properties)
 			{
@@ -232,6 +234,7 @@ namespace DDONamedGearPlanner
 				}
 				item.Properties.Add(ip);
 			}
+			QuestFoundIn?.Items.Add(item);
 
 			return item;
 		}

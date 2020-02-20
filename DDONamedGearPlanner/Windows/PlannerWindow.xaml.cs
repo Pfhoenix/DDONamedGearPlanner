@@ -21,7 +21,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public static readonly string VERSION = "0.6";
+		public static readonly string VERSION = "0.6.2";
 
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
@@ -50,6 +50,8 @@ namespace DDONamedGearPlanner
 				return;
 			}
 
+			LoadQuestSourceSettings();
+
 			CustomItemsManager.Load();
 
 			BtnFilterApply_Click(null, null);
@@ -68,6 +70,32 @@ namespace DDONamedGearPlanner
 			cbItemPropertyFilter.SelectedIndex = 0;
 
 			txtSearchBox.Focus();
+		}
+
+		void LoadQuestSourceSettings()
+		{
+			QuestSourceManager.InitializeFromDataset();
+
+			string filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "questsources.cfg");
+			if (File.Exists(filepath))
+			{
+				string[] lines = File.ReadAllLines(filepath);
+				foreach (var line in lines)
+				{
+					string[] split = line.Split('=');
+					if (split.Length < 2) continue;
+					split[0] = split[0].Trim();
+					QuestSourceManager.SetQuestSourceAllowed(split[0].Trim(), split[1].Trim() == "yes", false);
+				}
+				foreach (var tmi in miQuestSources.Items)
+				{
+					MenuItem mi = tmi as MenuItem;
+					if (mi == null) break;
+					mi.IsChecked = QuestSourceManager.IsAllowed(mi.Header.ToString());
+				}
+			}
+
+			QuestSourceManager.SaveSettings();
 		}
 
 		public void RegisterEquipmentSlot(EquipmentSlotControl esc)
@@ -133,6 +161,7 @@ namespace DDONamedGearPlanner
 			if ((ItemFilterSettings.Slots & item.Slot) == 0) return false;
 			if (ItemFilterSettings.MinimumLevel > item.ML) return false;
 			if (ItemFilterSettings.MaximumLevel < item.ML) return false;
+			if (!QuestSourceManager.IsItemAllowed(item)) return false;
 			if (item.Slot == SlotType.Body)
 			{
 				if ((ArmorCategory)item.Category == ArmorCategory.Cloth && !ItemFilterSettings.BodyCloth) return false;
@@ -227,6 +256,11 @@ namespace DDONamedGearPlanner
 			tbFilterBack.IsChecked = tbFilterBody.IsChecked = tbFilterEye.IsChecked = tbFilterFeet.IsChecked = tbFilterFinger.IsChecked = tbFilterHand.IsChecked = tbFilterHead.IsChecked = tbFilterNeck.IsChecked = tbFilterOffhand.IsChecked = tbFilterTrinket.IsChecked = tbFilterWaist.IsChecked = tbFilterWeapon.IsChecked = tbFilterWrist.IsChecked = false;
 		}
 
+		void UpdateItemSearchResults()
+		{
+			CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
+		}
+
 		private void BtnFilterApply_Click(object sender, RoutedEventArgs e)
 		{
 			txtSearchBox.Text = null;
@@ -296,12 +330,12 @@ namespace DDONamedGearPlanner
 			ItemFilterSettings.WeaponThrowingShuriken = tbFilterWeapon.IsChecked.Value ? cmiFilterWeaponThrowingShuriken.IsChecked : false;
 			ItemFilterSettings.Slots |= tbFilterWrist.IsChecked.Value ? SlotType.Wrist : 0;
 
-			if (sender != null) CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
+			if (sender != null) UpdateItemSearchResults();
 		}
 
 		private void TxtSearchBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
+			UpdateItemSearchResults();
 		}
 
 		private void TbFilterBody_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -768,7 +802,7 @@ namespace DDONamedGearPlanner
 			else if (header == "Slot") ItemListCopy.Sort((a, b) => string.Compare(a.Slot.ToString(), b.Slot.ToString()) == 0 ? string.Compare(a.Name, b.Name) : string.Compare(a.Slot.ToString(), b.Slot.ToString()));
 			else if (header == "ML") ItemListCopy.Sort((a, b) => a.ML < b.ML ? -1 * LastSortDir : (a.ML > b.ML ? 1 * LastSortDir : string.Compare(a.Name, b.Name)));
 
-			CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
+			UpdateItemSearchResults();
 		}
 
 		private void MLRangeChanged(RangeSlider slider, double oldvalue, double newvalue)
@@ -778,7 +812,7 @@ namespace DDONamedGearPlanner
 				ItemFilterSettings.MinimumLevel = (int)rsML.LowerValue;
 				ItemFilterSettings.MaximumLevel = (int)rsML.UpperValue;
 				grpML.Header = "ML Range: " + ItemFilterSettings.MinimumLevel + " to " + ItemFilterSettings.MaximumLevel;
-				CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
+				UpdateItemSearchResults();
 			}
 		}
 
@@ -891,7 +925,7 @@ namespace DDONamedGearPlanner
 			if (cbItemPropertyFilter.SelectedIndex == 0) ItemFilterSettings.SearchProperty = null;
 			else ItemFilterSettings.SearchProperty = (cbItemPropertyFilter.SelectedItem as DDOItemProperty).Property;
 
-			CollectionViewSource.GetDefaultView(lvItemList.ItemsSource).Refresh();
+			UpdateItemSearchResults();
 		}
 
 		ItemPropertyBrowserWindow IPBWindow;
@@ -1225,6 +1259,23 @@ namespace DDONamedGearPlanner
 					return;
 				}
 			}
+		}
+
+		void QuestSourceItem_Clicked(object sender, RoutedEventArgs e)
+		{
+			MenuItem mi = sender as MenuItem;
+			QuestSourceManager.SetQuestSourceAllowed(mi.Header.ToString(), mi.IsChecked, true);
+
+			UpdateItemSearchResults();
+		}
+
+		private void ManageQuestSources_Clicked(object sender, RoutedEventArgs e)
+		{
+			QuestSourcesWindow qsw = new QuestSourcesWindow();
+			qsw.Owner = this;
+			qsw.ShowDialog();
+
+			UpdateItemSearchResults();
 		}
 	}
 }

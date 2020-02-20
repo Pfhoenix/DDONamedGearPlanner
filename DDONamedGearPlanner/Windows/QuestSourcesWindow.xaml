@@ -1,0 +1,16 @@
+﻿<Window x:Class="DDONamedGearPlanner.QuestSourcesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DDONamedGearPlanner"
+        mc:Ignorable="d"
+        Title="Quest Sources" Height="450" Width="300" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Closed="Window_Closed">
+	<ListBox Name="lbQuestSources">
+		<ListBox.ItemTemplate>
+			<DataTemplate>
+				<CheckBox Content="{Binding Name}" IsChecked="{Binding Allow}"/>
+			</DataTemplate>			
+		</ListBox.ItemTemplate>
+	</ListBox>
+</Window>
