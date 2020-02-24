@@ -59,19 +59,34 @@ namespace DDONamedGearPlanner
 						if (string.IsNullOrWhiteSpace(ipt)) type = "untyped";
 						TreeViewItem tvii = new TreeViewItem();
 						SlotType st = SlotType.None;
+						bool itemnotallowed = false;
 						foreach (var item in ip.Items)
+						{
+							if (!QuestSourceManager.IsItemAllowed(item))
+							{
+								itemnotallowed = true;
+								continue;
+							}
 							if (item.Properties.Find(p => p.Property == ip.Property && (p.Type == type || (type == "untyped" && string.IsNullOrWhiteSpace(p.Type)))) != null) st |= item.Slot;
+						}
 						if (st != SlotType.None)
 						{
 							tvii.Header = type + " (" + st + ")";
 							tvii.Tag = ip;
+							tvi.Items.Add(tvii);
 						}
-						else tvii.Header = type + " (set bonus only)";
-						tvi.Items.Add(tvii);
+						else if (!itemnotallowed)
+						{
+							tvii.Header = type + " (set bonus only)";
+							tvi.Items.Add(tvii);
+						}
 					}
 				}
-				tvi.Header = header;
-				tvByProperty.Items.Add(tvi);
+				if (tvi.HasItems)
+				{
+					tvi.Header = header;
+					tvByProperty.Items.Add(tvi);
+				}
 			}
 
 			// populate by slot treeview
@@ -99,6 +114,8 @@ namespace DDONamedGearPlanner
 				TextBlock tb;
 				foreach (var item in ip.Items)
 				{
+					if (!QuestSourceManager.IsItemAllowed(item)) continue;
+
 					bool first;
 					if (ipslots.ContainsKey(item.Slot))
 					{
@@ -149,6 +166,7 @@ namespace DDONamedGearPlanner
 		{
 			foreach (var item in ip.Items)
 			{
+				if (!QuestSourceManager.IsItemAllowed(item)) continue;
 				if (slot != SlotType.None && item.Slot != slot) continue;
 
 				ListBoxItem lbi = new ListBoxItem();

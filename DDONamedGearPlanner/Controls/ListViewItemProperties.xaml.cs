@@ -20,6 +20,14 @@ namespace DDONamedGearPlanner
 			Item = item;
 			lvDetails.Items.Clear();
 			if (item == null) return;
+
+			if (item.Item.QuestFoundIn.IsRaid)
+			{
+				ListViewItem lvi = new ListViewItem();
+				lvi.Content = new { Property = "Raid Drop", Type = "", Value = "" };
+				lvDetails.Items.Add(lvi);
+			}
+
 			foreach (var p in item.Item.Properties)
 			{
 				if (p.Options != null)
