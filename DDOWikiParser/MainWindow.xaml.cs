@@ -46,12 +46,13 @@ namespace DDOWikiParser
 		};
 		string[] MinorArtifacts =
 		{
-			"Epic Voice of the Master",
 			"Band of Diani ir'Wynarn",
 			"Brand of Kalok Shash",
+			"Brightlord, the Sigil of the Flame",
 			"Charune, Grand Burden of Fury",
 			"Doctor LeRoux's Curious Implant",
 			"Doctor Vulcana's Broken Wristwatch",
+			"Epic Voice of the Master",
 			"Gauntlet of the Iron Council",
 			"Gilded Gloves of Sanctity",
 			"Ir'Kesslan's Most Prescient Lens",
@@ -60,6 +61,7 @@ namespace DDOWikiParser
 			"Sigil of Regalport",
 			"Sigil of the Triumvirate",
 			"Stolen Signet of ir'Wynarn",
+			"The Shrouded Steps of the Beyond",
 			"The Zarash'ak Ward"
 		};
 		char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
@@ -794,7 +796,7 @@ namespace DDOWikiParser
 							p = "Ki Generation";
 							v = "enhanced ki";
 						}
-						else if (p.EndsWith("Armor-Piercing -")) p = "Armor-Piercing";
+						else if (p.EndsWith("Armor-Piercing -")) p = "Fortification Bypass";
 						else if (p.EndsWith("Assassinate") || p.EndsWith("Assassination")) p = "Assassinate DC";
 						else if (p == "Attack Bonus") p = "Attack";
 						else if (p.StartsWith("Coalesced Flame"))
