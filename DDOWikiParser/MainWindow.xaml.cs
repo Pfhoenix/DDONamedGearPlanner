@@ -49,9 +49,11 @@ namespace DDOWikiParser
 			"Epic Voice of the Master",
 			"Band of Diani ir'Wynarn",
 			"Brand of Kalok Shash",
+			"Charune, Grand Burden of Fury",
 			"Doctor LeRoux's Curious Implant",
 			"Doctor Vulcana's Broken Wristwatch",
 			"Gauntlet of the Iron Council",
+			"Gilded Gloves of Sanctity",
 			"Ir'Kesslan's Most Prescient Lens",
 			"Key of Rhukaan Draal",
 			"Radiant Ring of Taer Valaestas",
@@ -856,9 +858,7 @@ namespace DDOWikiParser
 							{
 								p = p.Substring(0, c).Trim();
 								// we flag this for special handling later
-								if (p == "Parrying") v = numerals[vi - 1];
-								else if (p.EndsWith("Deception")) v = numerals[vi - 1];
-								else if (p == "Speed") v = numerals[vi - 1];
+								if (p == "Parrying" || p.EndsWith("Deception") || p == "Speed" || p == "Riposte") v = numerals[vi - 1];
 							}
 						}
 
@@ -1459,10 +1459,17 @@ namespace DDOWikiParser
 				}
 				else if (p == "Riposte")
 				{
-					data.AddProperty("Armor Class", "insight", vi, null);
-					data.AddProperty("Fortitude", "insight", vi, null);
-					data.AddProperty("Reflex", "insight", vi, null);
-					data.AddProperty("Will", "insight", vi, null);
+					int ac = vi;
+					int s = vi;
+					if (numerals.Contains(v))
+					{
+						ac = (int)Math.Ceiling(vi / 2.0);
+						s = (int)Math.Floor(vi / 2.0);
+					}
+					data.AddProperty("Armor Class", "insight", ac, null);
+					data.AddProperty("Fortitude", "insight", s, null);
+					data.AddProperty("Reflex", "insight", s, null);
+					data.AddProperty("Will", "insight", s, null);
 				}
 				else if (p == "Improved Deception")
 				{
@@ -2227,6 +2234,7 @@ namespace DDOWikiParser
 				{
 					string[] split = r.ChildNodes[1].InnerText.Split(' ');
 					split[0] = split[0].Replace("\n", "");
+					if (split[0] == "Cosmetic") return null;
 					data.Category = (int)(ArmorCategory)Enum.Parse(typeof(ArmorCategory), split[0]);
 					data.AddProperty("Armor Category", split[0], 0, null);
 					tvpath = "Armor|" + split[0] + "|" + data.Name;
@@ -2280,7 +2288,7 @@ namespace DDOWikiParser
 				else if (r.InnerText.StartsWith("Location"))
 				{
 					string loc = ParseLocation(data, r);
-					if (loc == "/page/Test_Dojo_Loot_Room") return null;
+					if (loc == "/page/Test_Dojo_Loot_Room" || loc == "/page/DDO_Store") return null;
 				}
 			}
 
@@ -2322,7 +2330,7 @@ namespace DDOWikiParser
 				else if (r.InnerText.StartsWith("Location"))
 				{
 					string loc = ParseLocation(data, r);
-					if (loc == "/page/Test_Dojo_Loot_Room") return null;
+					if (loc == "/page/Test_Dojo_Loot_Room" || loc == "/page/DDO_Store") return null;
 				}
 			}
 
@@ -2391,7 +2399,7 @@ namespace DDOWikiParser
 				else if (r.InnerText.StartsWith("Location"))
 				{
 					string loc = ParseLocation(data, r);
-					if (loc == "/page/Test_Dojo_Loot_Room") return null;
+					if (loc == "/page/Test_Dojo_Loot_Room" || loc == "/page/DDO_Store") return null;
 				}
 			}
 
@@ -2408,6 +2416,7 @@ namespace DDOWikiParser
 				{
 					try
 					{
+						if (r.InnerText.Contains("Cosmetic")) return null;
 						//string[] split = r.InnerText.Split('\n');
 						//split = split[1].Split(' ');
 						data.Slot = (SlotType)Enum.Parse(typeof(SlotType), r.InnerText.Replace("\n", "").Substring(4));
@@ -2442,7 +2451,7 @@ namespace DDOWikiParser
 				else if (r.InnerText.StartsWith("Location"))
 				{
 					string loc = ParseLocation(data, r);
-					if (loc == "/page/Test_Dojo_Loot_Room") return null;
+					if (loc == "/page/Test_Dojo_Loot_Room" || loc == "/page/DDO_Store") return null;
 				}
 			}
 

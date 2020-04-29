@@ -51,10 +51,10 @@ namespace DDONamedGearPlanner
 
 		public static bool IsItemAllowed(DDOItemData item)
 		{
+			if (item.QuestFoundIn.Adpack != null && !QuestSourceAllowed[item.QuestFoundIn.Adpack.Name]) return false;
 			if (item.QuestFoundIn.IsFree) return true;
 			if (item.QuestFoundIn.Adpack == null) return QuestSourceAllowed[FreeToVIP];
 			if (item.QuestFoundIn.Adpack.FreeToVIP && !QuestSourceAllowed[FreeToVIP]) return false;
-			if (!QuestSourceAllowed[item.QuestFoundIn.Adpack.Name]) return false;
 			if (!item.MinorArtifact && item.QuestFoundIn.IsRaid && !QuestSourceAllowed[RaidDrops]) return false;
 
 			return true;

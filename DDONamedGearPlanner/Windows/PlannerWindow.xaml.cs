@@ -21,7 +21,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public static readonly string VERSION = "0.7.1";
+		public static readonly string VERSION = "0.7.2";
 
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
@@ -162,6 +162,7 @@ namespace DDONamedGearPlanner
 			if (ItemFilterSettings.MinimumLevel > item.ML) return false;
 			if (ItemFilterSettings.MaximumLevel < item.ML) return false;
 			if (!QuestSourceManager.IsItemAllowed(item)) return false;
+
 			if (item.Slot == SlotType.Body)
 			{
 				if ((ArmorCategory)item.Category == ArmorCategory.Cloth && !ItemFilterSettings.BodyCloth) return false;
@@ -887,6 +888,8 @@ namespace DDONamedGearPlanner
 				{
 					string[] itemsplit = s.Split('{');
 					DDOItemData item = DatasetManager.Dataset.Items.Find(i => i.Name == itemsplit[0]);
+					// attempt to find the item as a loaded custom item
+					if (item == null) item = CustomItemsManager.CustomItems.Find(i => i.Name == itemsplit[0]);
 					if (item != null)
 					{
 						BuildItem bi = new BuildItem(item, EquipmentSlotType.None);
@@ -904,7 +907,8 @@ namespace DDONamedGearPlanner
 								}
 							}
 						}
-						SlotItem(bi, SlotType.None);
+						if (item.Slot == SlotType.Weapon && EquipmentSlots[EquipmentSlotType.Weapon].Item != null) SlotItem(bi, SlotType.Offhand);
+						else SlotItem(bi, SlotType.None);
 					}
 				}
 				CalculateGearSet(true);
