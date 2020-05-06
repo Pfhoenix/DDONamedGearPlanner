@@ -1921,6 +1921,12 @@ namespace DDOWikiParser
 					else if (p.StartsWith("Greater ")) p = p.Substring(8);
 					data.AddProperty(p, origv == v ? null : v, vi, null);
 				}
+				else if (p == "Bloodrage Defense")
+				{
+					vi = ParseNumber(trimmed);
+					data.AddProperty("Physical Resistance Rating", v, vi, null);
+					data.AddProperty("Magical Resistance Rating", v, vi, null);
+				}
 				else data.AddProperty(p, origv == v ? null : v, vi, null);
 
 				return true;

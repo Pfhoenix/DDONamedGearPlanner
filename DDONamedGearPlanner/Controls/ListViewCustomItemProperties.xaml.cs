@@ -111,6 +111,7 @@ namespace DDONamedGearPlanner
 
 		private void AddProperty_Click(object sender, RoutedEventArgs e)
 		{
+			if (Item == null) return;
 			ItemProperty ip = Item.AddProperty("", null, 0, null);
 			AddItemProperty(ip);
 		}
