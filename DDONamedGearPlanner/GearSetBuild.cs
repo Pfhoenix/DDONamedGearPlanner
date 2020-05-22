@@ -146,15 +146,7 @@ namespace DDONamedGearPlanner
 			if (OptionProperties != null)
 			{
 				foreach (var op in OptionProperties)
-				{
-					sb.Append('{');
-					sb.Append(string.IsNullOrWhiteSpace(op.Type) ? "untyped" : op.Type);
-					sb.Append(' ');
-					sb.Append(op.Property);
-					sb.Append(' ');
-					sb.Append(op.Value);
-					sb.Append('}');
-				}
+					sb.Append(op.ToString());
 			}
 			return sb.ToString();
 		}

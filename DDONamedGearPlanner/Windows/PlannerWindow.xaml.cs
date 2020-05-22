@@ -21,7 +21,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public static readonly string VERSION = "0.7.2";
+		public static readonly string VERSION = "0.7.4";
 
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
@@ -848,7 +848,7 @@ namespace DDONamedGearPlanner
 			}
 		}
 
-		string EncodeGearset()
+		/*string EncodeGearset()
 		{
 			string raw = "";
 			foreach (var es in EquipmentSlots)
@@ -868,15 +868,15 @@ namespace DDONamedGearPlanner
 			}
 
 			return EncodeString(raw);
-		}
+		}*/
 
-		private void EncodeGearsetToClipboard(object sender, RoutedEventArgs e)
+		private void SendGearsetToClipboard(object sender, RoutedEventArgs e)
 		{
 			Clipboard.Clear();
-			Clipboard.SetData(DataFormats.Text, EncodeGearset());
+			Clipboard.SetData(DataFormats.Text, SerializeGearset());
 		}
 
-		void DecodeGearset(string cdata)
+		bool DecodeGearset(string cdata)
 		{
 			try
 			{
@@ -912,16 +912,19 @@ namespace DDONamedGearPlanner
 					}
 				}
 				CalculateGearSet(true);
+
+				return true;
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("There was an error decoding the data. Check the source and try again.");
+				//MessageBox.Show("There was an error decoding the data. Check the source and try again.");
+				return false;
 			}
 		}
 
-		private void DecodeGearsetFromClipboard(object sender, RoutedEventArgs e)
+		private void GetGearsetFromClipboard(object sender, RoutedEventArgs e)
 		{
-			DecodeGearset(Clipboard.GetData(DataFormats.Text).ToString());
+			UnserializeGearset(Clipboard.GetData(DataFormats.Text).ToString());
 		}
 
 		private void ItemPropertyFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1035,7 +1038,7 @@ namespace DDONamedGearPlanner
 			sfd.AddExtension = true;
 			if (sfd.ShowDialog() == true)
 			{
-				File.WriteAllText(sfd.FileName, EncodeGearset());
+				File.WriteAllText(sfd.FileName, SerializeGearset());
 			}
 		}
 
@@ -1045,7 +1048,7 @@ namespace DDONamedGearPlanner
 			ofd.Filter = "Gear Set file (*.gearset)|*.gearset";
 			if (ofd.ShowDialog() == true)
 			{
-				DecodeGearset(File.ReadAllText(ofd.FileName));
+				UnserializeGearset(File.ReadAllText(ofd.FileName));
 			}
 		}
 
@@ -1174,20 +1177,101 @@ namespace DDONamedGearPlanner
 			SaveBuild(false, true);
 		}
 
-		private void DumpGearsetToTextFile(object sender, RoutedEventArgs e)
+		private string SerializeGearset()
 		{
-			SaveFileDialog sfd = new SaveFileDialog();
-			sfd.Filter = "Text file (*.txt)|*.txt";
-			sfd.AddExtension = true;
-			if (sfd.ShowDialog() == false) return;
-
 			StringBuilder sb = new StringBuilder();
 			foreach (var es in EquipmentSlots)
 			{
 				if (es.Value.Item != null) sb.AppendLine(es.Value.Item.ToString(true));
 			}
 
-			File.WriteAllText(sfd.FileName, sb.ToString());
+			// get the treeview control from tciGearSet
+			// iterate over all treeviewitems in the treeview
+			TreeView tv = tciGearSet.Content as TreeView;
+			if (tv != null)
+			{
+				if (tv.HasItems)
+				{
+					if (sb.Length > 0) sb.AppendLine();
+					foreach (TreeViewItem tvi in tv.Items)
+					{
+						string h = tvi.Header.ToString();
+						if (h.Contains(" set (")) continue;
+						sb.AppendLine(h);
+					}
+				}
+			}
+
+			return sb.ToString();
+		}
+
+		private void UnserializeGearset(string text)
+		{
+			UnlockClearAll(null, null);
+
+			string[] gearset = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+			// first try to decode the old format, for backwards compatibility
+			if (gearset.Length == 1 && DecodeGearset(gearset[0])) return;
+
+			foreach (string line in gearset)
+			{
+				string[] entry = line.Split(':');
+				// we've hit a line that isn't a proper entry, so stop processing
+				if (entry.Length < 2) break;
+				EquipmentSlotType slot;
+				try
+				{
+					slot = (EquipmentSlotType)Enum.Parse(typeof(EquipmentSlotType), entry[0]);
+				}
+				catch
+				{
+					break;
+				}
+				entry = entry[1].Split('{');
+				DDOItemData item = DatasetManager.Dataset.Items.Find(i => i.Name == entry[0]);
+				// attempt to find the item as a loaded custom item
+				if (item == null)
+				{
+					item = CustomItemsManager.CustomItems.Find(i => i.Name == entry[0]);
+					if (item != null) SlotItem(new BuildItem(item, slot));
+				}
+				else
+				{
+					BuildItem bi = new BuildItem(item, slot);
+					if (entry.Length > 1)
+					{
+						// go through all optional properties on item
+						var optionals = item.Properties.Where(p => p.Options != null).ToList();
+						foreach (var ops in optionals)
+						{
+							foreach (var op in ops.Options)
+							{
+								bool found = false;
+								string s = op.ToString().Substring(1);
+								for (int e = 1; e < entry.Length; e++)
+								{
+									if (entry[e] == s)
+									{
+										entry[e] = null;
+										found = true;
+										break;
+									}
+								}
+								if (found)
+								{
+									bi.OptionProperties.Add(op);
+									break;
+								}
+							}
+						}
+					}
+
+					SlotItem(bi);
+				}
+			}
+
+			CalculateGearSet(true);
 		}
 
 		private void LockFilledSlots(object sender, RoutedEventArgs e)

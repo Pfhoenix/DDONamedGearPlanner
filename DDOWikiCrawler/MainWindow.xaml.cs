@@ -35,7 +35,11 @@ namespace DDOWikiCrawler
 			"Items",
 			"Items_by_effect",
 			"Root",
-			"DDO_library"
+			"DDO_library",
+			"Cosmetic_Headwear_items",
+			"Cosmetic_Cloak_items",
+			"Item_groups",
+			"Items_by_equipment_slot"
 		};
 
 		string HtmlCachePath;

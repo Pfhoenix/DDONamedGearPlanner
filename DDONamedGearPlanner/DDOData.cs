@@ -121,6 +121,11 @@ namespace DDONamedGearPlanner
 
 			return ip;
 		}
+
+		public override string ToString()
+		{
+			return "{" + (string.IsNullOrWhiteSpace(Type) ? "untyped" : Type) + " " + Property + " " + Value + "}";
+		}
 	}
 
 	[Serializable]

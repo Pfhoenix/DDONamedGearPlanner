@@ -259,12 +259,11 @@
 						<Button Margin="3,3,12,3" Click="UnlockClearAll">Unlock &amp; Clear All</Button>
 					</StackPanel>
 				</Grid>
-				<Button Margin="11,11,11,0" Click="EncodeGearsetToClipboard">Copy to Clipboard</Button>
-				<Button Margin="11,3,11,0" Click="DecodeGearsetFromClipboard">Paste from Clipboard</Button>
+				<Button Margin="11,11,11,0" Click="SendGearsetToClipboard">Copy to Clipboard</Button>
+				<Button Margin="11,3,11,0" Click="GetGearsetFromClipboard">Paste from Clipboard</Button>
 				<Separator Margin="6,5,6,2"/>
 				<Button Margin="11,3,11,0" Click="ImportGearsetFromFile">Import Gear Set From File</Button>
 				<Button Margin="11,3,11,0" Click="ExportGearsetToFile">Export Gear Set to File</Button>
-				<Button Margin="11,3,11,0" Click="DumpGearsetToTextFile">Dump Gear Set to Text File</Button>
 			</StackPanel>
 			<TabControl Grid.Column="2" Name="tcPropertyAreas">
 				<TabItem Name="tciGearSet" Header="Gear Set"/>
