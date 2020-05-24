@@ -122,6 +122,7 @@
       <DependentUpon>RangeSlider.xaml</DependentUpon>
     </Compile>
     <Compile Include="QuestSourceManager.cs" />
+    <Compile Include="SlaveLordCrafting.cs" />
     <Compile Include="Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
