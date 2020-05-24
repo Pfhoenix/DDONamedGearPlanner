@@ -1,8 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml;
 
 namespace DDONamedGearPlanner
 {
+	public struct CraftingIngredient
+	{
+		public string Name;
+		public int Amount;
+	}
+
+	public class CraftedItemProperty
+	{
+		public string Name;
+		public List<ItemProperty> AppliedProperties;
+		public List<CraftingIngredient> Cost;
+	}
+
 	public static class SlaveLordCrafting
 	{
 		public const string BrokenShackles = "Broken Shackles";
@@ -23,20 +37,6 @@ namespace DDONamedGearPlanner
 		public const string LegendarySlaveMastersBust = "Legendary Slave Master's Bust";
 
 		public enum ESlaveLordItemSlots { Prefix, Suffix, Extra, Bonus, Augment, Set, Mythic }
-
-
-		public struct CraftingIngredient
-		{
-			public string Name;
-			public int Amount;
-		}
-
-		public class CraftedItemProperty
-		{
-			public string Name;
-			public List<ItemProperty> AppliedProperties;
-			public List<CraftingIngredient> Cost;
-		}
 
 		public static Dictionary<string, List<CraftedItemProperty>> ItemSlots = new Dictionary<string, List<CraftedItemProperty>>
 		{
@@ -2848,31 +2848,83 @@ namespace DDONamedGearPlanner
 			}
 		};
 
-		public class SlaveLordItem
+		public class SlaveLordItemContainer : ACustomItemContainer
 		{
-			public string Name;
 			public DDOItemData BaseItem;
+			DDOItemData GeneratedItem;
 			public CraftedItemProperty[] Slots = new CraftedItemProperty[7];
 
-			public DDOItemData GenerateItem()
+			public SlaveLordItemContainer()
 			{
-				DDOItemData item = new DDOItemData(ItemDataSource.SlaveLord, false)
+				Source = ItemDataSource.SlaveLord;
+			}
+
+			void GenerateItem()
+			{
+				if (GeneratedItem == null)
 				{
-					Name = Name,
-					WikiURL = "https://ddowiki.com/page/Slave_Lords_Crafting",
-					Slot = BaseItem.Slot,
-					Category = BaseItem.Category,
-					QuestFoundIn = BaseItem.QuestFoundIn
-				};
+					GeneratedItem = new DDOItemData(ItemDataSource.SlaveLord, false)
+					{
+						Name = Name,
+						WikiURL = "https://ddowiki.com/page/Slave_Lords_Crafting",
+						Slot = BaseItem.Slot,
+						Category = BaseItem.Category,
+						QuestFoundIn = BaseItem.QuestFoundIn
+					};
+				}
+				else GeneratedItem.Properties.Clear();
 
 				for (int i = 0; i < 7; i++)
 				{
 					if (Slots[i] == null) continue;
 					foreach (var ip in Slots[i].AppliedProperties)
-						item.AddProperty(ip.Property, ip.Type, ip.Value, null);
+						GeneratedItem.AddProperty(ip.Property, ip.Type, ip.Value, null);
 				}
+			}
 
-				return item;
+			public override DDOItemData GetItem()
+			{
+				if (GeneratedItem == null) GenerateItem();
+
+				return GeneratedItem;
+			}
+
+			public override void ToXml(XmlElement xci, XmlDocument doc)
+			{
+				XmlElement xe = doc.CreateElement("BaseItem");
+				xe.InnerText = BaseItem.Name + "|" + BaseItem.Slot;
+				xci.AppendChild(xe);
+				var slots = (ESlaveLordItemSlots[])Enum.GetValues(typeof(ESlaveLordItemSlots));
+				foreach (var slot in slots)
+				{
+					xe = doc.CreateElement(slot.ToString());
+					xe.InnerText = Slots[(int)slot]?.Name;
+					xci.AppendChild(xe);
+				}
+			}
+
+			public override bool FromXml(XmlElement xci)
+			{
+				try
+				{
+					string[] baseitem = xci.GetElementsByTagName("BaseItem")[0].Value.Split('|');
+					SlotType slot = (SlotType)Enum.Parse(typeof(SlotType), baseitem[1]);
+					BaseItem = DatasetManager.Dataset.Items.Find(i => i.Name == baseitem[0] && i.Slot == slot);
+					string ml = BaseItem.Name.StartsWith("Legendary") ? "Legendary " : "Heroic ";
+					var slots = (ESlaveLordItemSlots[])Enum.GetValues(typeof(ESlaveLordItemSlots));
+					foreach (var s in slots)
+					{
+						List<CraftedItemProperty> props = ItemSlots[ml + s.ToString()];
+						string p = xci.GetElementsByTagName(s.ToString())[0].Value;
+						Slots[(int)s] = props.Find(i => i.Name == p);
+					}
+
+					return true;
+				}
+				catch
+				{
+					return false;
+				}
 			}
 		}
 	}

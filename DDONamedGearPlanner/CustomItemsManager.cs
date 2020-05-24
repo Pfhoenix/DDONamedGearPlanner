@@ -7,25 +7,83 @@ using System.Xml;
 
 namespace DDONamedGearPlanner
 {
+	public abstract class ACustomItemContainer
+	{
+		public string Name;
+		public ItemDataSource Source;
+
+		public abstract DDOItemData GetItem();
+
+		public abstract void ToXml(XmlElement xci, XmlDocument doc);
+
+		public abstract bool FromXml(XmlElement xci);
+	}
+
+	public class CustomItemContainer : ACustomItemContainer
+	{
+		public DDOItemData Item;
+
+		public CustomItemContainer()
+		{
+			Source = ItemDataSource.Custom;
+		}
+
+		public override DDOItemData GetItem()
+		{
+			return Item;
+		}
+
+		public override void ToXml(XmlElement xci, XmlDocument doc)
+		{
+			XmlElement xi = Item.ToXml(doc);
+			xci.AppendChild(xi);
+		}
+
+		public override bool FromXml(XmlElement xci)
+		{
+			try
+			{
+				XmlElement xi = (XmlElement)xci.GetElementsByTagName("Item")[0];
+				Item = DDOItemData.FromXml(xi);
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+	}
+
 	public class CustomItemsManager
 	{
-		public static List<DDOItemData> CustomItems { get; private set; }
-		public static List<DDOItemData> GetItemsFromSource(ItemDataSource ids)
+		public static List<ACustomItemContainer> CustomItems { get; private set; }
+		public static List<T> GetItemsFromSource<T>(ItemDataSource ids) where T : ACustomItemContainer
 		{
-			return CustomItems.Where(i => i.Source == ids).ToList();
+			List<T> list = new List<T>();
+			foreach (var ci in CustomItems)
+				if (ci.Source == ids) list.Add((T)ci);
+
+			return list;
 		}
 
 		public static bool Load()
 		{
 			try
 			{
-				CustomItems = new List<DDOItemData>();
+				CustomItems = new List<ACustomItemContainer>();
 				XmlDocument doc = new XmlDocument();
 				doc.Load(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "customitems.xml"));
-				foreach (XmlElement xi in doc.GetElementsByTagName("Item"))
+				foreach (XmlElement xi in doc.GetElementsByTagName("CustomItem"))
 				{
-					DDOItemData item = DDOItemData.FromXml(xi);
-					if (item != null) CustomItems.Add(item);
+					string name = xi.Attributes["name"].Value;
+					ItemDataSource source = (ItemDataSource)Enum.Parse(typeof(ItemDataSource), xi.Attributes["source"].Value);
+					switch (source)
+					{
+						case ItemDataSource.Custom:
+							CustomItemContainer cic = new CustomItemContainer { Name = name, Source = source };
+							if (cic.FromXml(xi)) CustomItems.Add(cic);
+							break;
+					}
 				}
 
 				return true;
@@ -45,8 +103,15 @@ namespace DDONamedGearPlanner
 				doc.AppendChild(xr);
 				foreach (var item in CustomItems)
 				{
-					XmlElement xi = item.ToXml(doc);
-					xr.AppendChild(xi);
+					XmlElement xci = doc.CreateElement("CustomItem");
+					XmlAttribute xa = doc.CreateAttribute("name");
+					xa.InnerText = item.Name;
+					xci.Attributes.Append(xa);
+					xa = doc.CreateAttribute("source");
+					xa.InnerText = item.Source.ToString();
+					xci.Attributes.Append(xa);
+					item.ToXml(xci, doc);
+					xr.AppendChild(xci);
 				}
 
 				using (XmlTextWriter tw = new XmlTextWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "customitems.xml"), Encoding.Default))

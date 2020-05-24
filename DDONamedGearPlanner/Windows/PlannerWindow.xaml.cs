@@ -889,7 +889,11 @@ namespace DDONamedGearPlanner
 					string[] itemsplit = s.Split('{');
 					DDOItemData item = DatasetManager.Dataset.Items.Find(i => i.Name == itemsplit[0]);
 					// attempt to find the item as a loaded custom item
-					if (item == null) item = CustomItemsManager.CustomItems.Find(i => i.Name == itemsplit[0]);
+					if (item == null)
+					{
+						ACustomItemContainer cic = CustomItemsManager.CustomItems.Find(i => i.Name == itemsplit[0]);
+						if (cic != null) item = cic.GetItem();
+					}
 					if (item != null)
 					{
 						BuildItem bi = new BuildItem(item, EquipmentSlotType.None);
@@ -1233,7 +1237,7 @@ namespace DDONamedGearPlanner
 				// attempt to find the item as a loaded custom item
 				if (item == null)
 				{
-					item = CustomItemsManager.CustomItems.Find(i => i.Name == entry[0]);
+					item = CustomItemsManager.CustomItems.Find(i => i.Name == entry[0])?.GetItem();
 					if (item != null) SlotItem(new BuildItem(item, slot));
 				}
 				else
@@ -1326,7 +1330,7 @@ namespace DDONamedGearPlanner
 				{
 					// we match by name and source
 					// it's up to the user to not have duplicate item names if they reload while using an item
-					DDOItemData ni = CustomItemsManager.CustomItems.Find(i => i.Name == kv.Value.Item.Item.Name && i.Source == kv.Value.Item.Item.Source);
+					DDOItemData ni = CustomItemsManager.CustomItems.Find(i => i.Name == kv.Value.Item.Item.Name && i.Source == kv.Value.Item.Item.Source)?.GetItem();
 					kv.Value.SetItem(new BuildItem(ni, EquipmentSlotType.None));
 					recalc = true;
 				}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,12 +22,12 @@ namespace DDONamedGearPlanner
 			SetupTreeView();
 		}
 
-		TreeViewItem AddItemToTreeView(DDOItemData item)
+		TreeViewItem AddItemToTreeView(CustomItemContainer cic)
 		{
 			TreeViewItem tvi = null;
 			foreach (TreeViewItem i in tvItems.Items)
 			{
-				if ((SlotType)i.Tag == item.Slot)
+				if ((SlotType)i.Tag == cic.Item.Slot)
 				{
 					tvi = i;
 					break;
@@ -35,15 +36,15 @@ namespace DDONamedGearPlanner
 			if (tvi == null)
 			{
 				tvi = new TreeViewItem();
-				TextBlock tb = new TextBlock { Text = item.Slot.ToString(), FontWeight = FontWeights.Bold };
+				TextBlock tb = new TextBlock { Text = cic.Item.Slot.ToString(), FontWeight = FontWeights.Bold };
 				tvi.Header = tb;
-				tvi.Tag = item.Slot;
+				tvi.Tag = cic.Item.Slot;
 				tvItems.Items.Add(tvi);
 			}
 
 			TreeViewItem tvii = new TreeViewItem();
-			tvii.Header = item.Name + " (" + item.Source.ToString() + ")";
-			tvii.Tag = item;
+			tvii.Header = cic.Item.Name + " (" + cic.Item.Source.ToString() + ")";
+			tvii.Tag = cic;
 			tvi.Items.Add(tvii);
 
 			return tvii;
@@ -51,9 +52,10 @@ namespace DDONamedGearPlanner
 
 		void SetupTreeView()
 		{
-			CustomItemsManager.CustomItems.Sort((a, b) => string.Compare(a.Name, b.Name, true));
+			List<CustomItemContainer> customitems = CustomItemsManager.GetItemsFromSource<CustomItemContainer>(ItemDataSource.Custom);
+			customitems.Sort((a, b) => string.Compare(a.Name, b.Name, true));
 
-			foreach (var ci in CustomItemsManager.CustomItems)
+			foreach (var ci in customitems)
 				AddItemToTreeView(ci);
 		}
 
@@ -75,7 +77,7 @@ namespace DDONamedGearPlanner
 				else
 				{
 					tvItems.ContextMenu = tvItems.Resources["ItemCM"] as ContextMenu;
-					lvDetails.SetItem(tvi.Tag as DDOItemData);
+					lvDetails.SetItem((tvi.Tag as CustomItemContainer).Item);
 				}
 			}
 		}
@@ -90,7 +92,7 @@ namespace DDONamedGearPlanner
 			TreeViewItem tvi = tvItems.SelectedItem as TreeViewItem;
 			if (tvi.HasItems) return;
 
-			ItemDoubleClicked?.Invoke(tvi.Tag as DDOItemData);
+			ItemDoubleClicked?.Invoke((tvi.Tag as CustomItemContainer).Item);
 		}
 
 		private void Items_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -187,26 +189,28 @@ namespace DDONamedGearPlanner
 
 			if (slot == SlotType.None) return;
 
-			DDOItemData item = new DDOItemData(ItemDataSource.Custom, false) { Name = "<Custom Item>", Slot = slot };
-			item.AddProperty("Minimum Level", null, 1, null);
-			AddSlotSpecificProperties(item);
+			CustomItemContainer cic = new CustomItemContainer();
+			cic.Item = new DDOItemData(ItemDataSource.Custom, false) { Name = "<Custom Item>", Slot = slot };
+			cic.Item.AddProperty("Minimum Level", null, 1, null);
+			AddSlotSpecificProperties(cic.Item);
 
-			CustomItemsManager.CustomItems.Add(item);
-			TreeViewItem tvi = AddItemToTreeView(item);
+			CustomItemsManager.CustomItems.Add(cic);
+			TreeViewItem tvi = AddItemToTreeView(cic);
 			tvi.BringIntoView();
 			tvi.IsSelected = true;
 		}
 
 		private void RenameCustomItem_Click(object sender, RoutedEventArgs e)
 		{
-			DDOItemData item = (tvItems.SelectedItem as TreeViewItem).Tag as DDOItemData;
+			CustomItemContainer cic = (tvItems.SelectedItem as TreeViewItem).Tag as CustomItemContainer;
 			TextBoxWindow tbw = new TextBoxWindow();
 			tbw.Owner = this;
-			tbw.Setup("Input name", item.Name);
+			tbw.Setup("Input name", cic.Name);
 			if (tbw.ShowDialog() == true)
 			{
 				string name = tbw.Text.Replace('"', '\'').Replace('{', '(').Replace('}', ')').Replace('\\', '/').Replace('|', '/');
-				item.Name = name;
+				cic.Name = name;
+				cic.Item.Name = name;
 				(tvItems.SelectedItem as TreeViewItem).Header = name;
 			}
 		}
@@ -216,19 +220,19 @@ namespace DDONamedGearPlanner
 		private void ChangeSlot_Click(object sender, RoutedEventArgs e)
 		{
 			TreeViewItem tvi = tvItems.SelectedItem as TreeViewItem;
-			DDOItemData item = tvi.Tag as DDOItemData;
+			CustomItemContainer cic = tvi.Tag as CustomItemContainer;
 			SlotType slot = SlotType.None;
-			if (!GetSlot(item.Slot, out slot)) return;
-			if (slot == item.Slot) return;
+			if (!GetSlot(cic.Item.Slot, out slot)) return;
+			if (slot == cic.Item.Slot) return;
 			tvi.IsSelected = false;
 			(tvi.Parent as TreeViewItem).Items.Remove(tvi);
-			RemoveSlotSpecificProperties(item);
-			item.Slot = slot;
-			AddSlotSpecificProperties(item);
-			tvi = AddItemToTreeView(item);
+			RemoveSlotSpecificProperties(cic.Item);
+			cic.Item.Slot = slot;
+			AddSlotSpecificProperties(cic.Item);
+			tvi = AddItemToTreeView(cic);
 			tvi.IsSelected = true;
 			tvi.BringIntoView();
-			CustomItemChangedSlot?.Invoke(item);
+			CustomItemChangedSlot?.Invoke(cic.Item);
 		}
 
 		public delegate void CustomItemDeletedDelegate(DDOItemData item);
@@ -236,12 +240,12 @@ namespace DDONamedGearPlanner
 		private void DeleteCustomItem_Click(object sender, RoutedEventArgs e)
 		{
 			TreeViewItem tvi = tvItems.SelectedItem as TreeViewItem;
-			DDOItemData item = tvi.Tag as DDOItemData;
-			if (MessageBox.Show("Are you sure you want to delete " + item.Name + "?", "Confirm deletion", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
-			CustomItemsManager.CustomItems.Remove(item);
+			CustomItemContainer cic = tvi.Tag as CustomItemContainer;
+			if (MessageBox.Show("Are you sure you want to delete " + cic.Name + "?", "Confirm deletion", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
+			CustomItemsManager.CustomItems.Remove(cic);
 			tvi.IsSelected = false;
 			(tvi.Parent as TreeViewItem).Items.Remove(tvi);
-			CustomItemDeleted?.Invoke(item);
+			CustomItemDeleted?.Invoke(cic.Item);
 		}
 
 		public delegate void RefreshGearSetDelegate();
