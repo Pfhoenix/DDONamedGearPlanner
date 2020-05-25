@@ -1,0 +1,79 @@
+﻿<UserControl x:Class="DDONamedGearPlanner.SlaveLordItemProperties"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DDONamedGearPlanner"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="300">
+    <Grid Background="LightGray">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="3" />
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<ListView Name="lvSlots" SizeChanged="Slots_SizeChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+			<ListView.ItemContainerStyle>
+				<Style TargetType="ListViewItem">
+					<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+				</Style>
+			</ListView.ItemContainerStyle>
+			<ListView.View>
+				<GridView>
+					<GridViewColumn Header="Slot" Width="70">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Slot}">
+									<TextBlock.ToolTip>
+										<TextBlock Text="{Binding Slot}"/>
+									</TextBlock.ToolTip>
+								</TextBlock>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+					<GridViewColumn Header="Property" Width="220">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<ComboBox IsEditable="{Binding Property}" IsEnabled="{Binding Property}" ItemsSource="{Binding AvailableProperties}" Text="{Binding Property, Mode=TwoWay}" />
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+				</GridView>
+			</ListView.View>
+		</ListView>
+		<GridSplitter Grid.Row="1" Height="3" HorizontalAlignment="Stretch" />
+		<ListView Grid.Row="2" Name="lvCrafting" SizeChanged="LV_SizeChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+			<ListView.ItemContainerStyle>
+				<Style TargetType="ListViewItem">
+					<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+				</Style>
+			</ListView.ItemContainerStyle>
+			<ListView.View>
+				<GridView>
+					<GridViewColumn Header="Ingredient" Width="220">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Ingredient}">
+									<TextBlock.ToolTip>
+										<TextBlock Text="{Binding Ingredient}"/>
+									</TextBlock.ToolTip>
+								</TextBlock>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+					<GridViewColumn Header="Amount" Width="70">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Amount}">
+									<TextBlock.ToolTip>
+										<TextBlock Text="{Binding Amount}"/>
+									</TextBlock.ToolTip>
+								</TextBlock>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+				</GridView>
+			</ListView.View>
+		</ListView>
+    </Grid>
+</UserControl>

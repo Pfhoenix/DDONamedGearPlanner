@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDONamedGearPlanner"
         mc:Ignorable="d"
-        Title="Custom Items Management" Height="450" Width="700" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+        Title="Custom Items Management" Height="507" Width="700" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
 	<DockPanel>
 		<Border DockPanel.Dock="Bottom" BorderThickness="1" BorderBrush="Black">
 			<Grid Height="28">
@@ -30,9 +30,11 @@
 				<TreeView Name="tvItems" SelectedItemChanged="Items_SelectedItemChanged" MouseDoubleClick="Items_MouseDoubleClick" PreviewMouseRightButtonDown="Items_PreviewMouseRightButtonDown">
 					<TreeView.Resources>
 						<ContextMenu x:Key="EmptyCM" StaysOpen="True">
+							<MenuItem Click="NewSlaveLordItem_Click" Header="New Slave Lord Item"/>
 							<MenuItem Click="NewCustomItem_Click" Header="New Custom Item"/>
 						</ContextMenu>
 						<ContextMenu x:Key="SlotCM">
+							<MenuItem Click="NewSlaveLordItem_Click" Header="New Slave Lord Item"/>
 							<MenuItem Click="NewCustomItem_Click" Header="New Custom Slot Item"/>
 						</ContextMenu>
 						<ContextMenu x:Key="ItemCM">
@@ -44,7 +46,7 @@
 					</TreeView.Resources>
 				</TreeView>
 			</Border>
-			<Border Grid.Column="1" BorderThickness="1" BorderBrush="Black">
+			<Border Grid.Column="1" BorderThickness="1" BorderBrush="Black" Name="ItemPropertiesArea">
 				<local:ListViewCustomItemProperties x:Name="lvDetails"/>
 			</Border>
 		</Grid>

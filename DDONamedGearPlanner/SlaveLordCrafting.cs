@@ -2853,6 +2853,7 @@ namespace DDONamedGearPlanner
 			public DDOItemData BaseItem;
 			DDOItemData GeneratedItem;
 			public CraftedItemProperty[] Slots = new CraftedItemProperty[7];
+			new public static List<SlotType> DisallowSlots = new List<SlotType> { SlotType.Back, SlotType.Body, SlotType.Eye, SlotType.Hand, SlotType.Head, SlotType.Offhand, SlotType.Weapon };
 
 			public SlaveLordItemContainer()
 			{

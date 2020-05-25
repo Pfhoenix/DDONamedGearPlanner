@@ -13,6 +13,9 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class CustomItemsWindow : Window
 	{
+		ListViewCustomItemProperties CustomIP;
+		SlaveLordItemProperties SlaveLordIP;
+
 		public CustomItemsWindow()
 		{
 			InitializeComponent();
@@ -20,14 +23,16 @@ namespace DDONamedGearPlanner
 			tvItems.ContextMenu = tvItems.Resources["EmptyCM"] as ContextMenu;
 
 			SetupTreeView();
+
+			CustomIP = lvDetails;
 		}
 
-		TreeViewItem AddItemToTreeView(CustomItemContainer cic)
+		TreeViewItem AddItemToTreeView(ACustomItemContainer cic)
 		{
 			TreeViewItem tvi = null;
 			foreach (TreeViewItem i in tvItems.Items)
 			{
-				if ((SlotType)i.Tag == cic.Item.Slot)
+				if ((SlotType)i.Tag == cic.GetItem().Slot)
 				{
 					tvi = i;
 					break;
@@ -36,14 +41,14 @@ namespace DDONamedGearPlanner
 			if (tvi == null)
 			{
 				tvi = new TreeViewItem();
-				TextBlock tb = new TextBlock { Text = cic.Item.Slot.ToString(), FontWeight = FontWeights.Bold };
+				TextBlock tb = new TextBlock { Text = cic.GetItem().Slot.ToString(), FontWeight = FontWeights.Bold };
 				tvi.Header = tb;
-				tvi.Tag = cic.Item.Slot;
+				tvi.Tag = cic.GetItem().Slot;
 				tvItems.Items.Add(tvi);
 			}
 
 			TreeViewItem tvii = new TreeViewItem();
-			tvii.Header = cic.Item.Name + " (" + cic.Item.Source.ToString() + ")";
+			tvii.Header = cic.Name + " (" + cic.Source.ToString() + ")";
 			tvii.Tag = cic;
 			tvi.Items.Add(tvii);
 
@@ -52,7 +57,8 @@ namespace DDONamedGearPlanner
 
 		void SetupTreeView()
 		{
-			List<CustomItemContainer> customitems = CustomItemsManager.GetItemsFromSource<CustomItemContainer>(ItemDataSource.Custom);
+			//List<CustomItemContainer> customitems = CustomItemsManager.GetItemsFromSource<CustomItemContainer>(ItemDataSource.Custom);
+			List<ACustomItemContainer> customitems = CustomItemsManager.CustomItems;
 			customitems.Sort((a, b) => string.Compare(a.Name, b.Name, true));
 
 			foreach (var ci in customitems)
@@ -61,7 +67,9 @@ namespace DDONamedGearPlanner
 
 		private void Items_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
-			lvDetails.SetItem(null);
+			if (ItemPropertiesArea.Child == SlaveLordIP) SlaveLordIP.SetItem(null);
+			else if (ItemPropertiesArea.Child == CustomIP) CustomIP.SetItem(null);
+
 			if (tvItems.SelectedItem == null)
 			{
 				tvItems.ContextMenu = tvItems.Resources["EmptyCM"] as ContextMenu;
@@ -72,12 +80,32 @@ namespace DDONamedGearPlanner
 				if (tvi.Tag is SlotType)
 				{
 					tvItems.ContextMenu = tvItems.Resources["SlotCM"] as ContextMenu;
-					(tvItems.ContextMenu.Items[0] as MenuItem).Header = "New Custom " + (SlotType)tvi.Tag + " Item";
+					SlotType st = (SlotType)tvi.Tag;
+					if (SlaveLordCrafting.SlaveLordItemContainer.DisallowSlots.Contains(st)) (tvItems.ContextMenu.Items[0] as MenuItem).Visibility = Visibility.Collapsed;
+					else
+					{
+						(tvItems.ContextMenu.Items[0] as MenuItem).Visibility = Visibility.Visible;
+						(tvItems.ContextMenu.Items[1] as MenuItem).Header = "New Slave Lord " + (SlotType)tvi.Tag + " Item";
+					}
+					(tvItems.ContextMenu.Items[1] as MenuItem).Header = "New Custom " + (SlotType)tvi.Tag + " Item";
 				}
 				else
 				{
 					tvItems.ContextMenu = tvItems.Resources["ItemCM"] as ContextMenu;
-					lvDetails.SetItem((tvi.Tag as CustomItemContainer).Item);
+					ACustomItemContainer cic = tvi.Tag as ACustomItemContainer;
+					switch (cic.Source)
+					{
+						case ItemDataSource.SlaveLord:
+							if (SlaveLordIP == null) SlaveLordIP = new SlaveLordItemProperties();
+							ItemPropertiesArea.Child = SlaveLordIP;
+							SlaveLordIP.SetItem((SlaveLordCrafting.SlaveLordItemContainer)cic);
+							break;
+
+						case ItemDataSource.Custom:
+							ItemPropertiesArea.Child = CustomIP;
+							CustomIP.SetItem(cic.GetItem());
+							break;
+					}
 				}
 			}
 		}
@@ -92,7 +120,7 @@ namespace DDONamedGearPlanner
 			TreeViewItem tvi = tvItems.SelectedItem as TreeViewItem;
 			if (tvi.HasItems) return;
 
-			ItemDoubleClicked?.Invoke((tvi.Tag as CustomItemContainer).Item);
+			ItemDoubleClicked?.Invoke((tvi.Tag as ACustomItemContainer).GetItem());
 		}
 
 		private void Items_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -119,12 +147,14 @@ namespace DDONamedGearPlanner
 			return source as TreeViewItem;
 		}
 
-		bool GetSlot(SlotType initial, out SlotType rval)
+		bool GetSlot(SlotType initial, List<SlotType> disallow, out SlotType rval)
 		{
 			rval = SlotType.None;
 			ComboBoxWindow cbw = new ComboBoxWindow();
 			cbw.Owner = this;
-			SlotType[] slots = ((SlotType[])Enum.GetValues(typeof(SlotType))).Where(s => s != SlotType.None).ToArray();
+			SlotType[] slots = null;
+			if (disallow == null) slots = ((SlotType[])Enum.GetValues(typeof(SlotType))).Where(s => s != SlotType.None).ToArray();
+			else slots = ((SlotType[])Enum.GetValues(typeof(SlotType))).Where(s => s != SlotType.None && !disallow.Contains(s)).ToArray();
 			cbw.Setup("Select slot", slots, initial);
 			if (cbw.ShowDialog() == true)
 			{
@@ -184,7 +214,7 @@ namespace DDONamedGearPlanner
 			}
 			else
 			{
-				if (!GetSlot(SlotType.None, out slot)) return;
+				if (!GetSlot(SlotType.None, null, out slot)) return;
 			}
 
 			if (slot == SlotType.None) return;
@@ -200,9 +230,50 @@ namespace DDONamedGearPlanner
 			tvi.IsSelected = true;
 		}
 
+		private void NewSlaveLordItem_Click(object sender, RoutedEventArgs e)
+		{
+			SlotType slot = SlotType.None;
+			if (tvItems.SelectedItem != null)
+			{
+				slot = (SlotType)(tvItems.SelectedItem as TreeViewItem).Tag;
+			}
+			else
+			{
+				if (!GetSlot(SlotType.None, SlaveLordCrafting.SlaveLordItemContainer.DisallowSlots, out slot)) return;
+			}
+
+			if (slot == SlotType.None) return;
+
+			SlaveLordCrafting.SlaveLordItemContainer slic = new SlaveLordCrafting.SlaveLordItemContainer { Name = "<Custom Item>" };
+			string baseitemname = null;
+			switch (slot)
+			{
+				case SlotType.Feet:
+				case SlotType.Wrist:
+					baseitemname = "Shackles";
+					break;
+
+				case SlotType.Finger:
+				case SlotType.Trinket:
+					baseitemname = "Five Rings";
+					break;
+
+				case SlotType.Neck:
+				case SlotType.Waist:
+					baseitemname = "Chains";
+					break;
+			}
+			slic.BaseItem = DatasetManager.Dataset.Items.Find(i => i.Name == baseitemname && i.Slot == slot);
+
+			CustomItemsManager.CustomItems.Add(slic);
+			TreeViewItem tvi = AddItemToTreeView(slic);
+			tvi.BringIntoView();
+			tvi.IsSelected = true;
+		}
+
 		private void RenameCustomItem_Click(object sender, RoutedEventArgs e)
 		{
-			CustomItemContainer cic = (tvItems.SelectedItem as TreeViewItem).Tag as CustomItemContainer;
+			ACustomItemContainer cic = (tvItems.SelectedItem as TreeViewItem).Tag as ACustomItemContainer;
 			TextBoxWindow tbw = new TextBoxWindow();
 			tbw.Owner = this;
 			tbw.Setup("Input name", cic.Name);
@@ -210,7 +281,7 @@ namespace DDONamedGearPlanner
 			{
 				string name = tbw.Text.Replace('"', '\'').Replace('{', '(').Replace('}', ')').Replace('\\', '/').Replace('|', '/');
 				cic.Name = name;
-				cic.Item.Name = name;
+				cic.GetItem().Name = name;
 				(tvItems.SelectedItem as TreeViewItem).Header = name;
 			}
 		}
@@ -220,19 +291,20 @@ namespace DDONamedGearPlanner
 		private void ChangeSlot_Click(object sender, RoutedEventArgs e)
 		{
 			TreeViewItem tvi = tvItems.SelectedItem as TreeViewItem;
-			CustomItemContainer cic = tvi.Tag as CustomItemContainer;
+			ACustomItemContainer cic = tvi.Tag as ACustomItemContainer;
+			DDOItemData item = cic.GetItem();
 			SlotType slot = SlotType.None;
-			if (!GetSlot(cic.Item.Slot, out slot)) return;
-			if (slot == cic.Item.Slot) return;
+			if (!GetSlot(item.Slot, cic.GetDisallowedSlots(), out slot)) return;
+			if (slot == item.Slot) return;
 			tvi.IsSelected = false;
 			(tvi.Parent as TreeViewItem).Items.Remove(tvi);
-			RemoveSlotSpecificProperties(cic.Item);
-			cic.Item.Slot = slot;
-			AddSlotSpecificProperties(cic.Item);
+			if (ItemPropertiesArea.Child == CustomIP) RemoveSlotSpecificProperties(item);
+			item.Slot = slot;
+			if (ItemPropertiesArea.Child == CustomIP) AddSlotSpecificProperties(item);
 			tvi = AddItemToTreeView(cic);
 			tvi.IsSelected = true;
 			tvi.BringIntoView();
-			CustomItemChangedSlot?.Invoke(cic.Item);
+			CustomItemChangedSlot?.Invoke(item);
 		}
 
 		public delegate void CustomItemDeletedDelegate(DDOItemData item);
@@ -240,12 +312,12 @@ namespace DDONamedGearPlanner
 		private void DeleteCustomItem_Click(object sender, RoutedEventArgs e)
 		{
 			TreeViewItem tvi = tvItems.SelectedItem as TreeViewItem;
-			CustomItemContainer cic = tvi.Tag as CustomItemContainer;
+			ACustomItemContainer cic = tvi.Tag as ACustomItemContainer;
 			if (MessageBox.Show("Are you sure you want to delete " + cic.Name + "?", "Confirm deletion", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) return;
 			CustomItemsManager.CustomItems.Remove(cic);
 			tvi.IsSelected = false;
 			(tvi.Parent as TreeViewItem).Items.Remove(tvi);
-			CustomItemDeleted?.Invoke(cic.Item);
+			CustomItemDeleted?.Invoke(cic.GetItem());
 		}
 
 		public delegate void RefreshGearSetDelegate();

@@ -121,6 +121,9 @@
     <Compile Include="Controls\RangeSlider.xaml.cs">
       <DependentUpon>RangeSlider.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SlaveLordItemProperties.xaml.cs">
+      <DependentUpon>SlaveLordItemProperties.xaml</DependentUpon>
+    </Compile>
     <Compile Include="QuestSourceManager.cs" />
     <Compile Include="SlaveLordCrafting.cs" />
     <Compile Include="Windows\AboutWindow.xaml.cs">
@@ -144,6 +147,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ListViewItemProperties.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SlaveLordItemProperties.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

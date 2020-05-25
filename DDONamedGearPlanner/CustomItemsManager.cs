@@ -11,6 +11,12 @@ namespace DDONamedGearPlanner
 	{
 		public string Name;
 		public ItemDataSource Source;
+		public static List<SlotType> DisallowSlots;
+
+		public List<SlotType> GetDisallowedSlots()
+		{
+			return DisallowSlots;
+		}
 
 		public abstract DDOItemData GetItem();
 
