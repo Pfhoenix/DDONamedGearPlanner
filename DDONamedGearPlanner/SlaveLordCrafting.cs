@@ -6,8 +6,8 @@ namespace DDONamedGearPlanner
 {
 	public struct CraftingIngredient
 	{
-		public string Name;
-		public int Amount;
+		public string Name { get; set; }
+		public int Amount { get; set; }
 	}
 
 	public class CraftedItemProperty
@@ -15,6 +15,11 @@ namespace DDONamedGearPlanner
 		public string Name;
 		public List<ItemProperty> AppliedProperties;
 		public List<CraftingIngredient> Cost;
+
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 
 	public static class SlaveLordCrafting
@@ -44,6 +49,10 @@ namespace DDONamedGearPlanner
 				"Heroic Prefix",
 				new List<CraftedItemProperty>
 				{
+					new CraftedItemProperty
+					{
+						Name = "- empty -"
+					},
 					new CraftedItemProperty
 					{
 						Name = "Strength +5",
@@ -173,6 +182,10 @@ namespace DDONamedGearPlanner
 				{
 					new CraftedItemProperty
 					{
+						Name = "- empty -"
+					},
+					new CraftedItemProperty
+					{
 						Name = "Strength +17",
 						AppliedProperties = new List<ItemProperty>
 						{
@@ -298,6 +311,10 @@ namespace DDONamedGearPlanner
 				"Heroic Suffix",
 				new List<CraftedItemProperty>
 				{
+					new CraftedItemProperty
+					{
+						Name = "- empty -"
+					},
 					new CraftedItemProperty
 					{
 						Name = "Accuracy +8",
@@ -636,6 +653,10 @@ namespace DDONamedGearPlanner
 				{
 					new CraftedItemProperty
 					{
+						Name = "- empty -"
+					},
+					new CraftedItemProperty
+					{
 						Name = "Accuracy +28",
 						AppliedProperties = new List<ItemProperty>
 						{
@@ -970,6 +991,10 @@ namespace DDONamedGearPlanner
 				"Heroic Extra",
 				new List<CraftedItemProperty>
 				{
+					new CraftedItemProperty
+					{
+						Name = "- empty -"
+					},
 					new CraftedItemProperty
 					{
 						Name = "Balance +10",
@@ -1309,6 +1334,10 @@ namespace DDONamedGearPlanner
 				{
 					new CraftedItemProperty
 					{
+						Name = "- empty -"
+					},
+					new CraftedItemProperty
+					{
 						Name = "Balance +22",
 						AppliedProperties = new List<ItemProperty>
 						{
@@ -1644,6 +1673,10 @@ namespace DDONamedGearPlanner
 				"Heroic Bonus",
 				new List<CraftedItemProperty>
 				{
+					new CraftedItemProperty
+					{
+						Name = "- empty -"
+					},
 					new CraftedItemProperty
 					{
 						Name = "Quality Strength +1",
@@ -2102,6 +2135,10 @@ namespace DDONamedGearPlanner
 				{
 					new CraftedItemProperty
 					{
+						Name = "- empty -"
+					},
+					new CraftedItemProperty
+					{
 						Name = "Quality Strength +4",
 						AppliedProperties = new List<ItemProperty>
 						{
@@ -2558,6 +2595,10 @@ namespace DDONamedGearPlanner
 				{
 					new CraftedItemProperty
 					{
+						Name = "- empty -"
+					},
+					new CraftedItemProperty
+					{
 						Name = "Colorless Augment Slot",
 						AppliedProperties = new List<ItemProperty>
 						{
@@ -2622,6 +2663,10 @@ namespace DDONamedGearPlanner
 				"Legendary Augment",
 				new List<CraftedItemProperty>
 				{
+					new CraftedItemProperty
+					{
+						Name = "- empty -"
+					},
 					new CraftedItemProperty
 					{
 						Name = "Colorless Augment Slot",
@@ -2690,6 +2735,10 @@ namespace DDONamedGearPlanner
 				{
 					new CraftedItemProperty
 					{
+						Name = "- empty -"
+					},
+					new CraftedItemProperty
+					{
 						Name = "Slave Lord's Might",
 						AppliedProperties = new List<ItemProperty>
 						{
@@ -2739,6 +2788,10 @@ namespace DDONamedGearPlanner
 				"Legendary Set",
 				new List<CraftedItemProperty>
 				{
+					new CraftedItemProperty
+					{
+						Name = "- empty -"
+					},
 					new CraftedItemProperty
 					{
 						Name = "Legendary Slave Lord's Might",
@@ -2792,6 +2845,10 @@ namespace DDONamedGearPlanner
 				{
 					new CraftedItemProperty
 					{
+						Name = "- empty -"
+					},
+					new CraftedItemProperty
+					{
 						Name = "Mythic Boost +1",
 						AppliedProperties = new List<ItemProperty>
 						{
@@ -2820,6 +2877,10 @@ namespace DDONamedGearPlanner
 				"Legendary Mythic",
 				new List<CraftedItemProperty>
 				{
+					new CraftedItemProperty
+					{
+						Name = "- empty -"
+					},
 					new CraftedItemProperty
 					{
 						Name = "Mythic Boost +1",
@@ -2852,12 +2913,21 @@ namespace DDONamedGearPlanner
 		{
 			public DDOItemData BaseItem;
 			DDOItemData GeneratedItem;
-			public CraftedItemProperty[] Slots = new CraftedItemProperty[7];
-			new public static List<SlotType> DisallowSlots = new List<SlotType> { SlotType.Back, SlotType.Body, SlotType.Eye, SlotType.Hand, SlotType.Head, SlotType.Offhand, SlotType.Weapon };
+			public CraftedItemProperty[] Slots { get; set; }
+
+			public static List<SlotType> DisallowedSlots = new List<SlotType> { SlotType.Back, SlotType.Body, SlotType.Eye, SlotType.Hand, SlotType.Head, SlotType.Offhand, SlotType.Weapon };
 
 			public SlaveLordItemContainer()
 			{
 				Source = ItemDataSource.SlaveLord;
+				Slots = new CraftedItemProperty[7];
+				for (int i = 0; i < 7; i++)
+					Slots[i] = ItemSlots["Heroic " + ((ESlaveLordItemSlots)i).ToString()][0];
+			}
+
+			public override List<SlotType> GetDisallowedSlots()
+			{
+				return DisallowedSlots;
 			}
 
 			void GenerateItem()
@@ -2875,9 +2945,10 @@ namespace DDONamedGearPlanner
 				}
 				else GeneratedItem.Properties.Clear();
 
-				for (int i = 0; i < 7; i++)
+				// we skip the last slot, mythic, as it's not used by the planner for gear
+				for (int i = 0; i < 6; i++)
 				{
-					if (Slots[i] == null) continue;
+					if (Slots[i]?.AppliedProperties == null) continue;
 					foreach (var ip in Slots[i].AppliedProperties)
 						GeneratedItem.AddProperty(ip.Property, ip.Type, ip.Value, null);
 				}
@@ -2885,7 +2956,7 @@ namespace DDONamedGearPlanner
 
 			public override DDOItemData GetItem()
 			{
-				if (GeneratedItem == null) GenerateItem();
+				GenerateItem();
 
 				return GeneratedItem;
 			}
@@ -2908,7 +2979,7 @@ namespace DDONamedGearPlanner
 			{
 				try
 				{
-					string[] baseitem = xci.GetElementsByTagName("BaseItem")[0].Value.Split('|');
+					string[] baseitem = xci.GetElementsByTagName("BaseItem")[0].InnerText.Split('|');
 					SlotType slot = (SlotType)Enum.Parse(typeof(SlotType), baseitem[1]);
 					BaseItem = DatasetManager.Dataset.Items.Find(i => i.Name == baseitem[0] && i.Slot == slot);
 					string ml = BaseItem.Name.StartsWith("Legendary") ? "Legendary " : "Heroic ";
@@ -2916,7 +2987,7 @@ namespace DDONamedGearPlanner
 					foreach (var s in slots)
 					{
 						List<CraftedItemProperty> props = ItemSlots[ml + s.ToString()];
-						string p = xci.GetElementsByTagName(s.ToString())[0].Value;
+						string p = xci.GetElementsByTagName(s.ToString())[0].InnerText;
 						Slots[(int)s] = props.Find(i => i.Name == p);
 					}
 

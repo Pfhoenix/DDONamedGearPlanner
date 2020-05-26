@@ -12,35 +12,41 @@
 			<RowDefinition Height="3" />
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
-		<ListView Name="lvSlots" SizeChanged="Slots_SizeChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-			<ListView.ItemContainerStyle>
-				<Style TargetType="ListViewItem">
-					<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-				</Style>
-			</ListView.ItemContainerStyle>
-			<ListView.View>
-				<GridView>
-					<GridViewColumn Header="Slot" Width="70">
-						<GridViewColumn.CellTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding Slot}">
-									<TextBlock.ToolTip>
-										<TextBlock Text="{Binding Slot}"/>
-									</TextBlock.ToolTip>
-								</TextBlock>
-							</DataTemplate>
-						</GridViewColumn.CellTemplate>
-					</GridViewColumn>
-					<GridViewColumn Header="Property" Width="220">
-						<GridViewColumn.CellTemplate>
-							<DataTemplate>
-								<ComboBox IsEditable="{Binding Property}" IsEnabled="{Binding Property}" ItemsSource="{Binding AvailableProperties}" Text="{Binding Property, Mode=TwoWay}" />
-							</DataTemplate>
-						</GridViewColumn.CellTemplate>
-					</GridViewColumn>
-				</GridView>
-			</ListView.View>
-		</ListView>
+		<DockPanel>
+			<ComboBox DockPanel.Dock="Top" Name="cbML" SelectionChanged="cbML_SelectionChanged">
+				<ComboBoxItem>Heroic (ML8)</ComboBoxItem>
+				<ComboBoxItem>Legendary (ML28)</ComboBoxItem>
+			</ComboBox>
+			<ListView Name="lvSlots" DockPanel.Dock="Top" SizeChanged="Slots_SizeChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+				<ListView.ItemContainerStyle>
+					<Style TargetType="ListViewItem">
+						<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+					</Style>
+				</ListView.ItemContainerStyle>
+				<ListView.View>
+					<GridView>
+						<GridViewColumn Header="Slot" Width="70">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding SLSlot}">
+										<TextBlock.ToolTip>
+											<TextBlock Text="{Binding SLSlot}"/>
+										</TextBlock.ToolTip>
+									</TextBlock>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+						<GridViewColumn Header="Property" Width="220">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<ComboBox ItemsSource="{Binding AvailableProperties}" Text="{Binding Property, Mode=TwoWay}" />
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+					</GridView>
+				</ListView.View>
+			</ListView>
+		</DockPanel>
 		<GridSplitter Grid.Row="1" Height="3" HorizontalAlignment="Stretch" />
 		<ListView Grid.Row="2" Name="lvCrafting" SizeChanged="LV_SizeChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 			<ListView.ItemContainerStyle>
@@ -53,9 +59,9 @@
 					<GridViewColumn Header="Ingredient" Width="220">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>
-								<TextBlock Text="{Binding Ingredient}">
+								<TextBlock Text="{Binding Name}">
 									<TextBlock.ToolTip>
-										<TextBlock Text="{Binding Ingredient}"/>
+										<TextBlock Text="{Binding Name}"/>
 									</TextBlock.ToolTip>
 								</TextBlock>
 							</DataTemplate>

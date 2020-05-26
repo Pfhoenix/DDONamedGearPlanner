@@ -21,7 +21,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public static readonly string VERSION = "0.7.4";
+		public static readonly string VERSION = "0.8";
 
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
@@ -585,7 +585,13 @@ namespace DDONamedGearPlanner
 		{
 			if (button == MouseButton.Right)
 			{
-				if (esc.Item != null) System.Diagnostics.Process.Start(esc.Item.Item.WikiURL);
+				if (esc.Item == null) return;
+				if (esc.Item.Item.Source == ItemDataSource.Dataset) System.Diagnostics.Process.Start(esc.Item.Item.WikiURL);
+				else
+				{
+					ManageCustomItems(null, null);
+					CIWindow.SelectItem(esc.Item.Item.Name, esc.Item.Item.Slot.ToString());
+				}
 				return;
 			}
 

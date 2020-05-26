@@ -38,7 +38,7 @@
 			<MenuItem Header="_View">
 				<MenuItem Header="Item Property Browser" Click="ViewItemPropertyBrowser"/>
 				<Separator/>
-				<MenuItem Header="Custom Items" Click="ManageCustomItems"/>
+				<MenuItem Header="User Created Items" Click="ManageCustomItems"/>
 			</MenuItem>
 			<MenuItem Name="miQuestSources" Header="_Quest Sources">
 				<MenuItem Header="{x:Static local:QuestSourceManager.FreeToVIP}" IsCheckable="True" IsChecked="True" Click="QuestSourceItem_Clicked"/>

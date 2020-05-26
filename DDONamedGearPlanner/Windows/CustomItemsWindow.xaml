@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDONamedGearPlanner"
         mc:Ignorable="d"
-        Title="Custom Items Management" Height="507" Width="700" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+        Title="User Created Items Management" Height="600" Width="700" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
 	<DockPanel>
 		<Border DockPanel.Dock="Bottom" BorderThickness="1" BorderBrush="Black">
 			<Grid Height="28">

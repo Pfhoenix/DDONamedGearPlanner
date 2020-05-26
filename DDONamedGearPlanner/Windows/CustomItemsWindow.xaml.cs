@@ -27,6 +27,26 @@ namespace DDONamedGearPlanner
 			CustomIP = lvDetails;
 		}
 
+		public void SelectItem(string name, string slot)
+		{
+			foreach (TreeViewItem tvi in tvItems.Items)
+			{
+				if ((tvi.Header as TextBlock).Text == slot)
+				{
+					foreach (TreeViewItem tvii in tvi.Items)
+					{
+						ACustomItemContainer cic = tvii.Tag as ACustomItemContainer;
+						if (cic?.Name == name)
+						{
+							tvii.BringIntoView();
+							tvii.IsSelected = true;
+							return;
+						}
+					}
+				}
+			}
+		}
+
 		TreeViewItem AddItemToTreeView(ACustomItemContainer cic)
 		{
 			TreeViewItem tvi = null;
@@ -57,7 +77,6 @@ namespace DDONamedGearPlanner
 
 		void SetupTreeView()
 		{
-			//List<CustomItemContainer> customitems = CustomItemsManager.GetItemsFromSource<CustomItemContainer>(ItemDataSource.Custom);
 			List<ACustomItemContainer> customitems = CustomItemsManager.CustomItems;
 			customitems.Sort((a, b) => string.Compare(a.Name, b.Name, true));
 
@@ -81,7 +100,7 @@ namespace DDONamedGearPlanner
 				{
 					tvItems.ContextMenu = tvItems.Resources["SlotCM"] as ContextMenu;
 					SlotType st = (SlotType)tvi.Tag;
-					if (SlaveLordCrafting.SlaveLordItemContainer.DisallowSlots.Contains(st)) (tvItems.ContextMenu.Items[0] as MenuItem).Visibility = Visibility.Collapsed;
+					if (SlaveLordCrafting.SlaveLordItemContainer.DisallowedSlots.Contains(st)) (tvItems.ContextMenu.Items[0] as MenuItem).Visibility = Visibility.Collapsed;
 					else
 					{
 						(tvItems.ContextMenu.Items[0] as MenuItem).Visibility = Visibility.Visible;
@@ -219,8 +238,8 @@ namespace DDONamedGearPlanner
 
 			if (slot == SlotType.None) return;
 
-			CustomItemContainer cic = new CustomItemContainer();
-			cic.Item = new DDOItemData(ItemDataSource.Custom, false) { Name = "<Custom Item>", Slot = slot };
+			CustomItemContainer cic = new CustomItemContainer { Name = "<Custom Item>" };
+			cic.Item = new DDOItemData(ItemDataSource.Custom, false) { Name = cic.Name, Slot = slot };
 			cic.Item.AddProperty("Minimum Level", null, 1, null);
 			AddSlotSpecificProperties(cic.Item);
 
@@ -239,12 +258,13 @@ namespace DDONamedGearPlanner
 			}
 			else
 			{
-				if (!GetSlot(SlotType.None, SlaveLordCrafting.SlaveLordItemContainer.DisallowSlots, out slot)) return;
+				if (!GetSlot(SlotType.None, SlaveLordCrafting.SlaveLordItemContainer.DisallowedSlots, out slot)) return;
 			}
 
 			if (slot == SlotType.None) return;
 
 			SlaveLordCrafting.SlaveLordItemContainer slic = new SlaveLordCrafting.SlaveLordItemContainer { Name = "<Custom Item>" };
+
 			string baseitemname = null;
 			switch (slot)
 			{
@@ -282,7 +302,7 @@ namespace DDONamedGearPlanner
 				string name = tbw.Text.Replace('"', '\'').Replace('{', '(').Replace('}', ')').Replace('\\', '/').Replace('|', '/');
 				cic.Name = name;
 				cic.GetItem().Name = name;
-				(tvItems.SelectedItem as TreeViewItem).Header = name;
+				(tvItems.SelectedItem as TreeViewItem).Header = name + " (" + cic.Source.ToString() + ")";
 			}
 		}
 
@@ -341,7 +361,8 @@ namespace DDONamedGearPlanner
 				MessageBox.Show("There was an error loading custom items!", "Loading error", MessageBoxButton.OK, MessageBoxImage.Stop);
 				return;
 			}
-			lvDetails.SetItem(null);
+			SlaveLordIP.SetItem(null);
+			CustomIP.SetItem(null);
 			tvItems.Items.Clear();
 			SetupTreeView();
 			CustomItemsReloaded?.Invoke();

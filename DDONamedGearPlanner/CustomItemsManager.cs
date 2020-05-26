@@ -11,11 +11,10 @@ namespace DDONamedGearPlanner
 	{
 		public string Name;
 		public ItemDataSource Source;
-		public static List<SlotType> DisallowSlots;
 
-		public List<SlotType> GetDisallowedSlots()
+		public virtual List<SlotType> GetDisallowedSlots()
 		{
-			return DisallowSlots;
+			return null;
 		}
 
 		public abstract DDOItemData GetItem();
@@ -85,6 +84,11 @@ namespace DDONamedGearPlanner
 					ItemDataSource source = (ItemDataSource)Enum.Parse(typeof(ItemDataSource), xi.Attributes["source"].Value);
 					switch (source)
 					{
+						case ItemDataSource.SlaveLord:
+							SlaveLordCrafting.SlaveLordItemContainer slic = new SlaveLordCrafting.SlaveLordItemContainer { Name = name };
+							if (slic.FromXml(xi)) CustomItems.Add(slic);
+							break;
+
 						case ItemDataSource.Custom:
 							CustomItemContainer cic = new CustomItemContainer { Name = name, Source = source };
 							if (cic.FromXml(xi)) CustomItems.Add(cic);
