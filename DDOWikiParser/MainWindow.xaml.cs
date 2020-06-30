@@ -672,7 +672,9 @@ namespace DDOWikiParser
 						else p = p.Substring(0, c).Trim();
 
 						// standardize property names
-						if (p.EndsWith("Armor Bonus")) p = "Armor Class";
+						if (p.StartsWith("Creeping Dust Lore")) p = "Creeping Dust Lore";
+						else if (p.StartsWith("Power of Creeping Dust")) p = "Power of Creeping Dust";
+						else if (p.EndsWith("Armor Bonus")) p = "Armor Class";
 						else if (p.EndsWith("Accuracy")) p = "Attack";
 						else if (p.EndsWith("Deadly")) p = "Damage";
 						else if (p.StartsWith("Damage Bonus")) p = "Damage";
@@ -1926,6 +1928,16 @@ namespace DDOWikiParser
 					vi = ParseNumber(trimmed);
 					data.AddProperty("Physical Resistance Rating", v, vi, null);
 					data.AddProperty("Magical Resistance Rating", v, vi, null);
+				}
+				else if (p == "Creeping Dust Lore")
+				{
+					data.AddProperty("Acid Spell Critical Chance", v, vi, null);
+					data.AddProperty("Cold Spell Critical Chance", v, vi, null);
+				}
+				else if (p == "Power of Creeping Dust")
+				{
+					data.AddProperty("Acid Spell Power", v, vi, null);
+					data.AddProperty("Cold Spell Power", v, vi, null);
 				}
 				else data.AddProperty(p, origv == v ? null : v, vi, null);
 
