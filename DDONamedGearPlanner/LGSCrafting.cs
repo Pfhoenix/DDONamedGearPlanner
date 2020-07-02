@@ -1103,7 +1103,1113 @@ namespace DDONamedGearPlanner
 						}
 					},
 				}
-			}
+			},
+			{
+				"Tier 2", new List<LGSCraftedItemProperty>
+				{
+					new LGSCraftedItemProperty
+					{
+						Name = "Electric Spell Critical Damage 10%",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Electric Spell Critical Damage", Type = "insight", Value = 20 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusAir],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Acid Spell Critical Damage 10%",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Acid Spell Critical Damage", Type = "insight", Value = 20 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusEarth],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Fire Spell Critical Damage 10%",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Fire Spell Critical Damage", Type = "insight", Value = 20 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusFire],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Cold Spell Critical Damage 10%",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Cold Spell Critical Damage", Type = "insight", Value = 20 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusWater],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Negative Spell Critical Damage 10%",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Negative Spell Critical Damage", Type = "insight", Value = 20 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusNegative],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Positive Spell Critical Damage 10%",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Positive Spell Critical Damage", Type = "insight", Value = 20 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusPositive],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Electric Damage on Being Hit 10d6",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Electric Damage on Being Hit", Value = 10 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusAir],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Acid Damage on Being Hit 10d6",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Acid Damage on Being Hit", Value = 10 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusEarth],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Fire Damage on Being Hit 10d6",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Fire Damage on Being Hit", Value = 10 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusFire],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Cold Damage on Being Hit 10d6",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Cold Damage on Being Hit", Value = 10 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusWater],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Evil Damage on Being Hit 10d6",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Evil Damage on Being Hit", Value = 10 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusNegative],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Good Damage on Being Hit 10d6",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Good Damage on Being Hit", Value = 10 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusPositive],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+11 Charisma Skills/+3 UMD, +151 Spell Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Bluff", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Diplomacy", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Haggle", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Intimidate", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Perform", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Use Magic Device", Type = "insight", Value = 3 },
+							new ItemProperty { Property = "Spell Points", Type = "insight", Value = 151 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusAir],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+11 Wisdom Skills, +151 Spell Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Heal", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Listen", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Spot", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Spell Points", Type = "insight", Value = 151 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusEarth],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+11 Intelligence Skills, +151 Spell Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Disable Device", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Repair", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Search", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Spellcraft", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Spell Points", Type = "insight", Value = 151 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusFire],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+11 Wisdom Skills, +151 Spell Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Heal", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Listen", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Spot", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Spell Points", Type = "insight", Value = 151 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusWater],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+11 Intelligence Skills, +151 Spell Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Disable Device", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Repair", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Search", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Spellcraft", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Spell Points", Type = "insight", Value = 151 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusNegative],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+11 Charisma Skills/+3 UMD, +151 Spell Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Bluff", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Diplomacy", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Haggle", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Intimidate", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Perform", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Use Magic Device", Type = "insight", Value = 3 },
+							new ItemProperty { Property = "Spell Points", Type = "insight", Value = 151 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusPositive],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+11 Dexterity Skills, +28 Hit Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Balance", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Hide", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Move Silently", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Open Lock", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Tumble", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Hit Points", Type = "insight", Value = 28 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusAir],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+11 Constitution Skills, +28 Hit Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Concentration", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Hit Points", Type = "insight", Value = 28 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusEarth],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+11 Dexterity Skills, +28 Hit Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Balance", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Hide", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Move Silently", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Open Lock", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Tumble", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Hit Points", Type = "insight", Value = 28 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusFire],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+11 Strength Skills, +28 Hit Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Jump", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Swim", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Hit Points", Type = "insight", Value = 28 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusWater],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+11 Strength Skills, +28 Hit Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Jump", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Swim", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Hit Points", Type = "insight", Value = 28 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusNegative],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+11 Constitution Skills, +28 Hit Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Concentration", Type = "insight", Value = 11 },
+							new ItemProperty { Property = "Hit Points", Type = "insight", Value = 28 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusPositive],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+7 Reflex Save",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Reflex", Type = "insight", Value = 7 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusAir],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+7 Fortitude Save",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Fortitude", Type = "insight", Value = 7 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusEarth],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+7 Reflex Save",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Reflex", Type = "insight", Value = 7 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusFire],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+7 Will Save",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Will", Type = "insight", Value = 7 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusWater],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+7 Fortitude Save",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Fortitude", Type = "insight", Value = 7 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusNegative],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+7 Will Save",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Will", Type = "insight", Value = 7 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusPositive],
+							LGSCraftables[EtherealEssence],
+							LGSCraftables[GemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+25 Electric Resistance",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Electric Resistance", Type = "insight", Value = 25 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusAir],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+25 Acid Resistance",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Acid Resistance", Type = "insight", Value = 25 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusEarth],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+25 Fire Resistance",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Fire Resistance", Type = "insight", Value = 25 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusFire],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+25 Cold Resistance",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Cold Resistance", Type = "insight", Value = 25 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusWater],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+4 Fortitude Save vs Poison, Fear Immunity",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Fortitude vs Poison", Type = "insight", Value = 4 },
+							new ItemProperty { Property = "Fear Immunity" }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusNegative],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+64 Unconsciousness Range, 8 healing every 10 seconds",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Unconsciousness Range", Value = 64 },
+							new ItemProperty { Property = "Healing every 10 seconds", Value = 8 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[FocusPositive],
+							LGSCraftables[MaterialEssence],
+							LGSCraftables[GemOpposition]
+						}
+					},
+				}
+			},
+			{
+				"Tier 3", new List<LGSCraftedItemProperty>
+				{
+					new LGSCraftedItemProperty
+					{
+						Name = "Electric Spell Critical Damage 5%",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Electric Spell Critical Damage", Type = "quality", Value = 5 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusAir],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Acid Spell Critical Damage 5%",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Acid Spell Critical Damage", Type = "quality", Value = 5 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusEarth],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Fire Spell Critical Damage 5%",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Fire Spell Critical Damage", Type = "quality", Value = 5 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusFire],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Cold Spell Critical Damage 5%",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Cold Spell Critical Damage", Type = "quality", Value = 5 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusWater],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Negative Spell Critical Damage 5%",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Negative Spell Critical Damage", Type = "quality", Value = 5 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusNegative],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Positive Spell Critical Damage 5%",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Positive Spell Critical Damage", Type = "quality", Value = 5 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusPositive],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Electric Damage on Being Hit 15d6",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Electric Damage on Being Hit", Value = 15 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusAir],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Acid Damage on Being Hit 15d6",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Acid Damage on Being Hit", Value = 15 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusEarth],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Fire Damage on Being Hit 15d6",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Fire Damage on Being Hit", Value = 15 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusFire],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Cold Damage on Being Hit 15d6",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Cold Damage on Being Hit", Value = 15 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusWater],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Evil Damage on Being Hit 15d6",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Evil Damage on Being Hit", Value = 15 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusNegative],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "Good Damage on Being Hit 15d6",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Good Damage on Being Hit", Value = 15 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusPositive],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemDominion]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+6 Charisma Skills/+1 UMD, +75 Spell Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Bluff", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Diplomacy", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Haggle", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Intimidate", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Perform", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Use Magic Device", Type = "quality", Value = 1 },
+							new ItemProperty { Property = "Spell Points", Type = "quality", Value = 75 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusAir],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+6 Wisdom Skills, +75 Spell Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Heal", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Listen", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Spot", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Spell Points", Type = "quality", Value = 75 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusEarth],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+6 Intelligence Skills, +75 Spell Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Disable Device", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Repair", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Search", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Spellcraft", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Spell Points", Type = "quality", Value = 75 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusFire],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+6 Wisdom Skills, +75 Spell Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Heal", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Listen", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Spot", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Spell Points", Type = "quality", Value = 75 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusWater],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+6 Intelligence Skills, +75 Spell Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Disable Device", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Repair", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Search", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Spellcraft", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Spell Points", Type = "quality", Value = 75 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusNegative],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+6 Charisma Skills/+1 UMD, +75 Spell Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Bluff", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Diplomacy", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Haggle", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Intimidate", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Perform", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Use Magic Device", Type = "quality", Value = 1 },
+							new ItemProperty { Property = "Spell Points", Type = "quality", Value = 75 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusPositive],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+6 Dexterity Skills, +28 Hit Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Balance", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Hide", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Move Silently", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Open Lock", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Tumble", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Hit Points", Type = "quality", Value = 14 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusAir],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+6 Constitution Skills, +28 Hit Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Concentration", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Hit Points", Type = "quality", Value = 14 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusEarth],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+6 Dexterity Skills, +28 Hit Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Balance", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Hide", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Move Silently", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Open Lock", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Tumble", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Hit Points", Type = "quality", Value = 14 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusFire],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+6 Strength Skills, +28 Hit Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Jump", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Swim", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Hit Points", Type = "quality", Value = 14 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusWater],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+6 Strength Skills, +28 Hit Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Jump", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Swim", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Hit Points", Type = "quality", Value = 14 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusNegative],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+6 Constitution Skills, +28 Hit Points",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Concentration", Type = "quality", Value = 6 },
+							new ItemProperty { Property = "Hit Points", Type = "quality", Value = 14 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusPositive],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemEscalation]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+2 Reflex Save",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Reflex", Type = "quality", Value = 2 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusAir],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+2 Fortitude Save",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Fortitude", Type = "quality", Value = 2 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusEarth],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+2 Reflex Save",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Reflex", Type = "quality", Value = 2 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusFire],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+2 Will Save",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Will", Type = "quality", Value = 2 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusWater],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+2 Fortitude Save",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Fortitude", Type = "quality", Value = 2 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusNegative],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+2 Will Save",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Will", Type = "quality", Value = 2 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusPositive],
+							LGSCraftables[PureEtherealEssence],
+							LGSCraftables[FlawlessGemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+17 Electric Resistance",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Electric Resistance", Type = "competence", Value = 17 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusAir],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+17 Acid Resistance",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Acid Resistance", Type = "competence", Value = 17 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusEarth],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+17 Fire Resistance",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Fire Resistance", Type = "competence", Value = 17 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusFire],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+17 Cold Resistance",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Cold Resistance", Type = "competence", Value = 17 },
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusWater],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+25 Negative Resistance, Deathblock",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Negative Resistance", Type = "enhancement", Value = 25 },
+							new ItemProperty { Property = "Deathblock" }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusNegative],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemOpposition]
+						}
+					},
+					new LGSCraftedItemProperty
+					{
+						Name = "+32 Unconsciousness Range, 4 healing every 10 seconds",
+						AppliedProperties = new List<ItemProperty>
+						{
+							new ItemProperty { Property = "Unconsciousness Range", Value = 32 },
+							new ItemProperty { Property = "Healing every 10 seconds", Value = 4 }
+						},
+						Cost = new List<LGSCraftingIngredient>
+						{
+							LGSCraftables[SuperiorFocusPositive],
+							LGSCraftables[PureMaterialEssence],
+							LGSCraftables[FlawlessGemOpposition]
+						}
+					},
+				}
+			},
 		};
 	}
 }
