@@ -124,6 +124,7 @@
     <Compile Include="Controls\SlaveLordItemProperties.xaml.cs">
       <DependentUpon>SlaveLordItemProperties.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LGSCrafting.cs" />
     <Compile Include="QuestSourceManager.cs" />
     <Compile Include="SlaveLordCrafting.cs" />
     <Compile Include="Windows\AboutWindow.xaml.cs">

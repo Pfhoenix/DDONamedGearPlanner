@@ -4,24 +4,6 @@ using System.Xml;
 
 namespace DDONamedGearPlanner
 {
-	public struct CraftingIngredient
-	{
-		public string Name { get; set; }
-		public int Amount { get; set; }
-	}
-
-	public class CraftedItemProperty
-	{
-		public string Name;
-		public List<ItemProperty> AppliedProperties;
-		public List<CraftingIngredient> Cost;
-
-		public override string ToString()
-		{
-			return Name;
-		}
-	}
-
 	public static class SlaveLordCrafting
 	{
 		public const string BrokenShackles = "Broken Shackles";

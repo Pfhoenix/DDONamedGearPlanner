@@ -7,6 +7,24 @@ using System.Xml;
 
 namespace DDONamedGearPlanner
 {
+	public struct CraftingIngredient
+	{
+		public string Name { get; set; }
+		public int Amount { get; set; }
+	}
+
+	public class CraftedItemProperty
+	{
+		public string Name;
+		public List<ItemProperty> AppliedProperties;
+		public List<CraftingIngredient> Cost;
+
+		public override string ToString()
+		{
+			return Name;
+		}
+	}
+
 	public abstract class ACustomItemContainer
 	{
 		public string Name;
