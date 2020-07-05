@@ -336,7 +336,7 @@ namespace DDONamedGearPlanner
 	public class DDOItemSetBonus
 	{
 		public int MinimumItems;
-		public List<DDOItemSetBonusProperty> Bonuses;
+		public List<DDOItemSetBonusProperty> Bonuses = new List<DDOItemSetBonusProperty>();
 	}
 
 	[Serializable]
@@ -393,7 +393,7 @@ namespace DDONamedGearPlanner
 					else if (op.Property.EndsWith("Ethereal Essence")) type = "Ethereal";
 					else if (op.Property.EndsWith("Material Essence")) type = "Material";
 
-					if (type != null) gems[type].Add(op.Property);
+					if (type != null) gems[type].Add(op.Type);
 				}
 
 			// determine which gem counts are highest

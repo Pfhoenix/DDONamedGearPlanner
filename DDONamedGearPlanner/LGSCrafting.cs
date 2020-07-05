@@ -2277,7 +2277,7 @@ namespace DDONamedGearPlanner
 				{
 					if (Slots[i]?.AppliedProperties == null) continue;
 					foreach (var c in Slots[i].Cost)
-						ip.Options.Add(new ItemProperty { Property = c.Name, Value = c.Count });
+						ip.Options.Add(new ItemProperty { Property = c.Name, Type = Slots[i].Name, Value = c.Count });
 				}
 			}
 
