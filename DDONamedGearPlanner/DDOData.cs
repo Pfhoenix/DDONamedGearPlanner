@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 
 namespace DDONamedGearPlanner
@@ -42,7 +43,7 @@ namespace DDONamedGearPlanner
 		Wrist = 4096
 	}
 
-	public enum ItemDataSource { None, Dataset, Custom, Cannith, SlaveLord, ThunderForge, GreenSteel }
+	public enum ItemDataSource { None, Dataset, Custom, Cannith, SlaveLord, ThunderForge, LegendaryGreenSteel }
 
 
 	static class EquipmentSlotTypeConversionExtensions
@@ -97,6 +98,7 @@ namespace DDONamedGearPlanner
 		public string Type { get; set; }
 		public float Value { get; set; }
 		public List<ItemProperty> Options;
+		public bool HideOptions;
 		public DDOItemData Owner;
 		// this will only ever be used by the interface to create ad hoc item properties in order to track set bonuses in gear sets
 		public string SetBonusOwner;
@@ -344,7 +346,107 @@ namespace DDONamedGearPlanner
 		public string WikiURL;
 		public List<DDOItemSetBonus> SetBonuses;
 		public List<DDOItemData> Items = new List<DDOItemData>();
+
+        public virtual DDOItemSetBonus GetSetBonuses(List<ItemProperty> itemprops)
+        {
+            DDOItemSetBonus sb = null;
+            foreach (var SB in SetBonuses)
+            {
+                if (SB.MinimumItems > itemprops.Count) break;
+                sb = SB;
+            }
+
+            return sb;
+        }
 	}
+
+	[Serializable]
+    public class LGSItemSet : DDOItemSet
+    {
+		public LGSItemSet()
+        {
+            Name = "Legendary Green Steel";
+            WikiURL = null;
+        }
+
+        public override DDOItemSetBonus GetSetBonuses(List<ItemProperty> itemprops)
+        {
+            // need at least 2 items for any LGS set bonuses
+            if (itemprops.Count < 2) return null;
+
+            DDOItemSetBonus sb = new DDOItemSetBonus();
+
+			Dictionary<string, List<string>> gems = new Dictionary<string, List<string>>();
+			gems["Dominion"] = new List<string>();
+			gems["Escalation"] = new List<string>();
+			gems["Opposition"] = new List<string>();
+			gems["Ethereal"] = new List<string>();
+			gems["Material"] = new List<string>();
+
+			foreach (var ip in itemprops)
+				foreach (var op in ip.Options)
+				{
+					string type = null;
+					if (op.Property.EndsWith("Dominion")) type = "Dominion";
+					else if (op.Property.EndsWith("Escalation")) type = "Escalation";
+					else if (op.Property.EndsWith("Opposition")) type = "Opposition";
+					else if (op.Property.EndsWith("Ethereal Essence")) type = "Ethereal";
+					else if (op.Property.EndsWith("Material Essence")) type = "Material";
+
+					if (type != null) gems[type].Add(op.Property);
+				}
+
+			// determine which gem counts are highest
+			string hg = gems["Escalation"].Count > gems["Dominion"].Count ? "Escalation" : "Dominion";
+			if (gems["Opposition"].Count > gems[hg].Count) hg = gems["Dominion"].Count == gems["Escalation"].Count ? "Opposition" : null;
+
+			// we have a dominant gem to apply a bonus for
+			if (hg != null)
+			{
+				int unique = gems[hg].Distinct().Count();
+				if (hg == "Dominion") sb.Bonuses.Add(new DDOItemSetBonusProperty { Property = "Maximum Spell Points %", Type = "legendary", Value = 6 + unique * 2 });
+				else if (hg == "Escalation") sb.Bonuses.Add(new DDOItemSetBonusProperty { Property = "Dodge Cap", Type = "legendary", Value = 1 + unique / 3 });
+				else if (hg == "Opposition") sb.Bonuses.Add(new DDOItemSetBonusProperty { Property = "Maximum Hit Points %", Type = "legendary", Value = 6 + unique * 2 });
+			}
+
+			// having 4+pcs means potentially an ethereal or material essence bonus
+			if (itemprops.Count >= 4)
+			{
+				string he = gems["Ethereal"].Count > gems["Material"].Count ? "Ethereal" : null;
+				if (he == null) he = gems["Material"].Count > gems["Ethereal"].Count ? "Material" : null;
+
+				if (he != null)
+				{
+					int unique = gems[he].Distinct().Count();
+					if (he == "Ethereal") sb.Bonuses.Add(new DDOItemSetBonusProperty { Property = "Incorporeal", Type = "legendary", Value = 1 + unique * 0.5f });
+					else if (he == "Material")
+					{
+						sb.Bonuses.Add(new DDOItemSetBonusProperty { Property = "Critical Hit Damage", Type = "legendary", Value = 1 + unique });
+						sb.Bonuses.Add(new DDOItemSetBonusProperty { Property = "Universal Spell Crit Damage", Type = "legendary", Value = 5 + unique * 2 });
+					}
+
+					// the 5+pc bonus only applies if the set is also applying gem and essence bonuses
+					if (itemprops.Count >= 5 && hg != null)
+					{
+						if (he == "Ethereal")
+						{
+							if (hg == "Dominion") sb.Bonuses.Add(new DDOItemSetBonusProperty { Property = "Mind Spike" });
+							else if (hg == "Escalation") sb.Bonuses.Add(new DDOItemSetBonusProperty { Property = "Whispers of Life" });
+							if (hg == "Opposition") sb.Bonuses.Add(new DDOItemSetBonusProperty { Property = "Brazen Brilliance" });
+						}
+						else if (he == "Material")
+						{
+							if (hg == "Dominion") sb.Bonuses.Add(new DDOItemSetBonusProperty { Property = "Controller's Grip" });
+							else if (hg == "Escalation") sb.Bonuses.Add(new DDOItemSetBonusProperty { Property = "Sound and Silence" });
+							if (hg == "Opposition") sb.Bonuses.Add(new DDOItemSetBonusProperty { Property = "Ender" });
+						}
+					}
+				}
+			}
+
+            return sb;
+        }
+    }
 
 	[Serializable]
 	public class DDODataset
@@ -7430,7 +7532,9 @@ namespace DDONamedGearPlanner
 					}
 				}
 			});
-			#endregion
+            #endregion
+
+            Sets.Add("Legendary Green Steel", new LGSItemSet());
 
 			/*
 				Sets.Add("", new DDOItemSet
@@ -7496,7 +7600,7 @@ namespace DDONamedGearPlanner
 			// go through all item properties, to include optional ones
 			foreach (var ip in item.Properties)
 			{
-				if (ip.Options != null)
+				if (ip.Options != null && !ip.HideOptions)
 				{
 					foreach (var o in ip.Options)
 					{

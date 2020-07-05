@@ -2536,6 +2536,8 @@ namespace DDOWikiParser
 				tableNodes = doc.GetElementsByTagName("table");
 				foreach (XmlNode tn in tableNodes)
 				{
+					if (((XmlElement)tn).GetAttribute("id") == "Lama-Spoiler") break;
+
 					var trs = ((XmlElement)tn).GetElementsByTagName("tr");
 					XmlElement tr = (XmlElement)trs[0];
 
@@ -2997,6 +2999,7 @@ namespace DDOWikiParser
 			// first go through all set bonuses and populate the properties into the itemproperty list
 			foreach (var set in dataset.Sets)
 			{
+				if (set.Value.SetBonuses == null) continue;
 				foreach (var sb in set.Value.SetBonuses)
 				{
 					foreach (var b in sb.Bonuses) dataset.AddItemProperty(b.Property, b.Type, null);

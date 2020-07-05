@@ -36,7 +36,7 @@ namespace DDONamedGearPlanner
 						}
 					}
 				}
-				else if (p.Options != null)
+				else if (p.Options != null && !p.HideOptions)
 				{
 					foreach (var op in p.Options)
 					{

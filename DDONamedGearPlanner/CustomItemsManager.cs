@@ -102,6 +102,11 @@ namespace DDONamedGearPlanner
 					ItemDataSource source = (ItemDataSource)Enum.Parse(typeof(ItemDataSource), xi.Attributes["source"].Value);
 					switch (source)
 					{
+						case ItemDataSource.LegendaryGreenSteel:
+							LGSCrafting.LGSItemContainer lic = new LGSCrafting.LGSItemContainer { Name = name };
+							if (lic.FromXml(xi)) CustomItems.Add(lic);
+							break;
+
 						case ItemDataSource.SlaveLord:
 							SlaveLordCrafting.SlaveLordItemContainer slic = new SlaveLordCrafting.SlaveLordItemContainer { Name = name };
 							if (slic.FromXml(xi)) CustomItems.Add(slic);

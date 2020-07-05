@@ -15,6 +15,7 @@ namespace DDONamedGearPlanner
 	{
 		ListViewCustomItemProperties CustomIP;
 		SlaveLordItemProperties SlaveLordIP;
+		LGSItemProperties LGSIP;
 
 		public CustomItemsWindow()
 		{
@@ -88,6 +89,7 @@ namespace DDONamedGearPlanner
 		{
 			if (ItemPropertiesArea.Child == SlaveLordIP) SlaveLordIP.SetItem(null);
 			else if (ItemPropertiesArea.Child == CustomIP) CustomIP.SetItem(null);
+			else if (ItemPropertiesArea.Child == LGSIP) LGSIP.SetItem(null);
 
 			if (tvItems.SelectedItem == null)
 			{
@@ -100,13 +102,19 @@ namespace DDONamedGearPlanner
 				{
 					tvItems.ContextMenu = tvItems.Resources["SlotCM"] as ContextMenu;
 					SlotType st = (SlotType)tvi.Tag;
-					if (SlaveLordCrafting.SlaveLordItemContainer.DisallowedSlots.Contains(st)) (tvItems.ContextMenu.Items[0] as MenuItem).Visibility = Visibility.Collapsed;
+					if (LGSCrafting.LGSItemContainer.DisallowedSlots.Contains(st)) (tvItems.ContextMenu.Items[0] as MenuItem).Visibility = Visibility.Collapsed;
 					else
 					{
 						(tvItems.ContextMenu.Items[0] as MenuItem).Visibility = Visibility.Visible;
+						(tvItems.ContextMenu.Items[0] as MenuItem).Header = "New Legendary Green Steel " + (SlotType)tvi.Tag + " Item";
+					}
+					if (SlaveLordCrafting.SlaveLordItemContainer.DisallowedSlots.Contains(st)) (tvItems.ContextMenu.Items[1] as MenuItem).Visibility = Visibility.Collapsed;
+					else
+					{
+						(tvItems.ContextMenu.Items[1] as MenuItem).Visibility = Visibility.Visible;
 						(tvItems.ContextMenu.Items[1] as MenuItem).Header = "New Slave Lord " + (SlotType)tvi.Tag + " Item";
 					}
-					(tvItems.ContextMenu.Items[1] as MenuItem).Header = "New Custom " + (SlotType)tvi.Tag + " Item";
+					(tvItems.ContextMenu.Items[2] as MenuItem).Header = "New Custom " + (SlotType)tvi.Tag + " Item";
 				}
 				else
 				{
@@ -114,6 +122,12 @@ namespace DDONamedGearPlanner
 					ACustomItemContainer cic = tvi.Tag as ACustomItemContainer;
 					switch (cic.Source)
 					{
+						case ItemDataSource.LegendaryGreenSteel:
+							if (LGSIP == null) LGSIP = new LGSItemProperties();
+							ItemPropertiesArea.Child = LGSIP;
+							LGSIP.SetItem((LGSCrafting.LGSItemContainer)cic);
+							break;
+
 						case ItemDataSource.SlaveLord:
 							if (SlaveLordIP == null) SlaveLordIP = new SlaveLordItemProperties();
 							ItemPropertiesArea.Child = SlaveLordIP;
@@ -287,6 +301,30 @@ namespace DDONamedGearPlanner
 
 			CustomItemsManager.CustomItems.Add(slic);
 			TreeViewItem tvi = AddItemToTreeView(slic);
+			tvi.BringIntoView();
+			tvi.IsSelected = true;
+		}
+
+		private void NewLGSItem_Click(object sender, RoutedEventArgs e)
+		{
+			SlotType slot = SlotType.None;
+			if (tvItems.SelectedItem != null)
+			{
+				slot = (SlotType)(tvItems.SelectedItem as TreeViewItem).Tag;
+			}
+			else
+			{
+				if (!GetSlot(SlotType.None, LGSCrafting.LGSItemContainer.DisallowedSlots, out slot)) return;
+			}
+
+			if (slot == SlotType.None) return;
+
+			LGSCrafting.LGSItemContainer lic = new LGSCrafting.LGSItemContainer { Name = "<Custom Item>" };
+
+			lic.BaseItem = DatasetManager.Dataset.Items.Find(i => i.Name.StartsWith("Legendary Green Steel") && i.Slot == slot);
+
+			CustomItemsManager.CustomItems.Add(lic);
+			TreeViewItem tvi = AddItemToTreeView(lic);
 			tvi.BringIntoView();
 			tvi.IsSelected = true;
 		}

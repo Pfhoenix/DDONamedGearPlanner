@@ -30,10 +30,12 @@
 				<TreeView Name="tvItems" SelectedItemChanged="Items_SelectedItemChanged" MouseDoubleClick="Items_MouseDoubleClick" PreviewMouseRightButtonDown="Items_PreviewMouseRightButtonDown">
 					<TreeView.Resources>
 						<ContextMenu x:Key="EmptyCM" StaysOpen="True">
+							<MenuItem Click="NewLGSItem_Click" Header="New Legendary Green Steel Item"/>
 							<MenuItem Click="NewSlaveLordItem_Click" Header="New Slave Lord Item"/>
 							<MenuItem Click="NewCustomItem_Click" Header="New Custom Item"/>
 						</ContextMenu>
 						<ContextMenu x:Key="SlotCM">
+							<MenuItem Click="NewLGSItem_Click" Header="New Legendary Green Steel Item"/>
 							<MenuItem Click="NewSlaveLordItem_Click" Header="New Slave Lord Item"/>
 							<MenuItem Click="NewCustomItem_Click" Header="New Custom Slot Item"/>
 						</ContextMenu>

@@ -140,7 +140,7 @@ namespace DDONamedGearPlanner
 
 					foreach (var p in item.Properties)
 					{
-						if (p.Options != null)
+						if (p.Options != null && !p.HideOptions)
 						{
 							foreach (var op in p.Options)
 							{
@@ -178,7 +178,7 @@ namespace DDONamedGearPlanner
 				bool first = true;
 				foreach (var p in item.Properties)
 				{
-					if (p.Options != null)
+					if (p.Options != null && !p.HideOptions)
 					{
 						foreach (var op in p.Options)
 						{
@@ -231,7 +231,7 @@ namespace DDONamedGearPlanner
 					bool first = true;
 					foreach (var p in item.Properties)
 					{
-						if (p.Options != null)
+						if (p.Options != null && !p.HideOptions)
 						{
 							foreach (var op in p.Options)
 							{

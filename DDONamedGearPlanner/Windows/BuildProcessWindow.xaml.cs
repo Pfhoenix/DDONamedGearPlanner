@@ -106,7 +106,7 @@ namespace DDONamedGearPlanner
 							else return -1;
 						}
 					}
-					else if (p.Options != null)
+					else if (p.Options != null && !p.HideOptions)
 					{
 						foreach (var op in p.Options)
 						{
@@ -697,7 +697,7 @@ namespace DDONamedGearPlanner
 									tfi.Add(p);
 								}
 							}
-							else if (p.Options != null)
+							else if (p.Options != null && !p.HideOptions)
 							{
 								foreach (var op in p.Options)
 								{
@@ -739,7 +739,7 @@ namespace DDONamedGearPlanner
 						foreach (var p in item.Item.Properties)
 						{
 							if (CancelBuild) return;
-							if (p.Options == null) continue;
+							if (p.Options == null || p.HideOptions) continue;
 							if (p.Options.Any(a => item.OptionProperties.Contains(a))) continue;
 							foreach (var op in p.Options)
 							{

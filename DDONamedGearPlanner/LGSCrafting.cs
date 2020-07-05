@@ -6,6 +6,7 @@ namespace DDONamedGearPlanner
 {
 	public static class LGSCrafting
 	{
+        public const int Tiers = 3;
 		public const string CoV = "Commendation of Valor";
 		public const string SmallGlowingArrowhead = "Legendary Small Glowing Arrowhead";
 		public const string SmallGnawedBone = "Legendary Small Gnawed Bone";
@@ -62,6 +63,7 @@ namespace DDONamedGearPlanner
 		public class LGSCraftingIngredient
 		{
 			public string Name;
+			public int Count = 1;
 			public List<CraftingIngredient> Ingredients;
 		}
 
@@ -554,6 +556,10 @@ namespace DDONamedGearPlanner
 			{
 				"Tier 1", new List<LGSCraftedItemProperty>
 				{
+					new LGSCraftedItemProperty
+					{
+						Name = "- empty -"
+					},
 					new LGSCraftedItemProperty
 					{
 						Name = "Electric Spell Critical Damage 20%",
@@ -1109,6 +1115,10 @@ namespace DDONamedGearPlanner
 				{
 					new LGSCraftedItemProperty
 					{
+						Name = "- empty -"
+					},
+					new LGSCraftedItemProperty
+					{
 						Name = "Electric Spell Critical Damage 10%",
 						AppliedProperties = new List<ItemProperty>
 						{
@@ -1662,6 +1672,10 @@ namespace DDONamedGearPlanner
 				{
 					new LGSCraftedItemProperty
 					{
+						Name = "- empty -"
+					},
+					new LGSCraftedItemProperty
+					{
 						Name = "Electric Spell Critical Damage 5%",
 						AppliedProperties = new List<ItemProperty>
 						{
@@ -2211,5 +2225,102 @@ namespace DDONamedGearPlanner
 				}
 			},
 		};
-	}
+
+        public class LGSItemContainer : ACustomItemContainer
+        {
+            public DDOItemData BaseItem;
+            DDOItemData GeneratedItem;
+            public LGSCraftedItemProperty[] Slots { get; set; }
+
+            public static List<SlotType> DisallowedSlots = new List<SlotType> { SlotType.Finger, SlotType.Offhand, SlotType.Trinket, SlotType.Weapon };
+
+            public LGSItemContainer()
+            {
+                Source = ItemDataSource.LegendaryGreenSteel;
+                Slots = new LGSCraftedItemProperty[Tiers];
+                for (int i = 0; i < Tiers; i++)
+                    Slots[i] = LGSAugments["Tier " + (i + 1).ToString()][0];
+            }
+
+            public override List<SlotType> GetDisallowedSlots()
+            {
+                return DisallowedSlots;
+            }
+
+            void GenerateItem()
+            {
+                if (GeneratedItem == null)
+                {
+                    GeneratedItem = new DDOItemData(ItemDataSource.LegendaryGreenSteel, false)
+                    {
+                        Name = Name,
+                        WikiURL = "https://ddowiki.com/page/Legendary_Green_Steel_items",
+                        Slot = BaseItem.Slot,
+                        Category = BaseItem.Category,
+                        QuestFoundIn = BaseItem.QuestFoundIn
+                    };
+                }
+                else GeneratedItem.Properties.Clear();
+
+                for (int i = 0; i < Tiers; i++)
+                {
+                    if (Slots[i]?.AppliedProperties == null) continue;
+                    foreach (var ap in Slots[i].AppliedProperties)
+                        GeneratedItem.AddProperty(ap.Property, ap.Type, ap.Value, null);
+                }
+
+                // add in custom LGS set bonus
+                ItemProperty ip = GeneratedItem.AddProperty("Legendary Green Steel", "set", 0, null);
+				ip.HideOptions = true;
+				ip.Options = new List<ItemProperty>();
+				for (int i = 0; i < Tiers; i++)
+				{
+					if (Slots[i]?.AppliedProperties == null) continue;
+					foreach (var c in Slots[i].Cost)
+						ip.Options.Add(new ItemProperty { Property = c.Name, Value = c.Count });
+				}
+			}
+
+            public override DDOItemData GetItem()
+            {
+                GenerateItem();
+
+                return GeneratedItem;
+            }
+
+            public override void ToXml(XmlElement xci, XmlDocument doc)
+            {
+                XmlElement xe = doc.CreateElement("BaseItem");
+                xe.InnerText = BaseItem.Name;
+                xci.AppendChild(xe);
+                for (int i = 0; i < Tiers; i++)
+                {
+                    xe = doc.CreateElement("Tier" + (i + 1));
+                    xe.InnerText = Slots[i]?.Name;
+                    xci.AppendChild(xe);
+                }
+            }
+
+            public override bool FromXml(XmlElement xci)
+            {
+                try
+                {
+                    string baseitem = xci.GetElementsByTagName("BaseItem")[0].InnerText;
+                    BaseItem = DatasetManager.Dataset.Items.Find(i => i.Name == baseitem);
+                    for (int i = 0; i < Tiers; i++)
+                    {
+                        List<LGSCraftedItemProperty> props = LGSAugments["Tier " + (i + 1)];
+                        string p = xci.GetElementsByTagName("Tier" + (i + 1))[0].InnerText;
+                        Slots[i] = props.Find(pr => pr.Name == p);
+                    }
+
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+    }
 }

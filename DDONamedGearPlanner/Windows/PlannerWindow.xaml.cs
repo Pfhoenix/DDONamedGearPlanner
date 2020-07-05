@@ -372,12 +372,7 @@ namespace DDONamedGearPlanner
 					if (ip.ItemProperties[0].Type == "set")
 					{
 						DDOItemSet set = DatasetManager.Dataset.Sets[ip.Property];
-						DDOItemSetBonus sb = null;
-						foreach (var sbs in set.SetBonuses)
-						{
-							if (sbs.MinimumItems > ip.ItemProperties.Count) break;
-							sb = sbs;
-						}
+						DDOItemSetBonus sb = set.GetSetBonuses(ip.ItemProperties);
 						// no need to see a set listed that we're not getting anything from
 						if (sb == null) tvi.Header = ip.Property + " set (no bonuses)";
 						else tvi.Header = ip.Property + " set (" + sb.MinimumItems + " pieces)";
@@ -660,7 +655,7 @@ namespace DDONamedGearPlanner
 		{
 			if (bi == null) return;
 
-			bool optionals = bi.OptionProperties.Count > 0 || bi.Item.Properties.Exists(p => p.Options != null);
+			bool optionals = bi.OptionProperties.Count > 0 || bi.Item.Properties.Exists(p => p.Options != null && !p.HideOptions);
 
 			// first search for an existing tab for the item
 			foreach (TabItem ti in tcPropertyAreas.Items)
@@ -681,7 +676,7 @@ namespace DDONamedGearPlanner
 		{
 			if (item == null) return;
 
-			bool optionals = item.Properties.Exists(p => p.Options != null);
+			bool optionals = item.Properties.Exists(p => p.Options != null && !p.HideOptions);
 
 			foreach (TabItem ti in tcPropertyAreas.Items)
 			{
@@ -906,7 +901,7 @@ namespace DDONamedGearPlanner
 						for (int i = 1; i < itemsplit.Length; i++)
 						{
 							string[] ps = itemsplit[i].Split(';');
-							var optionals = item.Properties.Where(p => p.Options != null).ToList();
+							var optionals = item.Properties.Where(p => p.Options != null && !p.HideOptions).ToList();
 							foreach (var op in optionals)
 							{
 								ItemProperty ot = op.Options.Find(o => o.Property == ps[0] && (o.Type == ps[1] || (string.IsNullOrWhiteSpace(o.Type) && ps[1] == "untyped")));
@@ -1252,7 +1247,7 @@ namespace DDONamedGearPlanner
 					if (entry.Length > 1)
 					{
 						// go through all optional properties on item
-						var optionals = item.Properties.Where(p => p.Options != null).ToList();
+						var optionals = item.Properties.Where(p => p.Options != null && !p.HideOptions).ToList();
 						foreach (var ops in optionals)
 						{
 							foreach (var op in ops.Options)

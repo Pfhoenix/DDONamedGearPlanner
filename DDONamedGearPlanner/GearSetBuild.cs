@@ -216,7 +216,7 @@ namespace DDONamedGearPlanner
 				if (gsp == null)
 				{
 					// options get ignored, as the optionals will be applied separately
-					if (p.Options != null && p.Options.Count > 0) continue;
+					if (p.Options != null && p.Options.Count > 0 && !p.HideOptions) continue;
 					// we never want to show minimum level or handedness
 					if (p.Property == "Minimum Level" || p.Property == "Handedness") continue;
 
@@ -268,12 +268,7 @@ namespace DDONamedGearPlanner
 				{
 					List<ItemProperty> ips = new List<ItemProperty>();
 					DDOItemSet set = DatasetManager.Dataset.Sets[gsp.ItemProperties[0].Property];
-					DDOItemSetBonus sb = null;
-					foreach (var sbs in set.SetBonuses)
-					{
-						if (sbs.MinimumItems > gsp.ItemProperties.Count) break;
-						sb = sbs;
-					}
+					DDOItemSetBonus sb = set.GetSetBonuses(gsp.ItemProperties);
 
 					if (sb == null) continue;
 
