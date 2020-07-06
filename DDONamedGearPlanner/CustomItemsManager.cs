@@ -29,6 +29,7 @@ namespace DDONamedGearPlanner
 	{
 		public string Name;
 		public ItemDataSource Source;
+		public string WikiURL;
 
 		public virtual List<SlotType> GetDisallowedSlots()
 		{

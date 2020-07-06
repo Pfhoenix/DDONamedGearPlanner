@@ -8,9 +8,9 @@
              d:DesignHeight="450" d:DesignWidth="300">
 	<Grid Background="LightGray">
 		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
+			<RowDefinition Height="1*"/>
 			<RowDefinition Height="3" />
-			<RowDefinition Height="*"/>
+			<RowDefinition Height="2*"/>
 		</Grid.RowDefinitions>
 		<DockPanel>
 			<ListView Name="lvSlots" DockPanel.Dock="Top" SizeChanged="Slots_SizeChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled">

@@ -2902,6 +2902,7 @@ namespace DDONamedGearPlanner
 			public SlaveLordItemContainer()
 			{
 				Source = ItemDataSource.SlaveLord;
+				WikiURL = "https://ddowiki.com/page/Slave_Lords_Crafting";
 				Slots = new CraftedItemProperty[7];
 				for (int i = 0; i < 7; i++)
 					Slots[i] = ItemSlots["Heroic " + ((ESlaveLordItemSlots)i).ToString()][0];

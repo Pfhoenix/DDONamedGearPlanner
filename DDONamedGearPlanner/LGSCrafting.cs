@@ -2237,6 +2237,7 @@ namespace DDONamedGearPlanner
             public LGSItemContainer()
             {
                 Source = ItemDataSource.LegendaryGreenSteel;
+				WikiURL = "https://ddowiki.com/page/Legendary_Green_Steel_items";
                 Slots = new LGSCraftedItemProperty[Tiers];
                 for (int i = 0; i < Tiers; i++)
                     Slots[i] = LGSAugments["Tier " + (i + 1).ToString()][0];

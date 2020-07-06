@@ -16,6 +16,7 @@ namespace DDONamedGearPlanner
 		ListViewCustomItemProperties CustomIP;
 		SlaveLordItemProperties SlaveLordIP;
 		LGSItemProperties LGSIP;
+		string WikiURL;
 
 		public CustomItemsWindow()
 		{
@@ -126,17 +127,22 @@ namespace DDONamedGearPlanner
 							if (LGSIP == null) LGSIP = new LGSItemProperties();
 							ItemPropertiesArea.Child = LGSIP;
 							LGSIP.SetItem((LGSCrafting.LGSItemContainer)cic);
+							(tvItems.ContextMenu.Items[3] as MenuItem).IsEnabled = true;
+							WikiURL = cic.WikiURL;
 							break;
 
 						case ItemDataSource.SlaveLord:
 							if (SlaveLordIP == null) SlaveLordIP = new SlaveLordItemProperties();
 							ItemPropertiesArea.Child = SlaveLordIP;
 							SlaveLordIP.SetItem((SlaveLordCrafting.SlaveLordItemContainer)cic);
+							(tvItems.ContextMenu.Items[3] as MenuItem).IsEnabled = true;
+							WikiURL = cic.WikiURL;
 							break;
 
 						case ItemDataSource.Custom:
 							ItemPropertiesArea.Child = CustomIP;
 							CustomIP.SetItem(cic.GetItem());
+							(tvItems.ContextMenu.Items[3] as MenuItem).IsEnabled = false;
 							break;
 					}
 				}
@@ -404,6 +410,11 @@ namespace DDONamedGearPlanner
 			tvItems.Items.Clear();
 			SetupTreeView();
 			CustomItemsReloaded?.Invoke();
+		}
+
+		private void OpenWikiURL_Click(object sender, RoutedEventArgs e)
+		{
+			System.Diagnostics.Process.Start(WikiURL);
 		}
 	}
 }

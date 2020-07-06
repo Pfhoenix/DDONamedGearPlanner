@@ -475,7 +475,11 @@ namespace DDONamedGearPlanner
 					}
 					else if (item.Item.Handedness == 2)
 					{
-						if (EquipmentSlots[EquipmentSlotType.Offhand].IsLocked)
+						if (DatasetManager.Dataset.RuneArmCompatibleTwoHandedWeaponTypes.Contains(item.Item.WeaponType) && EquipmentSlots[EquipmentSlotType.Offhand].Item != null && (OffhandCategory)EquipmentSlots[EquipmentSlotType.Offhand].Item.Item.Category == OffhandCategory.RuneArm)
+						{
+							esc = EquipmentSlots[EquipmentSlotType.Weapon];
+						}
+						else if (EquipmentSlots[EquipmentSlotType.Offhand].IsLocked)
 						{
 							MessageBox.Show("Can't load a two-handed weapon with a locked offhand slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
 							return EquipmentSlotType.None;
@@ -484,6 +488,20 @@ namespace DDONamedGearPlanner
 					}
 					else esc = EquipmentSlots[EquipmentSlotType.Weapon];
 				}
+			}
+			else if (item.Item.Slot == SlotType.Offhand)
+			{
+				BuildItem w = EquipmentSlots[EquipmentSlotType.Weapon].Item;
+				if (w != null && w.Item.Handedness == 2)
+				{
+					if (DatasetManager.Dataset.RuneArmCompatibleTwoHandedWeaponTypes.Contains(w.Item.WeaponType) && (OffhandCategory)item.Item.Category == OffhandCategory.RuneArm) esc = EquipmentSlots[EquipmentSlotType.Offhand];
+					else
+					{
+						MessageBox.Show("Can't load an offhand item when a two-handed weapon is slotted.", "Item Incompatibility Detected", MessageBoxButton.OK, MessageBoxImage.Stop);
+						return EquipmentSlotType.None;
+					}
+				}
+				else esc = EquipmentSlots[EquipmentSlotType.Offhand];
 			}
 			else
 			{
@@ -504,7 +522,11 @@ namespace DDONamedGearPlanner
 			{
 				esc.SetItem(item);
 				// slotting a two-handed weapon means ensuring the offhand slot is empty
-				if (item.Item.Handedness == 2) EquipmentSlots[EquipmentSlotType.Offhand].SetItem(null);
+				if (item.Item.Handedness == 2)
+				{
+					if (!DatasetManager.Dataset.RuneArmCompatibleTwoHandedWeaponTypes.Contains(item.Item.WeaponType) || (EquipmentSlots[EquipmentSlotType.Offhand].Item != null && (OffhandCategory)EquipmentSlots[EquipmentSlotType.Offhand].Item.Item.Category != OffhandCategory.RuneArm))
+						EquipmentSlots[EquipmentSlotType.Offhand].SetItem(null);
+				}
 				return esc.Slot;
 			}
 		}

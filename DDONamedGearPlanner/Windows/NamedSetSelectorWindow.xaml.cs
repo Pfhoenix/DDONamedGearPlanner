@@ -246,6 +246,7 @@ namespace DDONamedGearPlanner
 				{
 					if (si.Handedness > HandLimit)
 					{
+						//if (si.Handedness == 1 ||)
 						MessageBox.Show("There are no hands available to use the selected weapon. Free up a weapon or offhand item to add another.", "Weapon/Offhand slots at capacity", MessageBoxButton.OK, MessageBoxImage.Stop);
 						cb.IsChecked = false;
 					}

@@ -43,6 +43,8 @@
 							<MenuItem Click="RenameCustomItem_Click" Header="Rename"/>
 							<MenuItem Click="ChangeSlot_Click" Header="Change Slot"/>
 							<Separator/>
+							<MenuItem Click="OpenWikiURL_Click" Header="Open Wiki Crafting Page"/>
+							<Separator/>
 							<MenuItem Click="DeleteCustomItem_Click" Header="Delete"/>
 						</ContextMenu>
 					</TreeView.Resources>
