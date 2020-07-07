@@ -29,7 +29,10 @@ namespace DDONamedGearPlanner
 	{
 		Dictionary<EquipmentSlotType, EquipmentSlotControl> EquipmentSlots;
 		int FingerLimit = 2;
-		int HandLimit = 2;
+		EquipmentSlotControl WeaponSlot;
+		EquipmentSlotControl OffhandSlot;
+		DDOItemData SelectedWeapon;
+		DDOItemData SelectedOffhand;
 		List<NamedSetInfo> Sets = new List<NamedSetInfo>();
 		List<CheckBox> SelectedItems = new List<CheckBox>();
 
@@ -55,16 +58,11 @@ namespace DDONamedGearPlanner
 		public void Initialize(Dictionary<EquipmentSlotType, EquipmentSlotControl> es)
 		{
 			FingerLimit = 2;
-			HandLimit = 2;
 			EquipmentSlots = es;
-			foreach (var eq in EquipmentSlots)
-			{
-				if (eq.Value.IsLocked)
-				{
-					if (eq.Value.SlotType == SlotType.Finger) FingerLimit--;
-					else if (eq.Value.SlotType == SlotType.Weapon || eq.Value.SlotType == SlotType.Offhand) HandLimit--;
-				}
-			}
+			WeaponSlot = EquipmentSlots[EquipmentSlotType.Weapon];
+			OffhandSlot = EquipmentSlots[EquipmentSlotType.Offhand];
+			if (EquipmentSlots[EquipmentSlotType.Finger1].IsLocked) FingerLimit--;
+			if (EquipmentSlots[EquipmentSlotType.Finger2].IsLocked) FingerLimit--;
 
 			foreach (var set in DatasetManager.Dataset.Sets)
 			{
@@ -123,6 +121,8 @@ namespace DDONamedGearPlanner
 			SlotPanel.Children.Clear();
 			SlotPanel.Tag = null;
 			SelectedItems.Clear();
+			SelectedWeapon = null;
+			SelectedOffhand = null;
 			btnApply.IsEnabled = false;
 			if (lvSets.SelectedItem == null) return;
 			DDOItemSet set = (lvSets.SelectedItem as NamedSetInfo).Set;
@@ -168,19 +168,52 @@ namespace DDONamedGearPlanner
 						}
 					}
 
-					if (item.Slot == SlotType.Finger && FingerLimit <= 0) ro = true;
-					else if (item.Slot == SlotType.Weapon && HandLimit <= 0) ro = true;
+					bool go = false;
+					if (item.Slot == SlotType.Finger)
+					{
+						if (FingerLimit <= 0) ro = true;
+						else if (FingerLimit == 1) go = true;
+					}
+					else if (item.Slot == SlotType.Weapon)
+					{
+						if (item.Handedness == 1)
+						{
+							if (WeaponSlot.IsLocked && OffhandSlot.IsLocked) ro = true;
+							else if (WeaponSlot.IsLocked || OffhandSlot.IsLocked) go = true;
+						}
+						else if (item.Handedness == 2)
+						{
+							if (WeaponSlot.IsLocked) ro = true;
+							else if (OffhandSlot.IsLocked)
+							{
+								if (OffhandSlot.Item == null) ro = true;
+								else if (OffhandSlot.Item.Item.Slot == SlotType.Weapon) ro = true;
+								else if ((OffhandCategory)OffhandSlot.Item.Item.Category != OffhandCategory.RuneArm) ro = true;
+								else if (!DatasetManager.RuneArmCompatibleTwoHandedWeaponTypes.Contains(item.WeaponType)) ro = true;
+								else go = true;
+							}
+						}
+					}
+
 					if (ro) header.Foreground = Brushes.Red;
-					else if (item.Slot == SlotType.Finger && FingerLimit == 1) header.Foreground = Brushes.Goldenrod;
-					else if (item.Slot == SlotType.Weapon && HandLimit == 1) header.Foreground = Brushes.Goldenrod;
+					else if (go) header.Foreground = Brushes.Goldenrod;
 				}
 				
 				CheckBox cb = new CheckBox { Content = item.Name, Tag = item };
 				if (ro) cb.IsEnabled = false;
 				else
 				{
-					if (item.Slot == SlotType.Weapon && item.Handedness > HandLimit) cb.IsEnabled = false;
-					cb.Click += ItemCheckBox_Clicked;
+					// we do individual offhand evaluation here
+					if (item.Slot == SlotType.Offhand)
+					{
+						if (WeaponSlot.IsLocked && WeaponSlot.Item != null && WeaponSlot.Item.Item.Handedness == 2)
+						{
+							if (!DatasetManager.RuneArmCompatibleTwoHandedWeaponTypes.Contains(WeaponSlot.Item.Item.WeaponType) || (OffhandCategory)item.Category != OffhandCategory.RuneArm) cb.IsEnabled = false;
+							else cb.Click += ItemCheckBox_Clicked;
+						}
+						else cb.Click += ItemCheckBox_Clicked;
+					}
+					else cb.Click += ItemCheckBox_Clicked;
 				}
 				cb.ToolTip = item.Name;
 				cb.MouseRightButtonDown += ItemCheckBox_MouseRightButtonDown;
@@ -228,7 +261,7 @@ namespace DDONamedGearPlanner
 						{
 							SelectedItems[i].IsChecked = false;
 							SelectedItems.RemoveAt(i);
-							if (si.Slot == SlotType.Offhand) HandLimit++;
+							if (SelectedOffhand == ci) SelectedOffhand = null;
 							break;
 						}
 					}
@@ -244,41 +277,95 @@ namespace DDONamedGearPlanner
 				}
 				else if (si.Slot == SlotType.Weapon)
 				{
-					if (si.Handedness > HandLimit)
+					bool allow = false;
+					if (si.Handedness == 1)
 					{
-						//if (si.Handedness == 1 ||)
+						if (WeaponSlot.IsLocked)
+						{
+							if (WeaponSlot.Item == null || WeaponSlot.Item.Item.Handedness == 1)
+							{
+								if (SelectedOffhand == null)
+								{
+									SelectedOffhand = si;
+									allow = true;
+								}
+							}
+						}
+						else if (SelectedWeapon == null)
+						{
+							SelectedWeapon = si;
+							allow = true;
+						}
+						else if (SelectedWeapon.Handedness == 1 && !OffhandSlot.IsLocked && SelectedOffhand == null)
+						{
+							SelectedOffhand = si;
+							allow = true;
+						}
+					}
+					else if (si.Handedness == 2)
+					{
+						if (SelectedWeapon == null)
+						{
+							if (OffhandSlot.Item == null) allow = true;
+							else if (OffhandSlot.IsLocked)
+							{
+								if (OffhandSlot.Item.Item.Slot == SlotType.Offhand && DatasetManager.CanBeUsedTogether(si, OffhandSlot.Item.Item)) allow = true;
+							}
+							else if (SelectedOffhand == null) allow = true;
+							else if (SelectedOffhand.Slot == SlotType.Offhand && DatasetManager.CanBeUsedTogether(si, SelectedOffhand)) allow = true;
+
+							if (allow) SelectedWeapon = si;
+						}
+					}
+
+					if (!allow)
+					{
 						MessageBox.Show("There are no hands available to use the selected weapon. Free up a weapon or offhand item to add another.", "Weapon/Offhand slots at capacity", MessageBoxButton.OK, MessageBoxImage.Stop);
 						cb.IsChecked = false;
 					}
-					else
-					{
-						HandLimit -= si.Handedness;
-						SelectedItems.Add(cb);
-					}
+					else SelectedItems.Add(cb);
 				}
 				else if (si.Slot == SlotType.Offhand)
 				{
-					if (HandLimit == 0)
+					bool allow = false;
+					if (SelectedOffhand == null)
+					{
+						if (SelectedWeapon != null) allow = DatasetManager.CanBeUsedTogether(SelectedWeapon, si);
+						else if (WeaponSlot.Item != null) allow = DatasetManager.CanBeUsedTogether(WeaponSlot.Item.Item, si);
+						else allow = true;
+					}
+
+					if (!allow)
 					{
 						MessageBox.Show("There are no hands available to use the selected offhand. Free up a weapon item first.", "Weapon/Offhand slots at capacity", MessageBoxButton.OK, MessageBoxImage.Stop);
 						cb.IsChecked = false;
 					}
 					else
 					{
-						HandLimit--;
 						SelectedItems.Add(cb);
+						SelectedOffhand = si;
 					}
 				}
 				else SelectedItems.Add(cb);
 			}
+			// item is being deselected by user
 			else
 			{
 				SelectedItems.Remove(cb);
 				DDOItemData id = cb.Tag as DDOItemData;
-				if (id.Slot == SlotType.Offhand) HandLimit++;
+				if (id.Slot == SlotType.Offhand) SelectedOffhand = null;
 				else if (id.Slot == SlotType.Weapon)
 				{
-					if (id.Handedness > 0) HandLimit += id.Handedness;
+					if (SelectedWeapon == id)
+					{
+						SelectedWeapon = null;
+						if (SelectedOffhand != null && SelectedOffhand.Slot == SlotType.Weapon)
+						{
+							SelectedWeapon = SelectedOffhand;
+							SelectedOffhand = null;
+						}
+					}
+					else if (SelectedOffhand == id) SelectedOffhand = null;
 				}
 			}
 

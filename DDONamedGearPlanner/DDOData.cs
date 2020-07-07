@@ -458,15 +458,6 @@ namespace DDONamedGearPlanner
 		public Dictionary<SlotType, List<DDOItemProperty>> SlotExclusiveItemProperties = new Dictionary<SlotType, List<DDOItemProperty>>();
 		public List<DDOAdventurePackData> AdventurePacks;
 
-		public readonly List<string> RuneArmCompatibleTwoHandedWeaponTypes = new List<string>
-		{
-			"Great Crossbow",
-			"Heavy Crossbow",
-			"Light Crossbow",
-			"Repeating Heavy Crossbow",
-			"Repeating Light Crossbow"
-		};
-
 		public void Initialize()
 		{
 			Slots.Add(SlotType.Back, new DDOSlot { Slot = SlotType.Back });

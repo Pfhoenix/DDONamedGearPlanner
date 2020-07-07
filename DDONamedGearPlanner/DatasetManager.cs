@@ -16,6 +16,15 @@ namespace DDONamedGearPlanner
 			"Weapon Category"
 		};
 
+		public static readonly List<string> RuneArmCompatibleTwoHandedWeaponTypes = new List<string>
+		{
+			"Great Crossbow",
+			"Heavy Crossbow",
+			"Light Crossbow",
+			"Repeating Heavy Crossbow",
+			"Repeating Light Crossbow"
+		};
+
 		public static DDODataset Dataset;
 
 		public static string Load()
@@ -35,6 +44,17 @@ namespace DDONamedGearPlanner
 			finally
 			{
 				fs.Close();
+			}
+		}
+
+		public static bool CanBeUsedTogether(DDOItemData weapon, DDOItemData offhand)
+		{
+			if (weapon.Handedness == 1) return true;
+			else
+			{
+				if (offhand.Slot != SlotType.Offhand) return false;
+
+				return RuneArmCompatibleTwoHandedWeaponTypes.Contains(weapon.WeaponType) && (OffhandCategory)offhand.Category == OffhandCategory.RuneArm;
 			}
 		}
 	}

@@ -21,7 +21,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public static readonly string VERSION = "0.8";
+		public static readonly string VERSION = "0.8.1";
 
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
@@ -112,6 +112,7 @@ namespace DDONamedGearPlanner
 		{
 			CurrentBuild.SetLockStatus(esc.Slot, esc.IsLocked);
 
+			/*
 			// if weapon slot and item is two-handed, set the offhand slot lock to the same state
 			if (esc.Item != null && esc.Slot == EquipmentSlotType.Weapon)
 			{
@@ -130,7 +131,7 @@ namespace DDONamedGearPlanner
 					esc.SetLockStatus(EquipmentSlots[EquipmentSlotType.Weapon].IsLocked);
 					CurrentBuild.SetLockStatus(EquipmentSlotType.Offhand, esc.IsLocked);
 				}
-			}
+			}*/
 		}
 
 		bool IsMinorArtifactSlotted()
@@ -463,7 +464,7 @@ namespace DDONamedGearPlanner
 				{
 					if (EquipmentSlots[EquipmentSlotType.Weapon].IsLocked)
 					{
-						if (item.Item.Handedness == 1)
+						if (item.Item.Handedness == 1 && (EquipmentSlots[EquipmentSlotType.Weapon].Item == null || EquipmentSlots[EquipmentSlotType.Weapon].Item.Item.Handedness == 1))
 						{
 							if (EquipmentSlots[EquipmentSlotType.Offhand].IsLocked)
 							{
@@ -475,14 +476,14 @@ namespace DDONamedGearPlanner
 					}
 					else if (item.Item.Handedness == 2)
 					{
-						if (DatasetManager.Dataset.RuneArmCompatibleTwoHandedWeaponTypes.Contains(item.Item.WeaponType) && EquipmentSlots[EquipmentSlotType.Offhand].Item != null && (OffhandCategory)EquipmentSlots[EquipmentSlotType.Offhand].Item.Item.Category == OffhandCategory.RuneArm)
+						if (EquipmentSlots[EquipmentSlotType.Offhand].Item != null)
 						{
-							esc = EquipmentSlots[EquipmentSlotType.Weapon];
-						}
-						else if (EquipmentSlots[EquipmentSlotType.Offhand].IsLocked)
-						{
-							MessageBox.Show("Can't load a two-handed weapon with a locked offhand slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
-							return EquipmentSlotType.None;
+							if (DatasetManager.CanBeUsedTogether(item.Item, EquipmentSlots[EquipmentSlotType.Offhand].Item.Item)) esc = EquipmentSlots[EquipmentSlotType.Weapon];
+							else
+							{
+								MessageBox.Show("Can't load a two-handed weapon with an incompatible offhand item slotted.", "Item Incompatibility Detected", MessageBoxButton.OK, MessageBoxImage.Stop);
+								return EquipmentSlotType.None;
+							}
 						}
 						else esc = EquipmentSlots[EquipmentSlotType.Weapon];
 					}
@@ -494,7 +495,7 @@ namespace DDONamedGearPlanner
 				BuildItem w = EquipmentSlots[EquipmentSlotType.Weapon].Item;
 				if (w != null && w.Item.Handedness == 2)
 				{
-					if (DatasetManager.Dataset.RuneArmCompatibleTwoHandedWeaponTypes.Contains(w.Item.WeaponType) && (OffhandCategory)item.Item.Category == OffhandCategory.RuneArm) esc = EquipmentSlots[EquipmentSlotType.Offhand];
+					if (DatasetManager.CanBeUsedTogether(w.Item, item.Item)) esc = EquipmentSlots[EquipmentSlotType.Offhand];
 					else
 					{
 						MessageBox.Show("Can't load an offhand item when a two-handed weapon is slotted.", "Item Incompatibility Detected", MessageBoxButton.OK, MessageBoxImage.Stop);
@@ -522,11 +523,11 @@ namespace DDONamedGearPlanner
 			{
 				esc.SetItem(item);
 				// slotting a two-handed weapon means ensuring the offhand slot is empty
-				if (item.Item.Handedness == 2)
+				/*if (item.Item.Handedness == 2)
 				{
-					if (!DatasetManager.Dataset.RuneArmCompatibleTwoHandedWeaponTypes.Contains(item.Item.WeaponType) || (EquipmentSlots[EquipmentSlotType.Offhand].Item != null && (OffhandCategory)EquipmentSlots[EquipmentSlotType.Offhand].Item.Item.Category != OffhandCategory.RuneArm))
+					if (!DatasetManager.RuneArmCompatibleTwoHandedWeaponTypes.Contains(item.Item.WeaponType) || (EquipmentSlots[EquipmentSlotType.Offhand].Item != null && (OffhandCategory)EquipmentSlots[EquipmentSlotType.Offhand].Item.Item.Category != OffhandCategory.RuneArm))
 						EquipmentSlots[EquipmentSlotType.Offhand].SetItem(null);
-				}
+				}*/
 				return esc.Slot;
 			}
 		}
