@@ -11,6 +11,7 @@ namespace DDONamedGearPlanner
 	public partial class QuestSourcesWindow : Window
 	{
 		List<QuestSourceItemData> QuestSourceList = new List<QuestSourceItemData>();
+		bool Initializing = true;
 
 		public QuestSourcesWindow()
 		{
@@ -20,11 +21,29 @@ namespace DDONamedGearPlanner
 				QuestSourceList.Add(new QuestSourceItemData() { Pack = ap, Allow = QuestSourceManager.IsAllowed(ap.Name) });
 
 			lbQuestSources.ItemsSource = QuestSourceList;
+
+			Initializing = false;
 		}
 
 		private void Window_Closed(object sender, EventArgs e)
 		{
 			QuestSourceManager.SaveSettings();
+		}
+
+		void SetAllQuestSources(bool allowed)
+		{
+			foreach (var qp in QuestSourceList)
+				qp.Allow = allowed;
+		}
+
+		private void Toggle_Checked(object sender, RoutedEventArgs e)
+		{
+			if (!Initializing) SetAllQuestSources(true);
+		}
+
+		private void Toggle_Unchecked(object sender, RoutedEventArgs e)
+		{
+			if (!Initializing) SetAllQuestSources(false);
 		}
 	}
 

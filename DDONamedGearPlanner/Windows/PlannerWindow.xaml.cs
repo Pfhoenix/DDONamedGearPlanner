@@ -21,7 +21,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public static readonly string VERSION = "0.8.1";
+		public static readonly string VERSION = "0.8.2";
 
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
@@ -237,7 +237,7 @@ namespace DDONamedGearPlanner
 				}
 			}
 
-			if (ItemFilterSettings.SearchProperty != null && !item.Properties.Exists(i => i.Property == ItemFilterSettings.SearchProperty)) return false;
+			if (ItemFilterSettings.SearchProperty != null && !item.Properties.Exists(i => i.Property == ItemFilterSettings.SearchProperty || (i.Options != null && i.Options.Exists(o => o.Property == ItemFilterSettings.SearchProperty)))) return false;
 
 			if (string.IsNullOrWhiteSpace(txtSearchBox.Text)) return true;
 			else return item.Name.IndexOf(txtSearchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0;

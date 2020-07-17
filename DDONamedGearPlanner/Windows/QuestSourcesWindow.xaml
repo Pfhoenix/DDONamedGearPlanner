@@ -6,11 +6,14 @@
         xmlns:local="clr-namespace:DDONamedGearPlanner"
         mc:Ignorable="d"
         Title="Quest Sources" Height="450" Width="300" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Closed="Window_Closed">
-	<ListBox Name="lbQuestSources">
-		<ListBox.ItemTemplate>
-			<DataTemplate>
-				<CheckBox Content="{Binding Name}" IsChecked="{Binding Allow}"/>
-			</DataTemplate>			
-		</ListBox.ItemTemplate>
-	</ListBox>
+	<DockPanel>
+		<CheckBox DockPanel.Dock="Top" Name="cbToggle" IsChecked="True" Margin="6,3,0,0" Checked="Toggle_Checked" Unchecked="Toggle_Unchecked">Toggle All</CheckBox>
+		<ListBox Name="lbQuestSources" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Auto">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<CheckBox Content="{Binding Name}" IsChecked="{Binding Allow}"/>
+				</DataTemplate>			
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</DockPanel>
 </Window>

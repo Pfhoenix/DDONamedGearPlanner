@@ -9,16 +9,18 @@
     <DockPanel>
 		<DockPanel DockPanel.Dock="Left" Width="170" HorizontalAlignment="Left">
 			<TextBox DockPanel.Dock="Top" Name="tbSearchName" TextChanged="SearchTextChanged"/>
-			<ListView Name="lvSets" MouseUp="LvSets_MouseUp" MouseLeave="LvSets_MouseLeave" SelectionChanged="LvSets_SelectionChanged">
+			<ListView Name="lvSets" MouseUp="LvSets_MouseUp" MouseLeave="LvSets_MouseLeave" SelectionChanged="LvSets_SelectionChanged" GridViewColumnHeader.Click="NamedSetHeader_Clicked">
 				<ListView.View>
 					<GridView>
-						<GridViewColumn Header="Name" Width="118">
+						<GridViewColumn Width="118">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
-									<TextBlock Text="{Binding Name}" ToolTip="{Binding Name}">
-								</TextBlock>
+									<TextBlock Text="{Binding Name}" ToolTip="{Binding Name}"/>
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
+							<GridViewColumn.Header>
+								<TextBlock Text="Name"/>
+							</GridViewColumn.Header>
 						</GridViewColumn>
 						<GridViewColumn Width="26" DisplayMemberBinding="{Binding ML}">
 							<GridViewColumn.Header>

@@ -61,6 +61,7 @@ namespace DDOWikiParser
 			"Sigil of Regalport",
 			"Sigil of the Triumvirate",
 			"Stolen Signet of ir'Wynarn",
+			"The Bloodsigil Ring",
 			"The Shrouded Steps of the Beyond",
 			"The Zarash'ak Ward"
 		};

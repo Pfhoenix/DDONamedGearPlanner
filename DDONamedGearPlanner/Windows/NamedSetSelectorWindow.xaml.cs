@@ -412,5 +412,25 @@ namespace DDONamedGearPlanner
 
 			return items;
 		}
+
+		string LastSortBy;
+		int LastSortDir = 1;
+		private void NamedSetHeader_Clicked(object sender, RoutedEventArgs e)
+		{
+			string header = ((e.OriginalSource as GridViewColumnHeader)?.Content as TextBlock)?.Text;
+			if (header == null) return;
+			if (header != LastSortBy)
+			{
+				LastSortBy = header;
+				LastSortDir = 1;
+			}
+			else LastSortDir *= -1;
+
+
+			if (header == "Name")  Sets.Sort((a, b) => string.Compare(a.Name, b.Name) * LastSortDir);
+			else if (header == "ML") Sets.Sort((a, b) => a.ML < b.ML ? -1 * LastSortDir : (a.ML > b.ML ? 1 * LastSortDir : string.Compare(a.Name, b.Name)));
+
+			CollectionViewSource.GetDefaultView(lvSets.ItemsSource).Refresh();
+		}
 	}
 }

@@ -136,6 +136,9 @@
     <Compile Include="Windows\ComboBoxWindow.xaml.cs">
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\GearSetComparisonWindow.xaml.cs">
+      <DependentUpon>GearSetComparisonWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\QuestSourcesWindow.xaml.cs">
       <DependentUpon>QuestSourcesWindow.xaml</DependentUpon>
     </Compile>
@@ -179,6 +182,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\FilterTestResultsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\GearSetComparisonWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
