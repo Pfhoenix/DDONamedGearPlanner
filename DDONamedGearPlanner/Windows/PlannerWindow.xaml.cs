@@ -21,7 +21,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public static readonly string VERSION = "0.8.2";
+		public static readonly string VERSION = "0.8.3";
 
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
@@ -70,6 +70,11 @@ namespace DDONamedGearPlanner
 			cbItemPropertyFilter.SelectedIndex = 0;
 
 			txtSearchBox.Focus();
+		}
+
+		public List<BuildItem> GetEquippedItems()
+		{
+			return EquipmentSlots.Where(es => es.Value.Item != null).Select(es => es.Value.Item).ToList();
 		}
 
 		void LoadQuestSourceSettings()
@@ -533,11 +538,11 @@ namespace DDONamedGearPlanner
 		}
 
 		// this is for slotting a build item into a particular (set) slot
-		public bool SlotItem(BuildItem item)
+		public bool SlotItem(BuildItem item, bool suppressErrors = false)
 		{
 			if (item.Slot == EquipmentSlotType.None || EquipmentSlots[item.Slot].IsLocked)
 			{
-				MessageBox.Show("Can't load an item into a locked slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
+				if (!suppressErrors) MessageBox.Show("Can't load an item into a locked slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
 				return false;
 			}
 
@@ -547,7 +552,7 @@ namespace DDONamedGearPlanner
 				{
 					if (EquipmentSlots[EquipmentSlotType.Offhand].IsLocked)
 					{
-						MessageBox.Show("Can't load a two-handed weapon with a locked offhand slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
+						if (!suppressErrors) MessageBox.Show("Can't load a two-handed weapon with a locked offhand slot.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
 						return false;
 					}
 					else EquipmentSlots[EquipmentSlotType.Offhand].SetItem(null);
@@ -561,7 +566,7 @@ namespace DDONamedGearPlanner
 					{
 						if (EquipmentSlots[EquipmentSlotType.Weapon].IsLocked)
 						{
-							MessageBox.Show("Can't load an offhand item with a locked two-handed weapon locked.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
+							if (!suppressErrors) MessageBox.Show("Can't load an offhand item with a locked two-handed weapon locked.", "Slot Locked", MessageBoxButton.OK, MessageBoxImage.Stop);
 							return false;
 						}
 						else EquipmentSlots[EquipmentSlotType.Weapon].SetItem(null);
@@ -571,7 +576,7 @@ namespace DDONamedGearPlanner
 
 			if (item.Item.MinorArtifact && IsMinorArtifactSlotted())
 			{
-				MessageBox.Show("Can't equip more than one minor artifact.", "Minor Artifact Limit", MessageBoxButton.OK, MessageBoxImage.Stop);
+				if (!suppressErrors) MessageBox.Show("Can't equip more than one minor artifact.", "Minor Artifact Limit", MessageBoxButton.OK, MessageBoxImage.Stop);
 				return false;
 			}
 
@@ -766,7 +771,7 @@ namespace DDONamedGearPlanner
 			OpenPropertiesTab(lvItemList.SelectedItem as DDOItemData);
 		}
 
-		private void UnlockClearAll(object sender, RoutedEventArgs e)
+		public void UnlockClearAll(object sender, RoutedEventArgs e)
 		{
 			foreach (var kv in EquipmentSlots)
 			{
@@ -900,7 +905,7 @@ namespace DDONamedGearPlanner
 			Clipboard.SetData(DataFormats.Text, SerializeGearset());
 		}
 
-		bool DecodeGearset(string cdata)
+		GearSet DecodeGearset(string cdata, bool render)
 		{
 			try
 			{
@@ -939,14 +944,13 @@ namespace DDONamedGearPlanner
 						else SlotItem(bi, SlotType.None);
 					}
 				}
-				CalculateGearSet(true);
 
-				return true;
+				return CalculateGearSet(render);
 			}
 			catch (Exception ex)
 			{
 				//MessageBox.Show("There was an error decoding the data. Check the source and try again.");
-				return false;
+				return null;
 			}
 		}
 
@@ -1233,14 +1237,14 @@ namespace DDONamedGearPlanner
 			return sb.ToString();
 		}
 
-		private void UnserializeGearset(string text)
+		public GearSet UnserializeGearset(string text, bool render = true, bool suppressErrors = false)
 		{
 			UnlockClearAll(null, null);
 
 			string[] gearset = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
 			// first try to decode the old format, for backwards compatibility
-			if (gearset.Length == 1 && DecodeGearset(gearset[0])) return;
+			if (gearset.Length == 1) return DecodeGearset(gearset[0], render);
 
 			foreach (string line in gearset)
 			{
@@ -1262,7 +1266,7 @@ namespace DDONamedGearPlanner
 				if (item == null)
 				{
 					item = CustomItemsManager.CustomItems.Find(i => i.Name == entry[0])?.GetItem();
-					if (item != null) SlotItem(new BuildItem(item, slot));
+					if (item != null) SlotItem(new BuildItem(item, slot), suppressErrors);
 				}
 				else
 				{
@@ -1295,11 +1299,11 @@ namespace DDONamedGearPlanner
 						}
 					}
 
-					SlotItem(bi);
+					SlotItem(bi, suppressErrors);
 				}
 			}
 
-			CalculateGearSet(true);
+			return CalculateGearSet(render);
 		}
 
 		private void LockFilledSlots(object sender, RoutedEventArgs e)
@@ -1392,6 +1396,12 @@ namespace DDONamedGearPlanner
 			qsw.ShowDialog();
 
 			UpdateItemSearchResults();
+		}
+
+		private void CompareGearsets(object sender, RoutedEventArgs e)
+		{
+			GearSetComparisonWindow gsw = new GearSetComparisonWindow(this);
+			gsw.Show();
 		}
 	}
 }

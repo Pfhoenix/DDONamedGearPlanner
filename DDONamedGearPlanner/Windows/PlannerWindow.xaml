@@ -264,6 +264,8 @@
 				<Separator Margin="6,5,6,2"/>
 				<Button Margin="11,3,11,0" Click="ImportGearsetFromFile">Import Gear Set From File</Button>
 				<Button Margin="11,3,11,0" Click="ExportGearsetToFile">Export Gear Set to File</Button>
+				<Separator Margin="6,5,6,2"/>
+				<Button Margin="11,3,11,0" Click="CompareGearsets">Compare Gear Sets</Button>
 			</StackPanel>
 			<TabControl Grid.Column="2" Name="tcPropertyAreas">
 				<TabItem Name="tciGearSet" Header="Gear Set"/>
