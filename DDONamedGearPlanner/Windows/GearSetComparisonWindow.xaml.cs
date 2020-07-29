@@ -20,7 +20,17 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class GearSetComparisonWindow : Window
 	{
+		readonly string[] PropertiesToIgnore =
+		{
+			"Armor Category",
+			"Augment Slot",
+			"Feat",
+			"Weapon Category",
+			"Weapon Type"
+		};
+
 		GearSet LeftGS, RightGS;
+		ScrollViewer LeftSV, RightSV;
 		PlannerWindow OwnerPW;
 
 		List<BuildItem> SavedItems;
@@ -31,6 +41,9 @@ namespace DDONamedGearPlanner
 
 			Owner = opw;
 			OwnerPW = opw;
+
+			//RightSV = (VisualTreeHelper.GetChild(lvRight, 0) as Decorator).Child as ScrollViewer;
+			//LeftSV = (VisualTreeHelper.GetChild(lvLeft, 0) as Decorator).Child as ScrollViewer;
 		}
 
 		void LoadGearsetFromPlanner(bool left)
@@ -122,6 +135,83 @@ namespace DDONamedGearPlanner
 			ClearGearset(sender == btnClearLeft);
 		}
 
+		public class CompareListItem
+		{
+			public string Text { get; set; }
+			public BuildItem BI { get; set; }
+			public Color BackgroundColor { get; set; } = Colors.Transparent;
+		}
+
+		void AddItemToList(BuildItem bi, ListView lv)
+		{
+			lv.Items.Add(new CompareListItem { Text = bi.ToString(), BI = bi });
+		}
+
+		void AddTextToList(string t, Color c, ListView lv)
+		{
+			lv.Items.Add(new CompareListItem { Text = t, BackgroundColor = c });
+		}
+
+		void AddPropertyToList(GearSetProperty p, Color c, ListView lv)
+		{
+			lv.Items.Add(new CompareListItem { Text = p.Property + " " + p.TotalValue, BackgroundColor = c });
+		}
+
+		bool IsPropertyAllowed(GearSetProperty p)
+		{
+			if (PropertiesToIgnore.Contains(p.Property)) return false;
+			if (p.ItemProperties[0].Type == "set") return false;
+
+			return true;
+		}
+
+		bool ignoreLeftScroll, ignoreRightScroll;
+
+		private void Scroll_Scrolled(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
+		{
+			ignoreLeftScroll = ignoreRightScroll = true;
+			LeftSV.ScrollToVerticalOffset(e.NewValue);
+			RightSV.ScrollToVerticalOffset(e.NewValue);
+		}
+
+		private void Scroll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			if (ignoreRightScroll || ignoreLeftScroll) return;
+
+			ignoreLeftScroll = ignoreRightScroll = true;
+			LeftSV.ScrollToVerticalOffset(e.NewValue);
+			RightSV.ScrollToVerticalOffset(e.NewValue);
+		}
+
+		private void LV_ScrollChanged(object sender, ScrollChangedEventArgs e)
+		{
+			if (LeftSV == null) LeftSV = (VisualTreeHelper.GetChild(lvLeft, 0) as Decorator).Child as ScrollViewer;
+			if (RightSV == null) RightSV = (VisualTreeHelper.GetChild(lvRight, 0) as Decorator).Child as ScrollViewer;
+
+			if (sender == lvLeft)
+			{
+				if (ignoreLeftScroll) ignoreLeftScroll = false;
+				else
+				{
+					ignoreRightScroll = true;
+					RightSV.ScrollToVerticalOffset(e.VerticalOffset);
+					sbScroll.Maximum = e.ExtentHeight - e.ViewportHeight;
+					sbScroll.Value = e.VerticalOffset;
+				}
+			}
+			else if (sender == lvRight)
+			{
+				if (ignoreRightScroll) ignoreRightScroll = false;
+				else
+				{
+					ignoreLeftScroll = true;
+					LeftSV.ScrollToVerticalOffset(e.VerticalOffset);
+					sbScroll.Maximum = e.ExtentHeight - e.ViewportHeight;
+					sbScroll.Value = e.VerticalOffset;
+				}
+			}
+		}
+
 		void CompareGearsets()
 		{
 			lvLeft.Items.Clear();
@@ -139,32 +229,117 @@ namespace DDONamedGearPlanner
 				if (r >= re)
 				{
 					// we can assume l < le
-					if (re > 0) lvRight.Items.Add("");
-					lvLeft.Items.Add(LeftGS.Items[l++].Item.Name);
+					if (re > 0) AddTextToList("-", Colors.Transparent, lvRight);
+					AddItemToList(LeftGS.Items[l++], lvLeft);
 				}
 				// if l >= le then proceed r only
 				else if (l >= le)
 				{
 					// we can assume r < re
-					if (le > 0) lvLeft.Items.Add("");
-					lvRight.Items.Add(RightGS.Items[r++].Item.Name);
+					if (le > 0) AddTextToList("-", Colors.Transparent, lvLeft);
+					AddItemToList(RightGS.Items[r++], lvRight);
 				}
 				else
 				{
 					if (RightGS.Items[r].Slot < LeftGS.Items[l].Slot)
 					{
-						lvRight.Items.Add(RightGS.Items[r++].Item.Name);
-						lvLeft.Items.Add("");
+						AddItemToList(RightGS.Items[r++], lvRight);
+						AddTextToList("-", Colors.Transparent, lvLeft);
 					}
 					else if (RightGS.Items[r].Slot > LeftGS.Items[l].Slot)
 					{
-						lvLeft.Items.Add(LeftGS.Items[l++].Item.Name);
-						lvRight.Items.Add("");
+						AddItemToList(LeftGS.Items[l++], lvLeft);
+						AddTextToList("-", Colors.Transparent, lvRight);
 					}
 					else
 					{
-						lvRight.Items.Add(RightGS.Items[r++].Item.Name);
-						lvLeft.Items.Add(LeftGS.Items[l++].Item.Name);
+						AddItemToList(RightGS.Items[r++], lvRight);
+						AddItemToList(LeftGS.Items[l++], lvLeft);
+					}
+				}
+			}
+
+			AddTextToList("", Colors.Transparent, lvRight);
+			AddTextToList("", Colors.Transparent, lvLeft);
+
+			r = l = 0;
+			re = RightGS?.Properties.Count ?? 0;
+			le = LeftGS?.Properties.Count ?? 0;
+			while (r < re || l < le)
+			{
+				// if r >= re then proceed l only
+				if (r >= re)
+				{
+					if (!IsPropertyAllowed(LeftGS.Properties[l]))
+					{
+						l++;
+						continue;
+					}
+					// we can assume l < le
+					if (re > 0) AddTextToList("", Colors.Transparent, lvRight);
+					AddPropertyToList(LeftGS.Properties[l++], Colors.LightGreen, lvLeft);
+				}
+				// if l >= le then proceed r only
+				else if (l >= le)
+				{
+					if (!IsPropertyAllowed(RightGS.Properties[r]))
+					{
+						r++;
+						continue;
+					}
+					// we can assume r < re
+					if (le > 0) AddTextToList("", Colors.Transparent, lvLeft);
+					AddPropertyToList(RightGS.Properties[r++], Colors.LightGreen, lvRight);
+				}
+				else
+				{
+					int sc = string.Compare(RightGS.Properties[r].Property, LeftGS.Properties[l].Property);
+
+					if (sc < 0)
+					{
+						if (!IsPropertyAllowed(RightGS.Properties[r]))
+						{
+							r++;
+							continue;
+						}
+
+						AddTextToList("", Colors.Transparent, lvLeft);
+						AddPropertyToList(RightGS.Properties[r++], Colors.LightGreen, lvRight);
+					}
+					else if (sc > 0)
+					{
+						if (!IsPropertyAllowed(LeftGS.Properties[l]))
+						{
+							l++;
+							continue;
+						}
+
+						AddTextToList("", Colors.Transparent, lvRight);
+						AddPropertyToList(LeftGS.Properties[l++], Colors.LightGreen, lvLeft);
+					}
+					else
+					{
+						if (!IsPropertyAllowed(RightGS.Properties[r]))
+						{
+							r++;
+							l++;
+							continue;
+						}
+
+						Color lc = Colors.Transparent, rc = Colors.Transparent;
+						if (RightGS.Properties[r].TotalValue < LeftGS.Properties[l].TotalValue)
+						{
+							rc = Colors.LightSalmon;
+							lc = Colors.LightGreen;
+						}
+						else if (RightGS.Properties[r].TotalValue > LeftGS.Properties[l].TotalValue)
+						{
+							rc = Colors.LightGreen;
+							lc = Colors.LightSalmon;
+						}
+
+						AddPropertyToList(RightGS.Properties[r++], rc, lvRight);
+						AddPropertyToList(LeftGS.Properties[l++], lc, lvLeft);
 					}
 				}
 			}

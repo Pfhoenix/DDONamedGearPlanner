@@ -16,20 +16,40 @@
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="32"/>
 		</Grid.RowDefinitions>
-		<ListView Grid.Column="0" Name="lvLeft">
+		<ListView Grid.Column="0" Name="lvLeft" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.ScrollChanged="LV_ScrollChanged">
 			<ListView.ItemContainerStyle>
 				<Style TargetType="ListViewItem">
 					<Setter Property="Focusable" Value="false"/>
+					<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 				</Style>
 			</ListView.ItemContainerStyle>
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Text}">
+						<TextBlock.Background>
+							<SolidColorBrush Color="{Binding BackgroundColor}"/>
+						</TextBlock.Background>
+					</TextBlock>
+				</DataTemplate>
+			</ListView.ItemTemplate>
 		</ListView>
-		<ScrollBar Grid.Column="1" Orientation="Vertical"/>
-		<ListView Grid.Column="2" Name="lvRight">
+		<ScrollBar Grid.Column="1" Name="sbScroll" Orientation="Vertical" Minimum="0" Maximum="0" ValueChanged="Scroll_ValueChanged" Scroll="Scroll_Scrolled" SmallChange="1"/>
+		<ListView Grid.Column="2" Name="lvRight" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.ScrollChanged="LV_ScrollChanged">
 			<ListView.ItemContainerStyle>
 				<Style TargetType="ListViewItem">
 					<Setter Property="Focusable" Value="false"/>
+					<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 				</Style>
 			</ListView.ItemContainerStyle>
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Text}">
+						<TextBlock.Background>
+							<SolidColorBrush Color="{Binding BackgroundColor}"/>
+						</TextBlock.Background>
+					</TextBlock>
+				</DataTemplate>
+			</ListView.ItemTemplate>
 		</ListView>
 		<Grid Grid.Column="0" Grid.Row="1">
 			<Grid.ColumnDefinitions>

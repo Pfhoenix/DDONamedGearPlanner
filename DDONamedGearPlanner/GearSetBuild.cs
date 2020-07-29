@@ -150,6 +150,11 @@ namespace DDONamedGearPlanner
 			}
 			return sb.ToString();
 		}
+
+		public override string ToString()
+		{
+			return Item?.ToString();
+		}
 	}
 
 	public class GearSetProperty
