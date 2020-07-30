@@ -139,7 +139,10 @@ namespace DDONamedGearPlanner
 		{
 			public string Text { get; set; }
 			public BuildItem BI { get; set; }
+			public GearSetProperty Prop { get; set; }
 			public Color BackgroundColor { get; set; } = Colors.Transparent;
+
+			public bool HasTooltip => Prop != null ? true : (BI != null ? (BI.OptionProperties != null && BI.OptionProperties.Count > 0) : false);
 		}
 
 		void AddItemToList(BuildItem bi, ListView lv)
@@ -154,7 +157,7 @@ namespace DDONamedGearPlanner
 
 		void AddPropertyToList(GearSetProperty p, Color c, ListView lv)
 		{
-			lv.Items.Add(new CompareListItem { Text = p.Property + " " + p.TotalValue, BackgroundColor = c });
+			lv.Items.Add(new CompareListItem { Text = p.Property + (p.TotalValue != 0 ? " " + p.TotalValue : ""), Prop = p, BackgroundColor = c });
 		}
 
 		bool IsPropertyAllowed(GearSetProperty p)
@@ -208,6 +211,59 @@ namespace DDONamedGearPlanner
 					LeftSV.ScrollToVerticalOffset(e.VerticalOffset);
 					sbScroll.Maximum = e.ExtentHeight - e.ViewportHeight;
 					sbScroll.Value = e.VerticalOffset;
+				}
+			}
+		}
+
+		private void ItemToolTip_Opening(object sender, ToolTipEventArgs e)
+		{
+			ListViewItem lvi = sender as ListViewItem;
+			CompareListItem cli = lvi.Content as CompareListItem;
+			ToolTip tt = lvi.ToolTip as ToolTip;
+
+			StackPanel sp = new StackPanel { Orientation = Orientation.Vertical };
+			tt.Content = sp;
+
+			if (cli.Prop != null)
+			{
+				string lasttype = null;
+				foreach (var p in cli.Prop.ItemProperties)
+				{
+					string source = p.Owner?.Name;
+					if (source == null)
+					{
+						source = p.SetBonusOwner + " set";
+					}
+					TextBlock tb = new TextBlock();
+					string l = null;
+					if (cli.Prop.Property == "Damage Reduction") l = ((int)p.Value).ToString() + "/" + p.Type;
+					else if (p.Type == "set") l = p.Owner.Name;
+					else
+					{
+						if (string.IsNullOrWhiteSpace(p.Type) && p.Value == 0) l = source;
+						else
+						{
+							l += (string.IsNullOrWhiteSpace(p.Type) ? "untyped" : p.Type) + " ";
+							l += p.Value + " (" + source + ")";
+						}
+						if (!cli.Prop.IsGroup && !string.IsNullOrWhiteSpace(lasttype) && p.Type == lasttype)
+						{
+							tb.Foreground = Brushes.Red;
+						}
+						lasttype = p.Type;
+					}
+					tb.Text = l;
+					sp.Children.Add(tb);
+				}
+			}
+			else if (cli.BI != null)
+			{
+				foreach (var op in cli.BI.OptionProperties)
+				{
+					TextBlock tb = new TextBlock();
+					string t = op.ToString();
+					tb.Text = t.Substring(1, t.Length - 2);
+					sp.Children.Add(tb);
 				}
 			}
 		}
@@ -342,6 +398,29 @@ namespace DDONamedGearPlanner
 						AddPropertyToList(LeftGS.Properties[l++], lc, lvLeft);
 					}
 				}
+			}
+		}
+
+		static ListViewItem VisualUpwardSearch(DependencyObject source)
+		{
+			while (source != null && !(source is ListViewItem))
+				source = VisualTreeHelper.GetParent(source);
+
+			return source as ListViewItem;
+		}
+
+		private void LV_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			ListViewItem item = VisualUpwardSearch(e.OriginalSource as DependencyObject);
+			CompareListItem cli = item?.Content as CompareListItem;
+
+			if (cli != null)
+			{
+				if (cli.BI != null)
+				{
+					System.Diagnostics.Process.Start(cli.BI.Item.WikiURL);
+				}
+				e.Handled = true;
 			}
 		}
 	}

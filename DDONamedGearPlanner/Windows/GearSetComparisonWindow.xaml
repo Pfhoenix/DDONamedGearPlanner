@@ -16,11 +16,22 @@
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="32"/>
 		</Grid.RowDefinitions>
-		<ListView Grid.Column="0" Name="lvLeft" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.ScrollChanged="LV_ScrollChanged">
+		<ListView Grid.Column="0" Name="lvLeft" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.ScrollChanged="LV_ScrollChanged" PreviewMouseRightButtonDown="LV_PreviewMouseRightButtonDown">
 			<ListView.ItemContainerStyle>
 				<Style TargetType="ListViewItem">
+					<EventSetter Event="ToolTipOpening" Handler="ItemToolTip_Opening"/>
 					<Setter Property="Focusable" Value="false"/>
 					<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+					<Setter Property="ToolTip">
+						<Setter.Value>
+							<ToolTip/>
+						</Setter.Value>
+					</Setter>
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding HasTooltip}" Value="False">
+							<Setter Property="ToolTip" Value="{x:Null}"/>
+						</DataTrigger>
+					</Style.Triggers>
 				</Style>
 			</ListView.ItemContainerStyle>
 			<ListView.ItemTemplate>
@@ -34,11 +45,22 @@
 			</ListView.ItemTemplate>
 		</ListView>
 		<ScrollBar Grid.Column="1" Name="sbScroll" Orientation="Vertical" Minimum="0" Maximum="0" ValueChanged="Scroll_ValueChanged" Scroll="Scroll_Scrolled" SmallChange="1"/>
-		<ListView Grid.Column="2" Name="lvRight" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.ScrollChanged="LV_ScrollChanged">
+		<ListView Grid.Column="2" Name="lvRight" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.ScrollChanged="LV_ScrollChanged" PreviewMouseRightButtonDown="LV_PreviewMouseRightButtonDown">
 			<ListView.ItemContainerStyle>
 				<Style TargetType="ListViewItem">
+					<EventSetter Event="ToolTipOpening" Handler="ItemToolTip_Opening"/>
 					<Setter Property="Focusable" Value="false"/>
 					<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+					<Setter Property="ToolTip">
+						<Setter.Value>
+							<ToolTip/>
+						</Setter.Value>
+					</Setter>
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding HasTooltip}" Value="False">
+							<Setter Property="ToolTip" Value="{x:Null}"/>
+						</DataTrigger>
+					</Style.Triggers>
 				</Style>
 			</ListView.ItemContainerStyle>
 			<ListView.ItemTemplate>
