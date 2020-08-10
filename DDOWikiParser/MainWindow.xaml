@@ -14,6 +14,10 @@
 				<Separator/>
 				<MenuItem Header="E_xit" Click="ExitMenuItem_Click"/>
 			</MenuItem>
+			<MenuItem Header="Icons">
+				<MenuItem Header="Process Icon Files" Click="ProcessIconFilesMenuItem_Click"/>
+				<MenuItem Header="Scan Temp Folder" Click="ScanTempFolderMenuItem_Click"/>
+			</MenuItem>
 			<MenuItem Header="Developer">
 				<MenuItem Header="Generate Item Property Report" Click="GenerateItemPropertyReport_Click"/>
 				<MenuItem Header="View Error Log" Click="ViewErrorLog_Click"/>

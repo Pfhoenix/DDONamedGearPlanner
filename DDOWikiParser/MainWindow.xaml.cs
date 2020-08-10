@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -8,11 +9,13 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media.Imaging;
 using System.Xml;
 using Sgml;
 using DDONamedGearPlanner;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading.Tasks;
+using System.Threading;
+using System.Diagnostics;
 
 namespace DDOWikiParser
 {
@@ -83,6 +86,12 @@ namespace DDOWikiParser
 		List<DDOItemData> ItemsCache = new List<DDOItemData>();
 		Dictionary<string, List<DDOItemData>> QuestLookup = new Dictionary<string, List<DDOItemData>>();
 		Dictionary<string, DDOAdventurePackData> AdpackLookup = new Dictionary<string, DDOAdventurePackData>();
+
+		Dictionary<string, string> IconFiles = new Dictionary<string, string>();
+
+		string TempIconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "allicons");
+		string FinalIconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Icons");
+
 
 		public MainWindow()
 		{
@@ -546,7 +555,7 @@ namespace DDOWikiParser
 						}
 					}
 				}
-				
+
 				c = trimmed.IndexOf(':');
 				p = c > -1 ? trimmed.Substring(0, c).Trim() : trimmed;
 				v = c > -1 ? trimmed.Substring(c + 1).Trim() : "";
@@ -2302,7 +2311,7 @@ namespace DDOWikiParser
 				{
 					if (!ParseEnhancements(data, r)) return null;
 				}
-				else if (r.InnerText.IndexOf("drops on death", StringComparison.InvariantCultureIgnoreCase) > -1)
+				else if ((r.InnerText.IndexOf("drops on death", StringComparison.InvariantCultureIgnoreCase) > -1) || (r.InnerText.IndexOf("drops on leaving adventure", StringComparison.InvariantCultureIgnoreCase) > -1))
 				{
 					return null;
 				}
@@ -2344,7 +2353,7 @@ namespace DDOWikiParser
 				{
 					data.AddProperty("Armor Class", "shield", ParseNumber(r.InnerText), null);
 				}
-				else if (r.InnerText.IndexOf("drops on death", StringComparison.InvariantCultureIgnoreCase) > -1)
+				else if ((r.InnerText.IndexOf("drops on death", StringComparison.InvariantCultureIgnoreCase) > -1) || (r.InnerText.IndexOf("drops on leaving adventure", StringComparison.InvariantCultureIgnoreCase) > -1))
 				{
 					return null;
 				}
@@ -2413,7 +2422,7 @@ namespace DDOWikiParser
 				{
 					if (!ParseEnhancements(data, r)) return null;
 				}
-				else if (r.InnerText.IndexOf("drops on death", StringComparison.InvariantCultureIgnoreCase) > -1)
+				else if ((r.InnerText.IndexOf("drops on death", StringComparison.InvariantCultureIgnoreCase) > -1) || (r.InnerText.IndexOf("drops on leaving adventure", StringComparison.InvariantCultureIgnoreCase) > -1))
 				{
 					return null;
 				}
@@ -2465,7 +2474,7 @@ namespace DDOWikiParser
 				{
 					if (!ParseEnhancements(data, r)) return null;
 				}
-				else if (r.InnerText.IndexOf("drops on death", StringComparison.InvariantCultureIgnoreCase) > -1)
+				else if ((r.InnerText.IndexOf("drops on death", StringComparison.InvariantCultureIgnoreCase) > -1) || (r.InnerText.IndexOf("drops on leaving adventure", StringComparison.InvariantCultureIgnoreCase) > -1))
 				{
 					return null;
 				}
@@ -2502,7 +2511,7 @@ namespace DDOWikiParser
 				var tableNodes = doc.GetElementsByTagName("title");
 				if (tableNodes.Count == 0) continue;
 				string itemName = tableNodes[0].InnerText.Replace(" - DDO wiki", "");
-				itemName = itemName.Substring(itemName.IndexOf(':') + 1);
+				itemName = itemName.Substring(itemName.IndexOf(':') + 1).Replace(" (Handwraps)", "").Replace('’', '\'');
 
 				if (itemName.Contains("(historic)")) continue;
 				else if (itemName == "Enchanted Chocolates by Fabiano & Zelda") continue;
@@ -3053,11 +3062,40 @@ namespace DDOWikiParser
 
 		private void ProcessItems(object sender, DoWorkEventArgs e)
 		{
+			if (Directory.Exists(FinalIconPath))
+			{
+				DeleteFolder(FinalIconPath);
+				while (Directory.Exists(FinalIconPath)) { Thread.Sleep(1000); }
+			}
+			Directory.CreateDirectory(FinalIconPath);
+
 			for (int i = 0; i < AllItems.Count; i++)
 			{
 				(sender as BackgroundWorker).ReportProgress(i, "items");
 				string result = dataset.AddItem(AllItems[i]);
 				if (result != null) LogError(result);
+				else
+				{
+					string iconname = AllItems[i].IconName;
+
+					if (IconFiles.ContainsKey(iconname))
+					{
+						try
+						{
+							string finaliconpath = Path.Combine(FinalIconPath, iconname + ".png");
+							if (!File.Exists(finaliconpath)) File.Copy(IconFiles[iconname], finaliconpath);
+						}
+						catch (Exception ex)
+						{
+							LogError(AllItems[i].Name + " icon error : " + ex.Message);
+						}
+					}
+					else
+					{
+						if (KnownItemsMissingIcons.Contains(AllItems[i].Name)) LogError(AllItems[i].Name + " is still missing an icon file");
+						else LogError("(*)" + AllItems[i].Name + " doesn't have an icon file");
+					}
+				}
 			}
 
 			foreach (var sp in dataset.SlotExclusiveItemProperties)
@@ -3116,6 +3154,214 @@ namespace DDOWikiParser
 		private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			Close();
+		}
+
+		bool DeleteFolder(string path)
+		{
+			try
+			{
+				ProcessStartInfo Info = new ProcessStartInfo();
+				Info.Arguments = "/C rd /s /q \"" + path + "\"";
+				Info.WindowStyle = ProcessWindowStyle.Hidden;
+				Info.CreateNoWindow = true;
+				Info.FileName = "cmd.exe";
+				Process p = Process.Start(Info);
+				while (!p.HasExited) { }
+
+				return true;
+			}
+			catch
+			{
+				System.Windows.MessageBox.Show("Error deleting the temp folder! Try deleting the temporary folder by hand (" + path + ") and then trying again.", "Error", MessageBoxButton.OK, MessageBoxImage.Stop);
+				return false;
+			}
+		}
+
+		private void ProcessIconFilesMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			FolderBrowserDialog fbd = new FolderBrowserDialog();
+			fbd.SelectedPath = "D:\\repos\\ddo-export\\web-export\\";
+			if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				files = Directory.GetFiles(fbd.SelectedPath, "*.json", SearchOption.AllDirectories);
+
+				if (files == null || files.Length == 0) return;
+
+				if (Directory.Exists(TempIconPath))
+				{
+					DeleteFolder(TempIconPath);
+					while (Directory.Exists(TempIconPath)) { Thread.Sleep(1000); }
+				}
+				Directory.CreateDirectory(TempIconPath);
+
+				IconFiles.Clear();
+
+				pbProgressBar.Minimum = 0;
+				pbProgressBar.Maximum = files.Length;
+				pbProgressBar.Value = 0;
+				BackgroundWorker bw = new BackgroundWorker();
+				bw.WorkerReportsProgress = true;
+				bw.DoWork += ProcessIcons_DoWork;
+				bw.ProgressChanged += InitialLoad_ProgressChanged;
+				bw.RunWorkerCompleted += ProcessIcons_Completed;
+
+				bw.RunWorkerAsync();
+			}
+		}
+
+		Dictionary<string, string> IconNameFixes = new Dictionary<string, string>
+		{
+			{ "Quicksilver Cassock", "Quicksilver Cassok" },
+			{ "Snowballs", "Snowball" }
+		};
+
+		List<string> KnownItemsMissingIcons = new List<string>
+		{
+			"Battered Marketplace Shield",
+			"Club of the Holy Flame (starter)",
+			"Drow Hunter's Armor",
+			"Fire Touch Heavy Mace",
+			"Flawless Shadow Dragonhide Armor",
+			"Flawless Shadow Dragonplate Armor",
+			"Flawless Shadow Dragonscale Armor",
+			"Gilk's Bangle",
+			"Guardian's Boots (Level 15)",
+			"Guardian's Boots (Level 27)",
+			"Guardian's Bracers (Level 15)",
+			"Guardian's Bracers (Level 26)",
+			"Guardian's Cloak (Level 19)",
+			"Guardian's Cloak (Level 27)",
+			"Guardian's Gauntlets (Level 15)",
+			"Guardian's Gauntlets (Level 26)",
+			"Guardian's Girdle (Level 15)",
+			"Guardian's Girdle (Level 26)",
+			"Guardian's Glasses (Level 19)",
+			"Guardian's Glasses (Level 27)",
+			"Guardian's Helmet (Level 19)",
+			"Guardian's Helmet (Level 27)",
+			"Guardian's Locket (Level 15)",
+			"Guardian's Locket (Level 26)",
+			"Guardian's Ring (Level 19)",
+			"Guardian's Ring (Level 27)",
+			"Incandescent Band",
+			"Legendary Sapphire Studded Buckles",
+			"Madstone Rod",
+			"Rod of Teleport",
+			"Romag's Club of Earthen Dominion",
+			"Sage's Cuffs (Level 15)",
+			"Sage's Cuffs (Level 26)",
+			"Sage's Gloves (Level 17)",
+			"Sage's Gloves (Level 26)",
+			"Sage's Locket (Level 15)",
+			"Sage's Locket (Level 26)",
+			"Sage's Mantle (Level 19)",
+			"Sage's Mantle (Level 27)",
+			"Sage's Ring (Level 19)",
+			"Sage's Ring (Level 27)",
+			"Sage's Sash (Level 15)",
+			"Sage's Sash (Level 26)",
+			"Sage's Shoes (Level 19)",
+			"Sage's Shoes (Level 27)",
+			"Sage's Skullcap (Level 19)",
+			"Sage's Skullcap (Level 27)",
+			"Sage's Spectacles (Level 15)",
+			"Sage's Spectacles (Level 27)",
+			"Skirmisher's Belt (Level 15)",
+			"Skirmisher's Belt (Level 26)",
+			"Skirmisher's Boots (Level 19)",
+			"Skirmisher's Boots (Level 27)",
+			"Skirmisher's Bracers (Level 15)",
+			"Skirmisher's Bracers (Level 26)",
+			"Skirmisher's Circlet (Level 19)",
+			"Skirmisher's Circlet (Level 27)",
+			"Skirmisher's Cloak (Level 19)",
+			"Skirmisher's Cloak (Level 25)",
+			"Skirmisher's Gloves (Level 15)",
+			"Skirmisher's Gloves (Level 26)",
+			"Skirmisher's Lenses (Level 19)",
+			"Skirmisher's Lenses (Level 27)",
+			"Skirmisher's Locket (Level 15)",
+			"Skirmisher's Locket (Level 26)",
+			"Skirmisher's Ring (Level 19)",
+			"Skirmisher's Ring (Level 27)",
+			"Starter Heavy Wooden Shield",
+			"Starter Leather Armor",
+			"Starter Rags",
+			"Titanic Docent"
+		};
+
+		private void ProcessIcons_DoWork(object sender, DoWorkEventArgs e)
+		{
+			BackgroundWorker bw = sender as BackgroundWorker;
+			for (int f = 0; f < files.Length; f++)
+			{
+				bw.ReportProgress(f);
+
+				string pngstring = null;
+				string[] lines = File.ReadAllLines(files[f]);
+				for (int l = 0; l < lines.Length; l++)
+				{
+					int i = lines[l].IndexOf("\"IconSource\"");
+					if (i > -1)
+					{
+						int c = lines[l].IndexOf(',');
+						pngstring = lines[l].Substring(c + 1).Trim().Replace(" ", "").Replace(",", "").Replace("\"", "");
+						byte[] bytes = Convert.FromBase64String(pngstring);
+						string itemname = Path.GetFileNameWithoutExtension(files[f]);
+						itemname = itemname.Substring(itemname.IndexOf(' ') + 1).Replace('’', '\'');
+						// need to fix names, oh lord
+						if (IconNameFixes.TryGetValue(itemname, out string fixedname)) itemname = fixedname;
+						else
+						{
+							c = itemname.IndexOf("(Level");
+							if (c == -1) c = itemname.IndexOf("(level");
+							if (c > -1) itemname = itemname.Substring(0, c);
+
+							c = itemname.IndexOf("(Main Hand)");
+							if (c > -1) itemname = itemname.Substring(0, c);
+
+							c = itemname.IndexOf("(Off Hand)");
+							if (c > -1) itemname = itemname.Substring(0, c);
+						}
+
+						itemname = itemname.Trim();
+
+						if (itemname.StartsWith("Mysterious Ring (")) itemname = "Mysterious Ring";
+						else if (itemname.StartsWith("The Arc Welder (")) itemname = "The Arc Welder";
+						else if (itemname.StartsWith("The Legendary Arc Welder (")) itemname = "The Legendary Arc Welder";
+
+						if (!IconFiles.ContainsKey(itemname))
+						{
+							string filename = Path.Combine(TempIconPath, itemname + ".png");
+							using (MemoryStream memoryStream = new MemoryStream(bytes))
+							{
+								Bitmap cb = new Bitmap(memoryStream);
+								Bitmap nb = cb.Clone(new Rectangle(2, 2, 32, 32), cb.PixelFormat);
+								nb.Save(filename, System.Drawing.Imaging.ImageFormat.Png);
+							}
+							IconFiles[itemname] = filename;
+						}
+
+						break;
+					}
+				}
+			}
+		}
+
+		private void ProcessIcons_Completed(object sender, RunWorkerCompletedEventArgs e)
+		{
+			tbProgressText.Text = null;
+			tbStatusBarText.Text = "Done";
+		}
+
+		private void ScanTempFolderMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			files = Directory.GetFiles(TempIconPath, "*.png", SearchOption.TopDirectoryOnly);
+			for (int f = 0; f < files.Length; f++)
+			{
+				string itemname = Path.GetFileNameWithoutExtension(files[f]);
+				IconFiles[itemname] = Path.Combine(TempIconPath, itemname + ".png");
+			}
 		}
 	}
 }

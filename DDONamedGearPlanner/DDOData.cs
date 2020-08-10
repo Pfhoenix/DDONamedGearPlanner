@@ -160,6 +160,37 @@ namespace DDONamedGearPlanner
 		public readonly ItemDataSource Source;
 		public DDOQuestData QuestFoundIn;
 
+		public string IconName
+		{
+			get
+			{
+				string icn = Name.Replace("?", "").Replace('-', ' ').Replace('.', ' ');
+
+				int c = icn.IndexOf("(tier");
+				if (c > -1) return icn.Substring(0, c).Trim();
+
+				c = icn.IndexOf("(Level");
+				if (c == -1) c = icn.IndexOf("(level");
+				if (c > -1) return icn.Substring(0, c).Trim();
+
+				c = icn.IndexOf("(unsuppressed)");
+				if (c > -1) return icn.Substring(0, c).Trim();
+
+				c = icn.IndexOf(" of the Weapon Master");
+				if (c > -1) return icn.Substring(0, c);
+
+				if (icn.StartsWith("Fellblade (")) return "Fellblade";
+				else if (icn.StartsWith("Mithral Full Plate of Speed")) return "Mithral Full Plate of Speed";
+				else if (icn == "Ir'Kesslan's Most Prescient Lens") return "ir'Kesslan's Most Prescient Lens";
+				else if (icn == "Linen Handwraps") return "Linen Wraps";
+				else if (icn.StartsWith("The Arc Welder (")) return "The Arc Welder";
+				else if (icn.StartsWith("The Legendary Arc Welder (")) return "The Legendary Arc Welder";
+				else if (icn.StartsWith("Thought Spike (")) return "Thought Spike";
+
+				return icn.Trim();
+			}
+		}
+
 		// utility because it gets used so often
 		int _Handedness = -1;
 		public int Handedness
