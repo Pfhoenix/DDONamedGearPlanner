@@ -2920,6 +2920,7 @@ namespace DDONamedGearPlanner
 					GeneratedItem = new DDOItemData(ItemDataSource.SlaveLord, false)
 					{
 						Name = Name,
+						IconName = BaseItem.IconName,
 						WikiURL = "https://ddowiki.com/page/Slave_Lords_Crafting",
 						Slot = BaseItem.Slot,
 						Category = BaseItem.Category,

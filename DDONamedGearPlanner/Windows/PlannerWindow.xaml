@@ -23,9 +23,12 @@
 	<DockPanel Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="_File">
-				<MenuItem Header="_New Build" Click="NewBuild_Click" ToolTip="Builds include both filters and results" />
-				<MenuItem Header="_Load Build" Click="LoadBuild_Click" ToolTip="Builds include both filters and results" />
-				<MenuItem Header="_Save Build" Click="SaveBuild_Click" ToolTip="Builds include both filters and results" />
+				<MenuItem Header="Load Gear Set" Click="ImportGearsetFromFile" />
+				<MenuItem Header="Save Gear Set" Click="ExportGearsetToFile" />
+				<Separator/>
+				<MenuItem Header="New Build" Click="NewBuild_Click" ToolTip="Builds include both filters and results" />
+				<MenuItem Header="Load Build" Click="LoadBuild_Click" ToolTip="Builds include both filters and results" />
+				<MenuItem Header="Save Build" Click="SaveBuild_Click" ToolTip="Builds include both filters and results" />
 				<Separator />
 				<MenuItem Header="Load Build Filters" Name="miLoadBuildFilters" Click="LoadBuildFilters_Click" />
 				<MenuItem Header="Save Build Filters" Name="miSaveBuildFilters" Click="SaveBuildFilters_Click" />
@@ -261,9 +264,6 @@
 				</Grid>
 				<Button Margin="11,11,11,0" Click="SendGearsetToClipboard">Copy to Clipboard</Button>
 				<Button Margin="11,3,11,0" Click="GetGearsetFromClipboard">Paste from Clipboard</Button>
-				<Separator Margin="6,5,6,2"/>
-				<Button Margin="11,3,11,0" Click="ImportGearsetFromFile">Import Gear Set From File</Button>
-				<Button Margin="11,3,11,0" Click="ExportGearsetToFile">Export Gear Set to File</Button>
 				<Separator Margin="6,5,6,2"/>
 				<Button Margin="11,3,11,0" Click="CompareGearsets">Compare Gear Sets</Button>
 			</StackPanel>

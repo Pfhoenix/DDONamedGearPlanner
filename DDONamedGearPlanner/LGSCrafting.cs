@@ -2252,9 +2252,10 @@ namespace DDONamedGearPlanner
             {
                 if (GeneratedItem == null)
                 {
-                    GeneratedItem = new DDOItemData(ItemDataSource.LegendaryGreenSteel, false)
-                    {
-                        Name = Name,
+					GeneratedItem = new DDOItemData(ItemDataSource.LegendaryGreenSteel, false)
+					{
+						Name = Name,
+						IconName = BaseItem.IconName,
                         WikiURL = "https://ddowiki.com/page/Legendary_Green_Steel_items",
                         Slot = BaseItem.Slot,
                         Category = BaseItem.Category,

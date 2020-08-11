@@ -160,35 +160,44 @@ namespace DDONamedGearPlanner
 		public readonly ItemDataSource Source;
 		public DDOQuestData QuestFoundIn;
 
+		string _IconName;
 		public string IconName
 		{
 			get
 			{
-				string icn = Name.Replace("?", "").Replace('-', ' ').Replace('.', ' ');
+				if (_IconName == null)
+				{
+					_IconName = Name.Replace("?", "").Replace('-', ' ').Replace('.', ' ');
 
-				int c = icn.IndexOf("(tier");
-				if (c > -1) return icn.Substring(0, c).Trim();
+					int c = _IconName.IndexOf("(tier");
+					if (c > -1) _IconName = _IconName.Substring(0, c);
 
-				c = icn.IndexOf("(Level");
-				if (c == -1) c = icn.IndexOf("(level");
-				if (c > -1) return icn.Substring(0, c).Trim();
+					c = _IconName.IndexOf("(Level");
+					if (c == -1) c = _IconName.IndexOf("(level");
+					if (c > -1) _IconName = _IconName.Substring(0, c);
 
-				c = icn.IndexOf("(unsuppressed)");
-				if (c > -1) return icn.Substring(0, c).Trim();
+					c = _IconName.IndexOf("(unsuppressed)");
+					if (c > -1) _IconName = _IconName.Substring(0, c);
 
-				c = icn.IndexOf(" of the Weapon Master");
-				if (c > -1) return icn.Substring(0, c);
+					c = _IconName.IndexOf(" of the Weapon Master");
+					if (c > -1) _IconName = _IconName.Substring(0, c);
 
-				if (icn.StartsWith("Fellblade (")) return "Fellblade";
-				else if (icn.StartsWith("Mithral Full Plate of Speed")) return "Mithral Full Plate of Speed";
-				else if (icn == "Ir'Kesslan's Most Prescient Lens") return "ir'Kesslan's Most Prescient Lens";
-				else if (icn == "Linen Handwraps") return "Linen Wraps";
-				else if (icn.StartsWith("The Arc Welder (")) return "The Arc Welder";
-				else if (icn.StartsWith("The Legendary Arc Welder (")) return "The Legendary Arc Welder";
-				else if (icn.StartsWith("Thought Spike (")) return "Thought Spike";
+					if (_IconName.StartsWith("Fellblade (")) _IconName = "Fellblade";
+					else if (_IconName.StartsWith("Mithral Full Plate of Speed")) _IconName = "Mithral Full Plate of Speed";
+					else if (_IconName == "Ir'Kesslan's Most Prescient Lens") _IconName = "ir'Kesslan's Most Prescient Lens";
+					else if (_IconName == "Linen Handwraps") _IconName = "Linen Wraps";
+					else if (_IconName.StartsWith("The Arc Welder (")) _IconName = "The Arc Welder";
+					else if (_IconName.StartsWith("The Legendary Arc Welder (")) _IconName = "The Legendary Arc Welder";
+					else if (_IconName.StartsWith("Thought Spike (")) _IconName = "Thought Spike";
 
-				return icn.Trim();
+					_IconName = _IconName.Trim();
+
+					return _IconName;
+				}
+				else return _IconName;
 			}
+
+			set { _IconName = value; }
 		}
 
 		// utility because it gets used so often
