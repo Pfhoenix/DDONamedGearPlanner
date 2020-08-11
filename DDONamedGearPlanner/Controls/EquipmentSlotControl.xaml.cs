@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -20,6 +21,7 @@ namespace DDONamedGearPlanner
 
 		protected static BitmapImage[] SlotBGImages;
 		protected static Dictionary<string, BitmapImage> SlotFillImages;
+		protected static Dictionary<string, BitmapImage> LoadedIcons = new Dictionary<string, BitmapImage>();
 
 		public static readonly DependencyProperty EquipmentSlotProperty =
 				DependencyProperty.Register
@@ -68,8 +70,11 @@ namespace DDONamedGearPlanner
 				SlotFillImages["wrist"] = new BitmapImage(new Uri("pack://application:,,,/Resources/slot_fill_wrist.png"));
 			}
 
-			EquipmentSlotControl esc = d as EquipmentSlotControl;
-			if (SlotBGImages != null) esc.imgIcon.Source = SlotBGImages[(int)esc.Slot];
+			if (SlotBGImages != null)
+			{
+				EquipmentSlotControl esc = d as EquipmentSlotControl;
+				esc.imgIcon.Source = SlotBGImages[(int)esc.Slot];
+			}
 		}
 
 		static Brush LockBrushOn = new SolidColorBrush(Colors.Red);
@@ -167,31 +172,45 @@ namespace DDONamedGearPlanner
 			{
 				Item.Slot = Slot;
 				Item.InUse = true;
-				switch (Item.Item.Slot)
-				{
-					case SlotType.Body:
-						if (Item.Item.Category == (int)ArmorCategory.Cloth) imgIcon.Source = SlotFillImages["body_cloth"];
-						else if (Item.Item.Category == (int)ArmorCategory.Light) imgIcon.Source = SlotFillImages["body_light"];
-						else if (Item.Item.Category == (int)ArmorCategory.Medium) imgIcon.Source = SlotFillImages["body_medium"];
-						else if (Item.Item.Category == (int)ArmorCategory.Heavy) imgIcon.Source = SlotFillImages["body_heavy"];
-						else if (Item.Item.Category == (int)ArmorCategory.Docent) imgIcon.Source = SlotFillImages["body_docent"];
-						break;
-
-					case SlotType.Offhand:
-						if (Item.Item.Category == (int)OffhandCategory.Buckler) imgIcon.Source = SlotFillImages["offhand_buckler"];
-						else if (Item.Item.Category == (int)OffhandCategory.Small) imgIcon.Source = SlotFillImages["offhand_small"];
-						else if (Item.Item.Category == (int)OffhandCategory.Large) imgIcon.Source = SlotFillImages["offhand_large"];
-						else if (Item.Item.Category == (int)OffhandCategory.Tower) imgIcon.Source = SlotFillImages["offhand_tower"];
-						else if (Item.Item.Category == (int)OffhandCategory.Orb) imgIcon.Source = SlotFillImages["offhand_orb"];
-						else if (Item.Item.Category == (int)OffhandCategory.RuneArm) imgIcon.Source = SlotFillImages["offhand_runearm"];
-						break;
-
-					default:
-						imgIcon.Source = SlotFillImages[Item.Item.Slot.ToString().ToLower()];
-						break;
-				}
 
 				ttTT.Content = Item.Item.Name;
+
+				string iconname = Item.Item.IconName;
+				if (LoadedIcons.ContainsKey(iconname)) imgIcon.Source = LoadedIcons[iconname];
+				else
+				{
+					string iconpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Icons", iconname + ".png");
+					if (File.Exists(iconpath))
+					{
+						imgIcon.Source = LoadedIcons[iconname] = new BitmapImage(new Uri(iconpath));
+					}
+					else
+					{
+						switch (Item.Item.Slot)
+						{
+							case SlotType.Body:
+								if (Item.Item.Category == (int)ArmorCategory.Cloth) imgIcon.Source = SlotFillImages["body_cloth"];
+								else if (Item.Item.Category == (int)ArmorCategory.Light) imgIcon.Source = SlotFillImages["body_light"];
+								else if (Item.Item.Category == (int)ArmorCategory.Medium) imgIcon.Source = SlotFillImages["body_medium"];
+								else if (Item.Item.Category == (int)ArmorCategory.Heavy) imgIcon.Source = SlotFillImages["body_heavy"];
+								else if (Item.Item.Category == (int)ArmorCategory.Docent) imgIcon.Source = SlotFillImages["body_docent"];
+								break;
+
+							case SlotType.Offhand:
+								if (Item.Item.Category == (int)OffhandCategory.Buckler) imgIcon.Source = SlotFillImages["offhand_buckler"];
+								else if (Item.Item.Category == (int)OffhandCategory.Small) imgIcon.Source = SlotFillImages["offhand_small"];
+								else if (Item.Item.Category == (int)OffhandCategory.Large) imgIcon.Source = SlotFillImages["offhand_large"];
+								else if (Item.Item.Category == (int)OffhandCategory.Tower) imgIcon.Source = SlotFillImages["offhand_tower"];
+								else if (Item.Item.Category == (int)OffhandCategory.Orb) imgIcon.Source = SlotFillImages["offhand_orb"];
+								else if (Item.Item.Category == (int)OffhandCategory.RuneArm) imgIcon.Source = SlotFillImages["offhand_runearm"];
+								break;
+
+							default:
+								imgIcon.Source = SlotFillImages[Item.Item.Slot.ToString().ToLower()];
+								break;
+						}
+					}
+				}
 			}
 		}
 
