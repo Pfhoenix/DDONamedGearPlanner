@@ -388,7 +388,7 @@ namespace DDOWikiParser
 			}
 			else if (trimmed.StartsWith("Spell Absorption -"))
 			{
-				int a = ParseNumber(trimmed);
+				/*int a = ParseNumber(trimmed);
 				data.AddProperty("Acid Absorption", null, a, null);
 				data.AddProperty("Cold Absorption", null, a, null);
 				data.AddProperty("Electric Absorption", null, a, null);
@@ -399,7 +399,7 @@ namespace DDOWikiParser
 				data.AddProperty("Poison Absorption", null, a, null);
 				data.AddProperty("Positive Absorption", null, a, null);
 				data.AddProperty("Repair Absorption", null, a, null);
-				data.AddProperty("Sonic Absorption", null, a, null);
+				data.AddProperty("Sonic Absorption", null, a, null);*/
 
 				data.AddProperty("Spell Absorption", null, ParseNumber(trimmed), null);
 				return true;
@@ -1544,7 +1544,7 @@ namespace DDOWikiParser
 					data.AddProperty("Repair Spell Power", v, vi, null);
 					data.AddProperty("Sonic Spell Power", v, vi, null);
 				}
-				else if (p.EndsWith("Spell Lore"))
+				else if (p == "Spell Lore")
 				{
 					if (origv == v) v = "equipment";
 					data.AddProperty("Acid Spell Critical Chance", v, vi, null);
