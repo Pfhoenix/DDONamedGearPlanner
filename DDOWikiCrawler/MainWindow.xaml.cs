@@ -39,7 +39,9 @@ namespace DDOWikiCrawler
 			"Cosmetic_Headwear_items",
 			"Cosmetic_Cloak_items",
 			"Item_groups",
-			"Items_by_equipment_slot"
+			"Items_by_equipment_slot",
+			"DDOwiki_metacategories",
+			"DDOwiki_meta"
 		};
 
 		string HtmlCachePath;

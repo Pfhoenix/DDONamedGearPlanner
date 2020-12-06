@@ -21,7 +21,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public static readonly string VERSION = "0.8.5";
+		public static readonly string VERSION = "0.8.6";
 
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 

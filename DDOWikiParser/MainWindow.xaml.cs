@@ -2706,6 +2706,12 @@ namespace DDOWikiParser
 				bw.ReportProgress(++progress, kvp.Key);
 				XmlDocument doc = DownloadWebpage("https://ddowiki.com" + kvp.Key.Replace("page", "edit"));
 
+				if (doc == null)
+				{
+					LogError("Unable to parse webpage : https://ddowiki.com" + kvp.Key.Replace("page", "edit"));
+					continue;
+				}
+
 				var taNodes = doc.GetElementsByTagName("textarea");
 				if (taNodes.Count == 0) continue;
 
