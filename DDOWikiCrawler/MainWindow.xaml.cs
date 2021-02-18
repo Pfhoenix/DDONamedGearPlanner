@@ -200,6 +200,8 @@ namespace DDOWikiCrawler
 
 		void CategoryCrawlCompleted(object sender, PageCrawlCompletedArgs e)
 		{
+			if (e.CrawledPage.HttpResponseMessage == null) return;
+
 			var httpStatus = e.CrawledPage.HttpResponseMessage.StatusCode;
 			if (httpStatus == HttpStatusCode.OK)
 			{
@@ -294,7 +296,14 @@ namespace DDOWikiCrawler
 			TreeViewItem tvi = tvCachedPages.SelectedItem as TreeViewItem;
 			if (tvi != null)
 			{
-				wbWebpageView.Source = new Uri(tvi.Tag.ToString());
+				try
+				{
+					wbWebpageView.Source = new Uri(tvi.Tag.ToString());
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.Message);
+				}
 				//wbWebpageView.Navigate(tvi.Tag.ToString());
 			}
 		}

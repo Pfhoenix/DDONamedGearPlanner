@@ -53,6 +53,7 @@ namespace DDOWikiParser
 			"Brand of Kalok Shash",
 			"Brightlord, the Sigil of the Flame",
 			"Charune, Grand Burden of Fury",
+			"Crown of Bone",
 			"Doctor LeRoux's Curious Implant",
 			"Doctor Vulcana's Broken Wristwatch",
 			"Epic Voice of the Master",
@@ -60,13 +61,22 @@ namespace DDOWikiParser
 			"Gilded Gloves of Sanctity",
 			"Ir'Kesslan's Most Prescient Lens",
 			"Key of Rhukaan Draal",
+			"Magmatic Grasp",
+			"Quori-Infused Core",
 			"Radiant Ring of Taer Valaestas",
+			"Rosethorn Necklace",
 			"Sigil of Regalport",
 			"Sigil of the Triumvirate",
 			"Stolen Signet of ir'Wynarn",
+			"Strap of Autumn Leaves",
 			"The Bloodsigil Ring",
+			"The Fang of Xyzzy",
+			"The Golden Idol",
+			"The Heart of Suulomades",
+			"The Prince's Guantlet",
 			"The Shrouded Steps of the Beyond",
-			"The Zarash'ak Ward"
+			"The Zarash'ak Ward",
+			"Titan Control Matrix"
 		};
 		char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 		string[] numerals = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX" };
