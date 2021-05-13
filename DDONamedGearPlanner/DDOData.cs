@@ -167,7 +167,7 @@ namespace DDONamedGearPlanner
 			{
 				if (_IconName == null)
 				{
-					_IconName = Name.Replace("?", "").Replace('-', ' ').Replace('.', ' ');
+					_IconName = Name.Replace("?", "").Replace('-', ' ').Replace('.', ' ').Replace(":", "");
 
 					int c = _IconName.IndexOf("(tier");
 					if (c > -1) _IconName = _IconName.Substring(0, c);
@@ -184,8 +184,8 @@ namespace DDONamedGearPlanner
 
 					if (_IconName.StartsWith("Fellblade (")) _IconName = "Fellblade";
 					else if (_IconName.StartsWith("Mithral Full Plate of Speed")) _IconName = "Mithral Full Plate of Speed";
-					else if (_IconName == "Ir'Kesslan's Most Prescient Lens") _IconName = "ir'Kesslan's Most Prescient Lens";
-					else if (_IconName == "Linen Handwraps") _IconName = "Linen Wraps";
+					//else if (_IconName == "Ir'Kesslan's Most Prescient Lens") _IconName = "ir'Kesslan's Most Prescient Lens";
+					//else if (_IconName == "Linen Handwraps") _IconName = "Linen Wraps";
 					else if (_IconName.StartsWith("The Arc Welder (")) _IconName = "The Arc Welder";
 					else if (_IconName.StartsWith("The Legendary Arc Welder (")) _IconName = "The Legendary Arc Welder";
 					else if (_IconName.StartsWith("Thought Spike (")) _IconName = "Thought Spike";

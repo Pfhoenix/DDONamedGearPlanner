@@ -99,7 +99,7 @@ namespace DDOWikiParser
 
 		Dictionary<string, string> IconFiles = new Dictionary<string, string>();
 
-		string TempIconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "allicons");
+		string TempItemImagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "allitemimages");
 		string FinalIconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Icons");
 
 
@@ -108,6 +108,7 @@ namespace DDOWikiParser
 			InitializeComponent();
 			File.Delete(ErrorFile);
 			LogError("Creating error log on " + DateTime.Now);
+			if (!Directory.Exists(TempItemImagePath)) Directory.CreateDirectory(TempItemImagePath);
 		}
 
 		void LogError(string msg)
@@ -307,6 +308,12 @@ namespace DDOWikiParser
 			else if (trimmed.StartsWith("Better Offhanded")) return false;
 			else if (trimmed.StartsWith("Mythic ")) return false;
 			else if (trimmed.StartsWith("Unverified")) return false;
+			else if (enh.InnerXml.Contains("/page/Named_item_sets"))
+			{
+				string p = ParseSetName(enh as XmlElement);
+				data.AddProperty(p, "set", 0, null);
+				return true;
+			}
 			else if (trimmed.StartsWith("Echoes of 2006"))
 			{
 				data.AddProperty("Echoes of 2006", null, 0, null);
@@ -1970,7 +1977,9 @@ namespace DDOWikiParser
 			var options = new List<ItemProperty>();
 
 			var lis = e.GetElementsByTagName("li");
-			foreach (XmlElement li in lis)
+			//foreach (XmlElement li in lis)
+			XmlElement li = lis.Item(0) as XmlElement;
+			while (li != null)
 			{
 				int count = data.Properties.Count;
 
@@ -1983,9 +1992,64 @@ namespace DDOWikiParser
 						options.Add(ip);
 					}
 				}
+
+				li = li.NextSibling as XmlElement;
 			}
 
 			return options;
+		}
+
+		void TryFindItemImageForIconParsing(DDOItemData data, XmlElement row)
+		{
+			// look for an image of the item in order to extract the icon
+			var td = row.GetElementsByTagName("td");
+			bool iconexists = false;
+			foreach (XmlElement e in td)
+			{
+				if (e.HasAttribute("rowspan") && e.HasAttribute("align"))
+				{
+					// find the img element
+					var img = e.GetElementsByTagName("img");
+					if (img.Count != 0)
+					{
+						string src = (img[0] as XmlElement)?.GetAttribute("srcset");
+						if (string.IsNullOrWhiteSpace(src))
+						{
+							src = (img[0] as XmlElement)?.GetAttribute("src");
+						}
+						if (!string.IsNullOrWhiteSpace(src))
+						{
+							int s = src.IndexOf(' ');
+							if (s > -1) src = src.Substring(0, s);
+							if (src == "/images/No_pic.jpg") break;
+							string imgtype = src.Substring(src.LastIndexOf('.') + 1);
+							string imgfilepath = Path.Combine(TempItemImagePath, data.IconName + "." + imgtype);
+							if (!File.Exists(imgfilepath))
+							{
+								src = "http://ddowiki.com" + src;
+								using (var response = HttpWebRequest.Create(src).GetResponse())
+								{
+									if (response.ContentType.StartsWith("image"))
+									{
+										FileStream fs = new FileStream(imgfilepath, FileMode.Create);
+										response.GetResponseStream().CopyTo(fs);
+										fs.Flush();
+										fs.Dispose();
+										iconexists = true;
+									}
+								}
+
+								if (!iconexists) LogError("Couldn't download image for " + data.Name + ", " + data.WikiURL);
+							}
+							else iconexists = true;
+						}
+						else LogError("No image attributes for " + data.Name + ", " + data.WikiURL);
+					}
+					else LogError("No image to process for " + data.Name + ", " + data.WikiURL);
+				}
+
+				if (iconexists) break;
+			}
 		}
 
 		bool ParseEnhancements(DDOItemData data, XmlElement row)
@@ -2253,6 +2317,8 @@ namespace DDOWikiParser
 					}
 					else ParseEnhancement(data, e);
 				}
+
+				TryFindItemImageForIconParsing(data, row);
 			}
 			catch (Exception ex)
 			{
@@ -2354,6 +2420,10 @@ namespace DDOWikiParser
 				else if (r.InnerText.StartsWith("Minimum Level", StringComparison.InvariantCultureIgnoreCase))
 				{
 					ParseMinimumLevel(data, r);
+				}
+				else if (r.InnerText.StartsWith("Material"))
+				{
+					TryFindItemImageForIconParsing(data, r);
 				}
 				else if (r.InnerText.StartsWith("Enhancements"))
 				{
@@ -3108,8 +3178,8 @@ namespace DDOWikiParser
 					}
 					else
 					{
-						if (KnownItemsMissingIcons.Contains(AllItems[i].Name)) LogError(AllItems[i].Name + " is still missing an icon file");
-						else LogError("(*)" + AllItems[i].Name + " doesn't have an icon file");
+						/*if (KnownItemsMissingIcons.Contains(AllItems[i].Name)) LogError(AllItems[i].Name + " is still missing an icon file");*/
+						LogError("(*)" + AllItems[i].Name + " doesn't have an icon file");
 					}
 				}
 			}
@@ -3195,116 +3265,105 @@ namespace DDOWikiParser
 
 		private void ProcessIconFilesMenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			FolderBrowserDialog fbd = new FolderBrowserDialog();
-			fbd.SelectedPath = "D:\\repos\\ddo-export\\web-export\\";
-			if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-			{
-				files = Directory.GetFiles(fbd.SelectedPath, "*.json", SearchOption.AllDirectories);
+			files = Directory.GetFiles(TempItemImagePath);
+			if (files == null || files.Length == 0) return;
 
-				if (files == null || files.Length == 0) return;
+			if (!Directory.Exists(FinalIconPath)) Directory.CreateDirectory(FinalIconPath);
 
-				if (Directory.Exists(TempIconPath))
-				{
-					DeleteFolder(TempIconPath);
-					while (Directory.Exists(TempIconPath)) { Thread.Sleep(1000); }
-				}
-				Directory.CreateDirectory(TempIconPath);
+			IconFiles.Clear();
 
-				IconFiles.Clear();
+			pbProgressBar.Minimum = 0;
+			pbProgressBar.Maximum = files.Length;
+			pbProgressBar.Value = 0;
+			BackgroundWorker bw = new BackgroundWorker();
+			bw.WorkerReportsProgress = true;
+			bw.DoWork += ProcessIcons_DoWork;
+			bw.ProgressChanged += InitialLoad_ProgressChanged;
+			bw.RunWorkerCompleted += ProcessIcons_Completed;
 
-				pbProgressBar.Minimum = 0;
-				pbProgressBar.Maximum = files.Length;
-				pbProgressBar.Value = 0;
-				BackgroundWorker bw = new BackgroundWorker();
-				bw.WorkerReportsProgress = true;
-				bw.DoWork += ProcessIcons_DoWork;
-				bw.ProgressChanged += InitialLoad_ProgressChanged;
-				bw.RunWorkerCompleted += ProcessIcons_Completed;
-
-				bw.RunWorkerAsync();
-			}
+			bw.RunWorkerAsync();
 		}
 
-		Dictionary<string, string> IconNameFixes = new Dictionary<string, string>
-		{
-			{ "Quicksilver Cassock", "Quicksilver Cassok" },
-			{ "Snowballs", "Snowball" }
-		};
+		/*
+				List<string> KnownItemsMissingIcons = new List<string>
+				{
+					"Battered Marketplace Shield",
+					"Club of the Holy Flame (starter)",
+					"Drow Hunter's Armor",
+					"Fire Touch Heavy Mace",
+					"Flawless Shadow Dragonhide Armor",
+					"Flawless Shadow Dragonplate Armor",
+					"Flawless Shadow Dragonscale Armor",
+					"Gilk's Bangle",
+					"Guardian's Boots (Level 15)",
+					"Guardian's Boots (Level 27)",
+					"Guardian's Bracers (Level 15)",
+					"Guardian's Bracers (Level 26)",
+					"Guardian's Cloak (Level 19)",
+					"Guardian's Cloak (Level 27)",
+					"Guardian's Gauntlets (Level 15)",
+					"Guardian's Gauntlets (Level 26)",
+					"Guardian's Girdle (Level 15)",
+					"Guardian's Girdle (Level 26)",
+					"Guardian's Glasses (Level 19)",
+					"Guardian's Glasses (Level 27)",
+					"Guardian's Helmet (Level 19)",
+					"Guardian's Helmet (Level 27)",
+					"Guardian's Locket (Level 15)",
+					"Guardian's Locket (Level 26)",
+					"Guardian's Ring (Level 19)",
+					"Guardian's Ring (Level 27)",
+					"Incandescent Band",
+					"Legendary Sapphire Studded Buckles",
+					"Madstone Rod",
+					"Rod of Teleport",
+					"Romag's Club of Earthen Dominion",
+					"Sage's Cuffs (Level 15)",
+					"Sage's Cuffs (Level 26)",
+					"Sage's Gloves (Level 17)",
+					"Sage's Gloves (Level 26)",
+					"Sage's Locket (Level 15)",
+					"Sage's Locket (Level 26)",
+					"Sage's Mantle (Level 19)",
+					"Sage's Mantle (Level 27)",
+					"Sage's Ring (Level 19)",
+					"Sage's Ring (Level 27)",
+					"Sage's Sash (Level 15)",
+					"Sage's Sash (Level 26)",
+					"Sage's Shoes (Level 19)",
+					"Sage's Shoes (Level 27)",
+					"Sage's Skullcap (Level 19)",
+					"Sage's Skullcap (Level 27)",
+					"Sage's Spectacles (Level 15)",
+					"Sage's Spectacles (Level 27)",
+					"Skirmisher's Belt (Level 15)",
+					"Skirmisher's Belt (Level 26)",
+					"Skirmisher's Boots (Level 19)",
+					"Skirmisher's Boots (Level 27)",
+					"Skirmisher's Bracers (Level 15)",
+					"Skirmisher's Bracers (Level 26)",
+					"Skirmisher's Circlet (Level 19)",
+					"Skirmisher's Circlet (Level 27)",
+					"Skirmisher's Cloak (Level 19)",
+					"Skirmisher's Cloak (Level 25)",
+					"Skirmisher's Gloves (Level 15)",
+					"Skirmisher's Gloves (Level 26)",
+					"Skirmisher's Lenses (Level 19)",
+					"Skirmisher's Lenses (Level 27)",
+					"Skirmisher's Locket (Level 15)",
+					"Skirmisher's Locket (Level 26)",
+					"Skirmisher's Ring (Level 19)",
+					"Skirmisher's Ring (Level 27)",
+					"Starter Heavy Wooden Shield",
+					"Starter Leather Armor",
+					"Starter Rags",
+					"Titanic Docent"
+				};*/
 
-		List<string> KnownItemsMissingIcons = new List<string>
+		bool IsColorBlack(ref Color c)
 		{
-			"Battered Marketplace Shield",
-			"Club of the Holy Flame (starter)",
-			"Drow Hunter's Armor",
-			"Fire Touch Heavy Mace",
-			"Flawless Shadow Dragonhide Armor",
-			"Flawless Shadow Dragonplate Armor",
-			"Flawless Shadow Dragonscale Armor",
-			"Gilk's Bangle",
-			"Guardian's Boots (Level 15)",
-			"Guardian's Boots (Level 27)",
-			"Guardian's Bracers (Level 15)",
-			"Guardian's Bracers (Level 26)",
-			"Guardian's Cloak (Level 19)",
-			"Guardian's Cloak (Level 27)",
-			"Guardian's Gauntlets (Level 15)",
-			"Guardian's Gauntlets (Level 26)",
-			"Guardian's Girdle (Level 15)",
-			"Guardian's Girdle (Level 26)",
-			"Guardian's Glasses (Level 19)",
-			"Guardian's Glasses (Level 27)",
-			"Guardian's Helmet (Level 19)",
-			"Guardian's Helmet (Level 27)",
-			"Guardian's Locket (Level 15)",
-			"Guardian's Locket (Level 26)",
-			"Guardian's Ring (Level 19)",
-			"Guardian's Ring (Level 27)",
-			"Incandescent Band",
-			"Legendary Sapphire Studded Buckles",
-			"Madstone Rod",
-			"Rod of Teleport",
-			"Romag's Club of Earthen Dominion",
-			"Sage's Cuffs (Level 15)",
-			"Sage's Cuffs (Level 26)",
-			"Sage's Gloves (Level 17)",
-			"Sage's Gloves (Level 26)",
-			"Sage's Locket (Level 15)",
-			"Sage's Locket (Level 26)",
-			"Sage's Mantle (Level 19)",
-			"Sage's Mantle (Level 27)",
-			"Sage's Ring (Level 19)",
-			"Sage's Ring (Level 27)",
-			"Sage's Sash (Level 15)",
-			"Sage's Sash (Level 26)",
-			"Sage's Shoes (Level 19)",
-			"Sage's Shoes (Level 27)",
-			"Sage's Skullcap (Level 19)",
-			"Sage's Skullcap (Level 27)",
-			"Sage's Spectacles (Level 15)",
-			"Sage's Spectacles (Level 27)",
-			"Skirmisher's Belt (Level 15)",
-			"Skirmisher's Belt (Level 26)",
-			"Skirmisher's Boots (Level 19)",
-			"Skirmisher's Boots (Level 27)",
-			"Skirmisher's Bracers (Level 15)",
-			"Skirmisher's Bracers (Level 26)",
-			"Skirmisher's Circlet (Level 19)",
-			"Skirmisher's Circlet (Level 27)",
-			"Skirmisher's Cloak (Level 19)",
-			"Skirmisher's Cloak (Level 25)",
-			"Skirmisher's Gloves (Level 15)",
-			"Skirmisher's Gloves (Level 26)",
-			"Skirmisher's Lenses (Level 19)",
-			"Skirmisher's Lenses (Level 27)",
-			"Skirmisher's Locket (Level 15)",
-			"Skirmisher's Locket (Level 26)",
-			"Skirmisher's Ring (Level 19)",
-			"Skirmisher's Ring (Level 27)",
-			"Starter Heavy Wooden Shield",
-			"Starter Leather Armor",
-			"Starter Rags",
-			"Titanic Docent"
-		};
+			return c.R < 60 && c.G < 60 && c.B < 60;
+		}
 
 		private void ProcessIcons_DoWork(object sender, DoWorkEventArgs e)
 		{
@@ -3313,53 +3372,84 @@ namespace DDOWikiParser
 			{
 				bw.ReportProgress(f);
 
-				string pngstring = null;
-				string[] lines = File.ReadAllLines(files[f]);
-				for (int l = 0; l < lines.Length; l++)
+				string outfilepath = Path.Combine(FinalIconPath, Path.GetFileName(files[f]));
+				if (File.Exists(outfilepath)) continue;
+
+				using (Bitmap sbm = new Bitmap(files[f]))
 				{
-					int i = lines[l].IndexOf("\"IconSource\"");
-					if (i > -1)
+					int hw = sbm.Width / 4;
+					int hh = sbm.Height / 4;
+
+					Bitmap nbm = null;
+					for (int y = 1; y < hh; y++)
 					{
-						int c = lines[l].IndexOf(',');
-						pngstring = lines[l].Substring(c + 1).Trim().Replace(" ", "").Replace(",", "").Replace("\"", "");
-						byte[] bytes = Convert.FromBase64String(pngstring);
-						string itemname = Path.GetFileNameWithoutExtension(files[f]);
-						itemname = itemname.Substring(itemname.IndexOf(' ') + 1).Replace('’', '\'');
-						// need to fix names, oh lord
-						if (IconNameFixes.TryGetValue(itemname, out string fixedname)) itemname = fixedname;
-						else
+						if (nbm != null) break;
+						for (int x = 1; x < hw; x++)
 						{
-							c = itemname.IndexOf("(Level");
-							if (c == -1) c = itemname.IndexOf("(level");
-							if (c > -1) itemname = itemname.Substring(0, c);
+							if (nbm != null) break;
 
-							c = itemname.IndexOf("(Main Hand)");
-							if (c > -1) itemname = itemname.Substring(0, c);
-
-							c = itemname.IndexOf("(Off Hand)");
-							if (c > -1) itemname = itemname.Substring(0, c);
-						}
-
-						itemname = itemname.Trim();
-
-						if (itemname.StartsWith("Mysterious Ring (")) itemname = "Mysterious Ring";
-						else if (itemname.StartsWith("The Arc Welder (")) itemname = "The Arc Welder";
-						else if (itemname.StartsWith("The Legendary Arc Welder (")) itemname = "The Legendary Arc Welder";
-
-						if (!IconFiles.ContainsKey(itemname))
-						{
-							string filename = Path.Combine(TempIconPath, itemname + ".png");
-							using (MemoryStream memoryStream = new MemoryStream(bytes))
+							Color p = sbm.GetPixel(x, y);
+							if (p.A < 250) continue;
+							if (IsColorBlack(ref p))
 							{
-								Bitmap cb = new Bitmap(memoryStream);
-								Bitmap nb = cb.Clone(new Rectangle(2, 2, 32, 32), cb.PixelFormat);
-								nb.Save(filename, System.Drawing.Imaging.ImageFormat.Png);
-							}
-							IconFiles[itemname] = filename;
-						}
+								Color o = sbm.GetPixel(x, y + 1);
+								if (o.A < 250) continue;
+								if (!IsColorBlack(ref o))
+								{
+									p = sbm.GetPixel(x - 1, y + 1);
+									if (p.A < 250) continue;
+									if (IsColorBlack(ref p))
+									{
+										// we've potentially found the upper left corner of the icon, double check bounds
 
-						break;
+										int countborder = 0;
+										for (int i = 0; i < 32; i++)
+										{
+											p = sbm.GetPixel(x + i, y + 1);
+											if (p.A < 250)
+											{
+												countborder = -1000;
+												break;
+											}
+											if (!IsColorBlack(ref p)) countborder++;
+											p = sbm.GetPixel(x + i, y + 32);
+											if (p.A < 250)
+											{
+												countborder = -1000;
+												break;
+											}
+											if (!IsColorBlack(ref p)) countborder++;
+										}
+										for (int i = 0; i < 32; i++)
+										{
+											p = sbm.GetPixel(x, y + 1 + i);
+											if (p.A < 250)
+											{
+												countborder = -1000;
+												break;
+											}
+											if (!IsColorBlack(ref p)) countborder++;
+											p = sbm.GetPixel(x + 31, y + 1 + i);
+											if (p.A < 250)
+											{
+												countborder = -1000;
+												break;
+											}
+											if (!IsColorBlack(ref p)) countborder++;
+										}
+
+										if (countborder < 112) continue;
+
+										nbm = sbm.Clone(new Rectangle(x, y + 1, 32, 32), sbm.PixelFormat);
+										nbm.Save(outfilepath, System.Drawing.Imaging.ImageFormat.Png);
+									}
+								}
+							}
+						}
 					}
+
+					if (nbm == null) LogError("Couldn't extract icon from file " + Path.GetFileName(files[f]));
+					else nbm.Dispose();
 				}
 			}
 		}
@@ -3372,12 +3462,12 @@ namespace DDOWikiParser
 
 		private void ScanTempFolderMenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			files = Directory.GetFiles(TempIconPath, "*.png", SearchOption.TopDirectoryOnly);
+			/*files = Directory.GetFiles(TempIconPath, "*.png", SearchOption.TopDirectoryOnly);
 			for (int f = 0; f < files.Length; f++)
 			{
 				string itemname = Path.GetFileNameWithoutExtension(files[f]);
 				IconFiles[itemname] = Path.Combine(TempIconPath, itemname + ".png");
-			}
+			}*/
 		}
 	}
 }
