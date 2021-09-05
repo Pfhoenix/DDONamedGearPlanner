@@ -3008,7 +3008,11 @@ namespace DDOWikiParser
 				DDOItemData id = ItemsCache.Find(i => i.Name == heroicname);
 				if (id != null)
 				{
-					foreach (var item in kvp.Value)
+					if (id.QuestFoundIn == null)
+					{
+						LogError("No QuestFoundIn for " + id.Name + ", " + id.WikiURL);
+					}
+					else foreach (var item in kvp.Value)
 					{
 						item.QuestFoundIn = id.QuestFoundIn;
 						id.QuestFoundIn.Items.Add(item);
