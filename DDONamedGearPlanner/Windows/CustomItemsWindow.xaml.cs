@@ -405,8 +405,8 @@ namespace DDONamedGearPlanner
 				MessageBox.Show("There was an error loading custom items!", "Loading error", MessageBoxButton.OK, MessageBoxImage.Stop);
 				return;
 			}
-			SlaveLordIP.SetItem(null);
-			CustomIP.SetItem(null);
+			SlaveLordIP?.SetItem(null);
+			CustomIP?.SetItem(null);
 			tvItems.Items.Clear();
 			SetupTreeView();
 			CustomItemsReloaded?.Invoke();

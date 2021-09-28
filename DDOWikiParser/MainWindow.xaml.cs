@@ -47,7 +47,7 @@ namespace DDOWikiParser
 			"Repeating Heavy Crossbow",
 			"Repeating Light Crossbow"
 		};
-		string[] MinorArtifacts =
+		/*string[] MinorArtifacts =
 		{
 			"Band of Diani ir'Wynarn",
 			"Brand of Kalok Shash",
@@ -77,7 +77,7 @@ namespace DDOWikiParser
 			"The Shrouded Steps of the Beyond",
 			"The Zarash'ak Ward",
 			"Titan Control Matrix"
-		};
+		};*/
 		char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 		string[] numerals = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX" };
 		char[] spacers = { ' ', ',', '.', '(', ')', '-', '+', '=', '*', '%', '#' };
@@ -2608,7 +2608,17 @@ namespace DDOWikiParser
 					if (historic) continue;
 				}
 
-				DDOItemData data = new DDOItemData(ItemDataSource.Dataset, MinorArtifacts.Contains(itemName)) { Name = itemName };
+				bool minorartifact = false;
+				foreach (XmlElement xd in doc.GetElementsByTagName("div"))
+				{
+					if (string.Compare("catlinks", xd.GetAttribute("id"), true) == 0)
+					{
+						minorartifact = xd.InnerXml.Contains("/page/Category:Minor_artifacts");
+						break;
+					}
+				}
+
+				DDOItemData data = new DDOItemData(ItemDataSource.Dataset, /*MinorArtifacts.Contains(itemName)*/ minorartifact) { Name = itemName };
 
 				// reconstruct the original URL
 				var linkNodes = doc.GetElementsByTagName("link");

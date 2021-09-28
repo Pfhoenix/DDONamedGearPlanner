@@ -51,6 +51,7 @@ namespace DDONamedGearPlanner
 
 		public static bool IsItemAllowed(DDOItemData item)
 		{
+			if (item.QuestFoundIn == null) return false;
 			if (item.QuestFoundIn.Adpack != null && !QuestSourceAllowed[item.QuestFoundIn.Adpack.Name]) return false;
 			if (item.QuestFoundIn.IsFree) return true;
 			if (item.QuestFoundIn.Adpack == null) return QuestSourceAllowed[FreeToVIP];

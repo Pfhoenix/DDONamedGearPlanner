@@ -1217,6 +1217,269 @@ namespace DDONamedGearPlanner
 					}
 				}
 			});
+
+			Sets.Add("Legendary Might of the Abishai", new DDOItemSet
+			{
+				Name = "Legendary Might of the Abishai",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Might_of_the_Abishai",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 3,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Physical Resistance Rating",
+								Type = "artifact",
+								Value = 20
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magical Resistance Rating",
+								Type = "artifact",
+								Value = 20
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Armor Class",
+								Type = "artifact natural armor",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Strength",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Dexterity",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Constitution",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Intelligence",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Wisdom",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Charisma",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Abjuration Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Conjuration Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Divination Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Enchantment Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Evocation Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Illusion Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Necromancy Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Transmutation Spell DC",
+								Type = "artifact",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Healing Amplification",
+								Type = "artifact",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Healing Amplification",
+								Type = "artifact",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Healing Amplification",
+								Type = "artifact",
+								Value = 10
+							}
+						}
+					},
+					new DDOItemSetBonus
+					{
+						MinimumItems = 5,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Physical Resistance Rating",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magical Resistance Rating",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Armor Class",
+								Type = "artifact natural armor",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Strength",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Dexterity",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Constitution",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Intelligence",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Wisdom",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Charisma",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Abjuration Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Conjuration Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Divination Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Enchantment Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Evocation Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Illusion Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Necromancy Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Transmutation Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Healing Amplification",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Healing Amplification",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Healing Amplification",
+								Type = "artifact",
+								Value = 30
+							}
+						}
+					}
+				}
+			});
 			#endregion
 
 			#region Three Barrel Cove sets
@@ -1325,6 +1588,58 @@ namespace DDONamedGearPlanner
 								Property = "Negative Spell Critical Chance",
 								Type = "artifact",
 								Value = 4
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Light Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell Power",
+								Type = "artifact",
+								Value = 30
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Legendary Divine Blessing", new DDOItemSet
+			{
+				Name = "Legendary Divine Blessing",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Divine_Blessing",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Light Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
 							},
 							new DDOItemSetBonusProperty
 							{
@@ -1525,6 +1840,154 @@ namespace DDONamedGearPlanner
 				}
 			});
 
+			Sets.Add("Legendary Elder's Knowledge", new DDOItemSet
+			{
+				Name = "Legendary Elder's Knowledge",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Elder.27s_Knowledge",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Force Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Light Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Poison Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sonic Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Force Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Light Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Poison Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sonic Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							}
+						}
+					}
+				}
+			});
+
 			Sets.Add("Marshwalker", new DDOItemSet
 			{
 				Name = "Marshwalker",
@@ -1599,6 +2062,64 @@ namespace DDONamedGearPlanner
 								Property = "Tumble",
 								Type = "artifact",
 								Value = 5
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Legendary Marshwalker", new DDOItemSet
+			{
+				Name = "Legendary Marshwalker",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Marshwalker",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Move Speed",
+								Type = "enhancement",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Dexterity",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fortitude",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Reflex",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Will",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Jump",
+								Type = "artifact",
+								Value = 7
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Tumble",
+								Type = "artifact",
+								Value = 7
 							}
 						}
 					}
@@ -1689,6 +2210,70 @@ namespace DDONamedGearPlanner
 								Property = "Search",
 								Type = "artifact",
 								Value = 5
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Legendary Raven's Eye", new DDOItemSet
+			{
+				Name = "Legendary Raven's Eye",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Raven.27s_Eye",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Attack",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Damage",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Confirm Critical Hits",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Critical Hit Damage",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sneak Attack Attack",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sneak Attack Damage",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Spot",
+								Type = "artifact",
+								Value = 7
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Search",
+								Type = "artifact",
+								Value = 7
 							}
 						}
 					}
@@ -1799,6 +2384,70 @@ namespace DDONamedGearPlanner
 				}
 			});
 
+			Sets.Add("Legendary Shaman's Fury", new DDOItemSet
+			{
+				Name = "Legendary Shaman's Fury",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Shaman.27s_Fury",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Power",
+								Type = "artifact",
+								Value = 30
+							}
+						}
+					}
+				}
+			});
+
 			Sets.Add("Siren's Ward", new DDOItemSet
 			{
 				Name = "Siren's Ward",
@@ -1855,6 +2504,52 @@ namespace DDONamedGearPlanner
 								Property = "Armor Class %",
 								Type = "artifact",
 								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fortitude",
+								Type = "insight",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Reflex",
+								Type = "insight",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Will",
+								Type = "insight",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Armor Class",
+								Type = "artifact shield",
+								Value = 3
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Legendary Siren's Ward", new DDOItemSet
+			{
+				Name = "Legendary Siren's Ward",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Siren.27s_Ward",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Armor Class %",
+								Type = "artifact",
+								Value = 15
 							},
 							new DDOItemSetBonusProperty
 							{
@@ -1948,6 +2643,44 @@ namespace DDONamedGearPlanner
 				}
 			});
 
+			Sets.Add("Legendary Vulkoor's Cunning", new DDOItemSet
+			{
+				Name = "Legendary Vulkoor's Cunning",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Vulkoor.27s_Cunning",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Threat Reduction",
+								Type = "artifact",
+								Value = 20
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Powerful Vulkoorim Poison"
+							}
+						}
+					}
+				}
+			});
+
 			Sets.Add("Vulkoor's Might", new DDOItemSet
 			{
 				Name = "Vulkoor's Might",
@@ -2019,6 +2752,64 @@ namespace DDONamedGearPlanner
 							new DDOItemSetBonusProperty
 							{
 								Property = "Critical Hit Damage",
+								Type = "artifact",
+								Value = 3
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Legendary Vulkoor's Might", new DDOItemSet
+			{
+				Name = "Legendary Vulkoor's Might",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Vulkoor.27s_Might",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Attack",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Damage",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Threat Generation",
+								Type = "artifact",
+								Value = 20
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Confirm Critical Hits",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Critical Hit Damage",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sneak Attack Attack",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sneak Attack Damage",
 								Type = "artifact",
 								Value = 3
 							}
@@ -10427,6 +11218,40 @@ namespace DDONamedGearPlanner
 				}
 			});
 
+			Sets.Add("Legendary Mroranon's Might", new DDOItemSet
+			{
+				Name = "Legendary Mroranon's Might",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Mroranon.27s_Might",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Strength",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "artifact",
+								Value = 15
+							}
+						}
+					}
+				}
+			});
+
 			Sets.Add("Silver Concord's Subtlety", new DDOItemSet
 			{
 				Name = "Silver Concord's Subtlety",
@@ -10495,6 +11320,40 @@ namespace DDONamedGearPlanner
 				}
 			});
 
+			Sets.Add("Legendary Silver Concord's Subtlety", new DDOItemSet
+			{
+				Name = "Legendary Silver Concord's Subtlety",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Silver_Concord.27s_Subtlety",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fortification Bypass",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "artifact",
+								Value = 15
+							}
+						}
+					}
+				}
+			});
+
 			Sets.Add("Draconic Prophecy", new DDOItemSet
 			{
 				Name = "Draconic Prophecy",
@@ -10545,6 +11404,34 @@ namespace DDONamedGearPlanner
 								Property = "Magical Resistance Rating Cap",
 								Type = "artifact",
 								Value = 20
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Legendary Draconic Prophecy", new DDOItemSet
+			{
+				Name = "Legendary Draconic Prophecy",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Draconic_Prophecy",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Universal Spell Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magical Resistance Rating Cap",
+								Type = "artifact",
+								Value = 30
 							}
 						}
 					}
@@ -10631,6 +11518,46 @@ namespace DDONamedGearPlanner
 				}
 			});
 
+			Sets.Add("Legendary Kundarak Delving Equipment", new DDOItemSet
+			{
+				Name = "Legendary Kundarak Delving Equipment",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Kundarak_Delving_Equipment",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sneak Attack Dice",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Damage vs Helpless",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Doublestrike",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Doubleshot",
+								Type = "artifact",
+								Value = 15
+							}
+						}
+					}
+				}
+			});
+
 			Sets.Add("Wards of House Kundarak", new DDOItemSet
 			{
 				Name = "Wards of House Kundarak",
@@ -10681,6 +11608,34 @@ namespace DDONamedGearPlanner
 								Property = "Physical Resistance Rating",
 								Type = "artifact",
 								Value = 20
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Legendary Wards of House Kundarak", new DDOItemSet
+			{
+				Name = "Legendary Wards of House Kundarak",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Wards_of_House_Kundarak",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Armor Class %",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Physical Resistance Rating",
+								Type = "artifact",
+								Value = 30
 							}
 						}
 					}
