@@ -677,6 +677,31 @@ namespace DDOWikiParser
 					else if (split[1] == "Evocation" && split[0] == "Improved") data.AddProperty("Effective Evocation Caster Level " + split[3], "equipment", 3, null);
 					return true;
 				}
+				else if (p == "Power of the Blight")
+				{
+					vi = ParseNumber(v);
+					v = "equipment";
+					data.AddProperty("Acid Spell Power", v, vi, null);
+					data.AddProperty("Negative Spell Power", v, vi, null);
+					data.AddProperty("Poison Spell Power", v, vi, null);
+					return true;
+				}
+				else if (p == "Power of the Silver Flame")
+				{
+					vi = ParseNumber(v);
+					v = "equipment";
+					data.AddProperty("Light Spell Power", v, vi, null);
+					data.AddProperty("Positive Spell Power", v, vi, null);
+					return true;
+				}
+				else if (p == "Silver Flame Lore")
+				{
+					vi = ParseNumber(v);
+					v = "equipment";
+					data.AddProperty("Light Spell Critical Chance", v, vi, null);
+					data.AddProperty("Positive Spell Critical Chance", v, vi, null);
+					return true;
+				}
 				/*else if (p.Contains(" (spell)"))
 				{
 					LogError("- found \" (spell)\" in " + data.Name);
@@ -3014,7 +3039,7 @@ namespace DDOWikiParser
 			foreach (var kvp in epiccrafting)
 			{
 				bw.ReportProgress(++progress, kvp.Key);
-				string heroicname = kvp.Key.Substring(16).Replace("Item:", "").Trim();
+				string heroicname = kvp.Key.Substring(16).Replace("Item:", "").Replace("I:", "").Trim();
 				DDOItemData id = ItemsCache.Find(i => i.Name == heroicname);
 				if (id != null)
 				{
