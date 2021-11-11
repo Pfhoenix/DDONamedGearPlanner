@@ -63,16 +63,16 @@ namespace DDOWikiCrawler
 		{
 			btnStart.IsEnabled = false;
 			btnStop.IsEnabled = true;
+			var config = new CrawlConfiguration
+			{
+				MinCrawlDelayPerDomainMilliSeconds = 50,
+				MaxCrawlDepth = 1,
+			};
 
 			if (tvCachedPages.Items.Count == 0)
 			{
 				onFirstPage = true;
 
-				var config = new CrawlConfiguration
-				{
-					MinCrawlDelayPerDomainMilliSeconds = 50,
-					MaxCrawlDepth = 1,
-				};
 				PoliteWebCrawler crawler = new PoliteWebCrawler(config);
 				crawler.PageCrawlStarting += PageCrawlStarting;
 				crawler.ShouldCrawlPageDecisionMaker = (ptc, cc) =>
@@ -119,11 +119,6 @@ namespace DDOWikiCrawler
 				{
 					onFirstPage = true;
 
-					var config = new CrawlConfiguration
-					{
-						MinCrawlDelayPerDomainMilliSeconds = 50,
-						MaxCrawlDepth = 1
-					};
 					PoliteWebCrawler crawler = new PoliteWebCrawler(config);
 					crawler.PageCrawlStarting += PageCrawlStarting;
 					crawler.ShouldCrawlPageDecisionMaker = (ptc, cc) =>
@@ -147,21 +142,13 @@ namespace DDOWikiCrawler
 					{
 						onFirstPage = true;
 						currentTVI = tvi;
-						string curHeader = tvi.Header.ToString();
 
-						var config = new CrawlConfiguration
-						{
-							MinCrawlDelayPerDomainMilliSeconds = 50,
-							MaxCrawlDepth = 1
-						};
+						if (tvi.Header.ToString() != "Large_shields") continue;
+
 						PoliteWebCrawler crawler = new PoliteWebCrawler(config);
 						crawler.PageCrawlStarting += PageCrawlStarting;
 						crawler.ShouldCrawlPageDecisionMaker = (ptc, cc) =>
 						{
-							if (curHeader == "Large_shields")
-							{
-								pages.AppendLine(ptc.Uri.AbsoluteUri);
-							}
 							if (string.Compare(ptc.Uri.Authority, "ddowiki.com", true) != 0) return new CrawlDecision { Allow = false, Reason = "Not on ddowiki domain" };
 							if (!ptc.Uri.AbsolutePath.StartsWith("/page/")) return new CrawlDecision { Allow = false, Reason = "Only crawl pages" };
 							if (!onFirstPage && !ptc.Uri.AbsolutePath.Contains("Item:")) return new CrawlDecision { Allow = false, Reason = "Not an item page" };
@@ -173,16 +160,6 @@ namespace DDOWikiCrawler
 						crawler.PageCrawlCompleted += ItemCrawlCompleted;
 
 						await crawler.CrawlAsync(new Uri(tvi.Tag.ToString()), cts);
-
-						if (curHeader == "Large_shields")
-						{
-							using (WebClient wc = new WebClient())
-							using (Stream page = wc.OpenRead(tvi.Tag.ToString()))
-							using (StreamReader sr = new StreamReader(page))
-							{
-								File.WriteAllText("large_shields.html", sr.ReadToEnd());
-							}
-						}
 					}
 				}
 
