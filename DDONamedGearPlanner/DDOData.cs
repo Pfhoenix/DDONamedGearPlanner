@@ -10300,6 +10300,40 @@ namespace DDONamedGearPlanner
 					}
 			});
 
+			Sets.Add("Legendary Oasis of Morality", new DDOItemSet
+			{
+				Name = "Legendary Oasis of Morality",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Oasis_of_Morality",
+				SetBonuses = new List<DDOItemSetBonus>
+					{
+						new DDOItemSetBonus
+						{
+							MinimumItems = 2,
+							Bonuses = new List<DDOItemSetBonusProperty>
+							{
+								new DDOItemSetBonusProperty
+								{
+									Property = "Positive Spell Critical Chance",
+									Type = "artifact",
+									Value = 6
+								},
+								new DDOItemSetBonusProperty
+								{
+									Property = "Positive Spell Power",
+									Type = "artifact",
+									Value = 30
+								},
+								new DDOItemSetBonusProperty
+								{
+									Property = "Fortification Bypass",
+									Type = "artifact",
+									Value = 15
+								}
+							}
+						}
+					}
+			});
+
 			Sets.Add("Vulkoor's Chosen", new DDOItemSet
 			{
 				Name = "Vulkoor's Chosen",
@@ -10414,6 +10448,63 @@ namespace DDONamedGearPlanner
 				}
 			});
 
+			Sets.Add("Legendary Vulkoor's Chosen", new DDOItemSet
+			{
+				Name = "Legendary Vulkoor's Chosen",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Vulkoor.27s_Chosen",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Poison Resistance",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sneak Attack Dice",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fortitude",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Reflex",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Will",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Dexterity",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Constitution",
+								Type = "artifact",
+								Value = 3
+							}
+						}
+					}
+				}
+			});
+
 			Sets.Add("The Desert's Writhing Storm", new DDOItemSet
 			{
 				Name = "The Desert's Writhing Storm",
@@ -10476,6 +10567,40 @@ namespace DDONamedGearPlanner
 								Property = "Magical Resistance Rating",
 								Type = "artifact",
 								Value = 20
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("The Legendary Desert's Writhing Storm", new DDOItemSet
+			{
+				Name = "The Legendary Desert's Writhing Storm",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#The_Legendary_Desert.27s_Writhing_Storm",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magical Resistance Rating",
+								Type = "artifact",
+								Value = 30
 							}
 						}
 					}
@@ -10574,6 +10699,52 @@ namespace DDONamedGearPlanner
 				}
 			});
 
+			Sets.Add("The Legendary Desert's Starless Nights", new DDOItemSet
+			{
+				Name = "The Legendary Desert's Starless Nights",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#The_Legendary_Desert.27s_Starless_Nights",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Poison Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Poison Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Damage vs Helpless",
+								Type = "artifact",
+								Value = 15
+							}
+						}
+					}
+				}
+			});
+
 			Sets.Add("The Desert's Burning Sun", new DDOItemSet
 			{
 				Name = "The Desert's Burning Sun",
@@ -10636,6 +10807,40 @@ namespace DDONamedGearPlanner
 								Property = "Physical Resistance Rating",
 								Type = "artifact",
 								Value = 10
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("The Legendary Desert's Burning Sun", new DDOItemSet
+			{
+				Name = "The Legendary Desert's Burning Sun",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#The_Legendary_Desert.27s_Burning_Sun",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Physical Resistance Rating",
+								Type = "artifact",
+								Value = 15
 							}
 						}
 					}
@@ -10716,6 +10921,46 @@ namespace DDONamedGearPlanner
 								Property = "Ranged Power",
 								Type = "artifact",
 								Value = 10
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Legendary Windlasher's Ferocity", new DDOItemSet
+			{
+				Name = "Legendary Windlasher's Ferocity",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Windlasher.27s_Ferocity",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Doublestrike",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Doubleshot",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "artifact",
+								Value = 15
 							}
 						}
 					}
@@ -10814,6 +11059,52 @@ namespace DDONamedGearPlanner
 				}
 			});
 
+			Sets.Add("Legendary Menechtarun Scavenger", new DDOItemSet
+			{
+				Name = "Legendary Menechtarun Scavenger",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Menechtarun_Scavenger",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Physical Resistance Rating",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magical Resistance Rating",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Healing Amplification",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Healing Amplification",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Healing Amplification",
+								Type = "artifact",
+								Value = 30
+							}
+						}
+					}
+				}
+			});
+
 			Sets.Add("The Desert's Biting Sands", new DDOItemSet
 			{
 				Name = "The Desert's Biting Sands",
@@ -10876,6 +11167,40 @@ namespace DDONamedGearPlanner
 								Property = "Magical Resistance Rating Cap",
 								Type = "artifact",
 								Value = 20
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("The Legendary Desert's Biting Sands", new DDOItemSet
+			{
+				Name = "The Legendary Desert's Biting Sands",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#The_Legendary_Desert.27s_Biting_Sands",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Force Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Force Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magical Resistance Rating Cap",
+								Type = "artifact",
+								Value = 30
 							}
 						}
 					}

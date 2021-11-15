@@ -143,7 +143,7 @@ namespace DDOWikiCrawler
 						onFirstPage = true;
 						currentTVI = tvi;
 
-						if (tvi.Header.ToString() != "Large_shields") continue;
+						//if (tvi.Header.ToString() != "Docents") continue;
 
 						PoliteWebCrawler crawler = new PoliteWebCrawler(config);
 						crawler.PageCrawlStarting += PageCrawlStarting;
@@ -218,10 +218,6 @@ namespace DDOWikiCrawler
 
 		void ItemCrawlCompleted(object sender, PageCrawlCompletedArgs e)
 		{
-			if (e.CrawledPage.Uri.AbsolutePath.Contains("Saltiron_Targe"))
-			{
-				int i = 0;
-			}
 			var httpStatus = e.CrawledPage.HttpResponseMessage?.StatusCode;
 			if (httpStatus == HttpStatusCode.OK)
 			{
