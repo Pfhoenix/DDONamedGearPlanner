@@ -884,11 +884,11 @@ namespace DDOWikiParser
 						else if (p.EndsWith("Will Save")) p = "Will";
 						else if (p.EndsWith("Reflex Save")) p = "Reflex";
 						else if (p.StartsWith("Fortification Penalty"))
-                        {
-                            p = "Fortification";
+						{
+							p = "Fortification";
 							v = null;
-                        }
-                        else if (p.StartsWith("Negative Energy Absorption")) p = "Negative Absorption";
+						}
+						else if (p.StartsWith("Negative Energy Absorption")) p = "Negative Absorption";
 						else if (p.EndsWith("Vertigo")) p = "Trip DC";
 						//else if (NullTypeProperties.Contains(p)) v = null;
 					}
