@@ -883,8 +883,12 @@ namespace DDOWikiParser
 						else if (p.EndsWith("Fortitude Save")) p = "Fortitude";
 						else if (p.EndsWith("Will Save")) p = "Will";
 						else if (p.EndsWith("Reflex Save")) p = "Reflex";
-						else if (p.StartsWith("Fortification Penalty")) p = "Fortification";
-						else if (p.StartsWith("Negative Energy Absorption")) p = "Negative Absorption";
+						else if (p.StartsWith("Fortification Penalty"))
+                        {
+                            p = "Fortification";
+							v = null;
+                        }
+                        else if (p.StartsWith("Negative Energy Absorption")) p = "Negative Absorption";
 						else if (p.EndsWith("Vertigo")) p = "Trip DC";
 						//else if (NullTypeProperties.Contains(p)) v = null;
 					}
@@ -1655,7 +1659,8 @@ namespace DDOWikiParser
 				else if (p == "Fortification")
 				{
 					if (vi == 0) vi = ParseNumber(v);
-					if (vi != 0) data.AddProperty(p, "enhancement", vi, null);
+					if (v != null && v.StartsWith("This suit")) v = "enhancement";
+					if (vi != 0) data.AddProperty(p, v, vi, null);
 				}
 				else if (p.EndsWith(" Threat Reduction"))
 				{
