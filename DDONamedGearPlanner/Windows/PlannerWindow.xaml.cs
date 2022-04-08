@@ -820,7 +820,7 @@ namespace DDONamedGearPlanner
 
 		private void ItemList_HeaderClick(object sender, RoutedEventArgs e)
 		{
-			string header = (e.OriginalSource as GridViewColumnHeader)?.Content.ToString();
+			string header = (e.OriginalSource as GridViewColumnHeader)?.Content?.ToString();
 			if (header == null) return;
 			if (header != LastSortBy)
 			{
