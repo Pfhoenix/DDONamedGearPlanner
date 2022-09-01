@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,7 +22,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public static readonly string VERSION = "0.8.13";
+		public static readonly string VERSION = "0.8.14";
 
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
@@ -816,6 +817,29 @@ namespace DDONamedGearPlanner
 			sb.AppendLine("Two-handed weapons will lock/unlock the offhand slot.");
 
 			MessageBox.Show(sb.ToString());
+		}
+
+		private async void CheckForUpdateMenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient();
+			var response = await httpClient.GetAsync("http://github.com/Pfhoenix/DDONamedGearPlanner/releases/latest");
+			if (response.IsSuccessStatusCode)
+			{
+				int last = response.RequestMessage.RequestUri.AbsoluteUri.LastIndexOf('/');
+				string latestVersion = response.RequestMessage.RequestUri.AbsoluteUri.Substring(last + 1);
+				if (latestVersion == VERSION) MessageBox.Show("DDO Named Gear Planner is up to date.", "Version Comparison", MessageBoxButton.OK);
+				else
+				{
+					if (MessageBox.Show("You are running version " + VERSION + ". The latest version released is " + latestVersion + ". Do you want to open up a browser window to the release page?", "Version mismatch", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+					{
+						System.Diagnostics.Process.Start(response.RequestMessage.RequestUri.AbsoluteUri);
+					}
+				}
+			}
+			else
+			{
+				MessageBox.Show("Error getting latest release version: " + response.ReasonPhrase, "Communication error", MessageBoxButton.OK);
+			}
 		}
 
 		private void ItemList_HeaderClick(object sender, RoutedEventArgs e)

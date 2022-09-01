@@ -12155,6 +12155,1014 @@ namespace DDONamedGearPlanner
 				}
 			});
 			#endregion
+
+			#region Isle of Dread Sets
+			Sets.Add("The Dread Isle's Curse", new DDOItemSet
+			{
+				Name = "The Dread Isle's Curse",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#The_Dread_Isle.27s_Curse",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 5,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "profane",
+								Value = 5
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "profane",
+								Value = 5
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell Power",
+								Type = "profane",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell Power",
+								Type = "profane",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Power",
+								Type = "profane",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Power",
+								Type = "profane",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Force Spell Power",
+								Type = "profane",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Light Spell Power",
+								Type = "profane",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell Power",
+								Type = "profane",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Poison Spell Power",
+								Type = "profane",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Spell Power",
+								Type = "profane",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Spell Power",
+								Type = "profane",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sonic Spell Power",
+								Type = "profane",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Physical Resistance Rating",
+								Type = "profane",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Abjuration Spell DC",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Conjuration Spell DC",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Divination Spell DC",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Enchantment Spell DC",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Evocation Spell DC",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Illusion Spell DC",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Necromancy Spell DC",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Transmutation Spell DC",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Strength",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Dexterity",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Constitution",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Intelligence",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Wisdom",
+								Type = "profane",
+								Value = 1
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Charisma",
+								Type = "profane",
+								Value = 1
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("The Legendary Dread Isle's Curse", new DDOItemSet
+			{
+				Name = "The Legendary Dread Isle's Curse",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#The_Legendary_Dread_Isle.27s_Curse",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 5,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "profane",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "profane",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell Power",
+								Type = "profane",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell Power",
+								Type = "profane",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Power",
+								Type = "profane",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Power",
+								Type = "profane",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Force Spell Power",
+								Type = "profane",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Light Spell Power",
+								Type = "profane",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell Power",
+								Type = "profane",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Poison Spell Power",
+								Type = "profane",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Spell Power",
+								Type = "profane",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Spell Power",
+								Type = "profane",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sonic Spell Power",
+								Type = "profane",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Physical Resistance Rating",
+								Type = "profane",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Abjuration Spell DC",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Conjuration Spell DC",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Divination Spell DC",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Enchantment Spell DC",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Evocation Spell DC",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Illusion Spell DC",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Necromancy Spell DC",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Transmutation Spell DC",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Strength",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Dexterity",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Constitution",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Intelligence",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Wisdom",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Charisma",
+								Type = "profane",
+								Value = 2
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Attack",
+								Type = "profane",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Damage",
+								Type = "profane",
+								Value = 3
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Dread Stalker", new DDOItemSet
+			{
+				Name = "Dread Stalker",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Dread_Stalker",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 3,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sneak Attack Dice",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Doublestrike",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Doubleshot",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Damage vs Helpless %",
+								Type = "artifact",
+								Value = 15
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Devotion of the Firemouth", new DDOItemSet
+			{
+				Name = "Devotion of the Firemouth",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Devotion_of_the_Firemouth",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 3,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Healing Amplification",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Healing Amplification",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Healing Amplification",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Physical Resistance Rating",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Armor Class",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Threat Generation",
+								Type = "artifact",
+								Value = 100
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Threat Generation",
+								Type = "artifact",
+								Value = 100
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Defender of Tanaroa", new DDOItemSet
+			{
+				Name = "Defender of Tanaroa",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Defender_of_Tanaroa",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 3,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Healing Amplification",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Healing Amplification",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Healing Amplification",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Force Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Light Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Poison Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sonic Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Force Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Light Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Poison Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sonic Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magical Resistance Rating",
+								Type = "artifact",
+								Value = 30
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Deacon of the Auricular Sacrarium", new DDOItemSet
+			{
+				Name = "Deacon of the Auricular Sacrarium",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Deacon_of_the_Auricular_Sacrarium",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 3,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Force Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Light Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Poison Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sonic Spell Critical Chance",
+								Type = "artifact",
+								Value = 6
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Force Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Light Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Poison Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sonic Spell Power",
+								Type = "artifact",
+								Value = 25
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Force Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Light Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Negative Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Poison Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Positive Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Repair Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sonic Spell Critical Damage",
+								Type = "legendary",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magical Resistance Rating",
+								Type = "artifact",
+								Value = 30
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Echoes of the Walking Ancestors", new DDOItemSet
+			{
+				Name = "Echoes of the Walking Ancestors",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Echoes_of_the_Walking_Ancestors",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 3,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Abjuration Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Conjuration Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Divination Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Enchantment Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Evocation Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Illusion Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Necromancy Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Transmutation Spell DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Trip DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Sunder DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Stunning DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Assassinate DC",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Strength",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Dexterity",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Constitution",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Intelligence",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Wisdom",
+								Type = "artifact",
+								Value = 3
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Charisma",
+								Type = "artifact",
+								Value = 3
+							}
+						}
+					}
+				}
+			});
+			#endregion
 			/*
 				Sets.Add("", new DDOItemSet
 				{

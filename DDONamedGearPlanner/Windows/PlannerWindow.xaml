@@ -52,6 +52,8 @@
 			<MenuItem Header="_Help">
 				<MenuItem Header="UI Tips" InputGestureText="F1" Click="HelpMenuItem_Click" />
 				<Separator/>
+				<MenuItem Header="Check for update" Click="CheckForUpdateMenuItem_Click" />
+				<Separator/>
 				<MenuItem Header="About" Click="AboutMenuItem_Click"/>
 			</MenuItem>
 		</Menu>
