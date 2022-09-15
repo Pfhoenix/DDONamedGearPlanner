@@ -13163,6 +13163,352 @@ namespace DDONamedGearPlanner
 				}
 			});
 			#endregion
+
+			#region Temple of Elemental Evil Sets
+			Sets.Add("Temple's Monolith", new DDOItemSet
+			{
+				Name = "Temple's Monolith",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Temple.27s_Monolith",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "artifact",
+								Value = 5
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "artifact",
+								Value = 5
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell Power",
+								Type = "artifact",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Physical Resistance Rating",
+								Type = "artifact",
+								Value = 10
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Temple's Tide", new DDOItemSet
+			{
+				Name = "Temple's Tide",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Temple.27s_Tide",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "artifact",
+								Value = 5
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "artifact",
+								Value = 5
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell Power",
+								Type = "artifact",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Threat Reduction",
+								Type = "artifact",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Threat Reduction",
+								Type = "artifact",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magic Threat Reduction",
+								Type = "artifact",
+								Value = 10
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Temple's Inferno", new DDOItemSet
+			{
+				Name = "Temple's Inferno",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Temple.27s_Inferno",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "artifact",
+								Value = 5
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "artifact",
+								Value = 5
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Power",
+								Type = "artifact",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Damage vs Helpless %",
+								Type = "artifact",
+								Value = 5
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Temple's Tempest", new DDOItemSet
+			{
+				Name = "Temple's Tempest",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Temple.27s_Tempest",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "artifact",
+								Value = 5
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "artifact",
+								Value = 5
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Power",
+								Type = "artifact",
+								Value = 10
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magical Resistance Rating",
+								Type = "artifact",
+								Value = 10
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Legendary Temple's Monolith", new DDOItemSet
+			{
+				Name = "Legendary Temple's Monolith",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Temple.27s_Monolith",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Acid Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Physical Resistance Rating",
+								Type = "artifact",
+								Value = 30
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Legendary Temple's Tide", new DDOItemSet
+			{
+				Name = "Legendary Temple's Tide",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Temple.27s_Tide",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Cold Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Threat Reduction",
+								Type = "artifact",
+								Value = 20
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Threat Reduction",
+								Type = "artifact",
+								Value = 20
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magic Threat Reduction",
+								Type = "artifact",
+								Value = 20
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Legendary Temple's Inferno", new DDOItemSet
+			{
+				Name = "Legendary Temple's Inferno",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Temple.27s_Inferno",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Fire Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Damage vs Helpless %",
+								Type = "artifact",
+								Value = 15
+							}
+						}
+					}
+				}
+			});
+
+			Sets.Add("Legendary Temple's Tempest", new DDOItemSet
+			{
+				Name = "Legendary Temple's Tempest",
+				WikiURL = "https://ddowiki.com/page/Named_item_sets#Legendary_Temple.27s_Tempest",
+				SetBonuses = new List<DDOItemSetBonus>
+				{
+					new DDOItemSetBonus
+					{
+						MinimumItems = 2,
+						Bonuses = new List<DDOItemSetBonusProperty>
+						{
+							new DDOItemSetBonusProperty
+							{
+								Property = "Melee Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Ranged Power",
+								Type = "artifact",
+								Value = 15
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Electric Spell Power",
+								Type = "artifact",
+								Value = 30
+							},
+							new DDOItemSetBonusProperty
+							{
+								Property = "Magical Resistance Rating",
+								Type = "artifact",
+								Value = 30
+							}
+						}
+					}
+				}
+			});
+			#endregion
 			/*
 				Sets.Add("", new DDOItemSet
 				{
