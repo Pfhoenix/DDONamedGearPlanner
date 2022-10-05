@@ -390,7 +390,7 @@ namespace DDONamedGearPlanner
     public class GearSetBuild
     {
 		public int MinimumLevel = 1;
-		public int MaximumLevel = 30;
+		public int MaximumLevel = DDODataset.MaximumLevel;
 
 		public int CurrentBuildResult;
 
@@ -429,7 +429,7 @@ namespace DDONamedGearPlanner
 		public void Clear()
 		{
 			MinimumLevel = 1;
-			MaximumLevel = 30;
+			MaximumLevel = DDODataset.MaximumLevel;
 			CurrentBuildResult = -1;
 			FiltersResultsMismatch = false;
 

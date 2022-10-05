@@ -491,6 +491,8 @@ namespace DDONamedGearPlanner
 	[Serializable]
 	public class DDODataset
 	{
+		public const int MaximumLevel = 32;
+
 		public Dictionary<SlotType, DDOSlot> Slots = new Dictionary<SlotType, DDOSlot>();
 		public Dictionary<string, DDOItemProperty> ItemProperties = new Dictionary<string, DDOItemProperty>();
 		public List<DDOItemData> Items = new List<DDOItemData>();

@@ -22,7 +22,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public static readonly string VERSION = "0.8.15";
+		public static readonly string VERSION = "0.8.16";
 
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
@@ -69,6 +69,9 @@ namespace DDONamedGearPlanner
 			ItemPropertiesCopy.Insert(0, new DDOItemProperty { Property = "< All >" });
 			cbItemPropertyFilter.ItemsSource = ItemPropertiesCopy;
 			cbItemPropertyFilter.SelectedIndex = 0;
+
+			rsML.Maximum = DDODataset.MaximumLevel;
+			rsBuildML.Maximum = DDODataset.MaximumLevel;
 
 			txtSearchBox.Focus();
 		}
@@ -1035,7 +1038,7 @@ namespace DDONamedGearPlanner
 		void ResetBuildResultsUI()
 		{
 			rsBuildML.LowerValue = 1;
-			rsBuildML.UpperValue = 30;
+			rsBuildML.UpperValue = 32;
 			btnStartBuild.IsEnabled = false;
 			tbTotalGearSets.Text = "Gear Sets: 0";
 			btnPreviousGS.IsEnabled = false;
