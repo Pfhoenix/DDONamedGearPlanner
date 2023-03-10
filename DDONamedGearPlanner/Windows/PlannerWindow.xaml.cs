@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,7 +21,7 @@ namespace DDONamedGearPlanner
 	/// </summary>
 	public partial class PlannerWindow : Window
 	{
-		public static readonly string VERSION = "0.8.17";
+		public static readonly string VERSION = "0.8.18";
 
 		public GearSetBuild CurrentBuild = new GearSetBuild();
 
@@ -793,7 +792,9 @@ namespace DDONamedGearPlanner
 			NamedSetSelectorWindow sw = new NamedSetSelectorWindow();
 			sw.Owner = this;
 			sw.Initialize(EquipmentSlots);
-			if (sw.ShowDialog().Value)
+			sw.ApplyNamedSetClicked += ApplyNamedSetClicked;
+			sw.Show();
+			/*if (sw.ShowDialog().Value)
 			{
 				List<DDOItemData> items = sw.GetItems();
 				bool w = false;
@@ -808,7 +809,23 @@ namespace DDONamedGearPlanner
 				}
 
 				CalculateGearSet(true);
+			}*/
+		}
+
+		private void ApplyNamedSetClicked(List<DDOItemData> items)
+		{
+			bool w = false;
+			foreach (var item in items)
+			{
+				if (item.Slot == SlotType.Weapon && w) SlotItem(item, SlotType.Offhand);
+				else
+				{
+					SlotItem(item, SlotType.None);
+					if (item.Slot == SlotType.Weapon) w = true;
+				}
 			}
+
+			CalculateGearSet(true);
 		}
 
 		private void HelpMenuItem_Click(object sender, RoutedEventArgs e)

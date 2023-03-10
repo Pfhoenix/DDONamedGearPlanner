@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace DDONamedGearPlanner
 {
@@ -394,14 +388,17 @@ namespace DDONamedGearPlanner
 
 		private void Cancel_Clicked(object sender, RoutedEventArgs e)
 		{
-			DialogResult = false;
+			//DialogResult = false;
 			Close();
 		}
 
+		public event Action<List<DDOItemData>> ApplyNamedSetClicked;
+
 		private void Apply_Clicked(object sender, RoutedEventArgs e)
 		{
-			DialogResult = true;
-			Close();
+			//DialogResult = true;
+			//Close();
+			ApplyNamedSetClicked?.Invoke(GetItems());
 		}
 
 		public List<DDOItemData> GetItems()

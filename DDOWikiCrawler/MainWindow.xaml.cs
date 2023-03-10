@@ -174,6 +174,16 @@ namespace DDOWikiCrawler
 			}
 		}
 
+		private void Crawler_PageCrawlDisallowed(object sender, PageCrawlDisallowedArgs e)
+		{
+			int i = 0;
+		}
+
+		private void Crawler_PageLinksCrawlDisallowed(object sender, PageLinksCrawlDisallowedArgs e)
+		{
+			int i = 0;
+		}
+
 		private void BtnStop_Click(object sender, RoutedEventArgs e)
 		{
 			btnStart.IsEnabled = true;
